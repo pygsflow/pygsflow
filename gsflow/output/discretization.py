@@ -19,6 +19,10 @@ class PrmsDiscretization(object):
     def __init__(self, xypts):
         self._xypts = xypts
 
+    @property
+    def xypts(self):
+        return self._xypts
+
     def get_hru_points(self, hru):
         """
 
@@ -66,7 +70,18 @@ class PrmsDiscretization(object):
                 rotation = 0.
             sr.set_spatialreference(xll=xll, yll=yll, rotation=rotation)
 
-        print('break')
+        xypts = []
+        # create closed polygons for each hru from UL to LR
+        for i in range(1, sr.xgrid.shape[0]):
+            for j in range(1, sr.xgrid.shape[1]):
+                t = [(sr.xgrid[i - 1, j - 1], sr.ygrid[i - 1, j - 1]),
+                     (sr.xgrid[i - 1, j], sr.ygrid[i - 1, j]),
+                     (sr.xgrid[i, j], sr.ygrid[i, j]),
+                     (sr.xgrid[i, j - 1], sr.ygrid[i, j - 1]),
+                     (sr.xgrid[i - 1, j - 1], sr.ygrid[i - 1, j - 1])]
+                xypts.append(t)
+
+        return PrmsDiscretization(xypts)
 
     @staticmethod
     def load_from_shapefile(shp):
