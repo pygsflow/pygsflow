@@ -16,17 +16,8 @@ class PrmsDiscretization(object):
 
 
     """
-    # todo: maybe make this xypts and then unravel
     def __init__(self, xypts):
-        pass
-        # self.xpts = xpts
-        # self.ypts = ypts
-
-        # if not isinstance(xpts, np.ndarray):
-        #     self.xpts = np.array(xpts)
-
-        # if not isinstance(ypts, np.ndarray):
-        #     self.ypts = np.array(ypts)
+        self._xypts = xypts
 
     def get_hru_points(self, hru):
         """
@@ -39,21 +30,43 @@ class PrmsDiscretization(object):
         -------
 
         """
-        pass
+        return self._xypts(hru - 1)
 
     @staticmethod
-    def load_from_flopy(model):
+    def load_from_flopy(model, xll=None, yll=None, rotation=None):
         """
 
         Parameters
         ----------
-        model
+        model : flopy.modflow.Modflow or gsflow.modflow.Modflow object
+        xll : float
+            xoffset for modflow grid
+        yll : float
+            yoffset for modflow grid
+        rotation : float
+            rotation for modflow grid
 
         Returns
         -------
-
+            PrmsDiscretization object
         """
-        pass
+        import flopy
+        from gsflow.modflow import Modflow
+        if not isinstance(model, flopy.modflow.Modflow) or \
+                not isinstance(model, Modflow):
+            raise ValueError("Model must be a flopy.modflow.Modflow or "
+                             "gsflow.modflow.Modflow model")
+
+        sr = model.sr
+        if not isinstance(sr, flopy.utils.SpatialReference):
+            raise AssertionError("Cannot find flopy discretization")
+
+        if (xll, yll, rotation) != (None, None, None):
+            if rotation is None:
+                rotation = 0.
+            sr.set_spatialreference(xll=xll, yll=yll, rotation=rotation)
+
+        print('break')
 
     @staticmethod
     def load_from_shapefile(shp):
@@ -84,18 +97,30 @@ class PrmsDiscretization(object):
 
         hru_field = False
         for ix, field in enumerate(sf.fields):
-            if "hru" == field[0].lower():
+            if "hru_id" == field[0].lower():
                 # index the hru field
-                hru_field = ix
+                hru_field = ix - 1
                 break
 
         if not hru_field:
-            err = "A hru field must be supplied; this is the hru order " \
+            err = "A hru_id field must be present in the shapefile; hru_id must be " \
                   "from 1 to n_hru"
+            raise AssertionError(err)
         
 
         shapes = sf.shapes()
-        print('break')
+
+        xypts_dict = {}
+        for ix, sh in enumerate(shapes):
+            rec = sf.record(ix)
+            hru_id = rec[hru_field]
+            xypts_dict[hru_id] = sh
+
+        xypts = []
+        for key, values in sorted(xypts_dict.items()):
+            xypts.append(values)
+
+        return PrmsDiscretization(xypts)
 
     def plot_discretization(self, ax=None, **kwargs):
         """
