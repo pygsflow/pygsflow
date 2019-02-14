@@ -1,0 +1,92 @@
+language: python
+os: linux
+dist: trusty
+sudo: required
+compiler: gcc
+
+matrix:
+  include:
+    - python: 2.7
+    - python: 3.4
+    - python: 3.5
+    - python: 3.6
+    - python: "3.6-dev"
+    - python: "nightly"
+
+  allow_failures:
+    - python: "3.6-dev"
+    - python: "3.7-dev"
+    - python: "nightly"
+
+cache:
+  pip: true
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.local
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gfortran-6
+      - g++-6
+      - python-pip
+      - libhdf5-serial-dev
+      - netcdf-bin
+      - libnetcdf-dev
+      - gdal-bin
+      - libgdal-dev
+      - openvpn
+
+env:
+  global:
+    - NO_NET=1
+
+# start Virtual X, so default matplotlib backend works
+before_install:
+    - "export DISPLAY=:99.0"
+    - "sh -e /etc/init.d/xvfb start"
+    - sudo openvpn path/to/conf.ovpn &>>openvpn=client.log &
+# command to install dependencies
+install:
+    - if [[ ! -d "$HOME/.local/bin" ]]; then
+        mkdir "$HOME/.local/bin";
+      fi
+    - export PATH="$HOME/.local/bin:$PATH"
+    - ln -fs /usr/bin/gfortran-6 "$HOME/.local/bin/gfortran" && gfortran --version
+    - ls -l /usr/bin/gfortran-6
+    - ln -fs /usr/bin/gcc-6 "$HOME/.local/bin/gcc" && gcc --version
+    - ls -l /usr/bin/gcc-6
+    - ln -fs /usr/bin/g++-6 "$HOME/.local/bin/g++" && g++ --version
+    - ls -l /usr/bin/g++-6
+    - export CXX="g++"
+    - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then
+      pip install -r requirements2-34.travis.txt;
+      pip install requests;
+      echo requests version1; python -c "import requests; print(requests.__version__)";
+      fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 3.4 ]];
+      then pip install -r requirements2-34.travis.txt;
+      fi
+    - if [[ $TRAVIS_PYTHON_VERSION > 3.4 ]];
+      then pip install -r requirements.travis.txt;
+      fi
+    - pip install https://github.com/modflowpy/flopy/zipball/develop
+    - pip install --upgrade jupyter
+    - pip install nbconvert
+    - pip install nose-timer
+    - pip install coveralls
+    - pip install pylint
+
+# command to run tests
+script:
+    - export PYTHONPATH=$PYTHONPATH:.
+    - echo python path; python -c "from __future__ import print_function; import sys; print(sys.path)"
+    - python -c "import os; is_travis = 'TRAVIS' in os.environ; print('TRAVIS {}'.format(is_travis))"
+    - echo nosetests version; nosetests --version
+    - echo jupyter version; jupyter --version
+    - echo jupyter runtime directory; jupyter --runtime-dir
+    - echo pylint version; pylint --version
+    - nosetests -v --with-id --with-timer -w ./autotest --with-coverage --cover-package=pygsflow
+
