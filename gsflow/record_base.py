@@ -43,7 +43,7 @@ class RecordBase(object):
             self.datatype = 2
         elif 'int' in self._values.dtype.name:
             self.datatype = 1
-        elif 'string' in self._values.dtype.name:
+        elif 'str' in self._values.dtype.name:
             self.datatype = 4
         else:
             raise ValueError("Value type is not recognized...{}", self.values.dtype)

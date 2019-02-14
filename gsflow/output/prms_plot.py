@@ -35,6 +35,35 @@ class PrmsPlot(object):
             except AttributeError:
                 pass
 
+    def plot_array(self, array, ax=None, masked_values=None, **kwargs):
+        """
+        General array plotter
+
+        Parameters
+        ----------
+        array : array to plot.
+            size must be equal to nhru
+
+        ax : matplotlib.pyplot.axes
+
+        kwargs : matplotlib keyword arguments
+
+        Returns
+        -------
+
+        """
+        if ax is None:
+            plt.gca()
+
+        if not isinstance(array, np.ndarray):
+            array = np.array(array)
+
+        if masked_values is not None:
+            for mval in masked_values:
+                array = np.ma.masked_equal(array, mval)
+
+        return self.__plot_patches(array, ax=ax, **kwargs)
+
     def plot_parameter_map(self, parameter, ax=None, **kwargs):
         """
 
@@ -48,6 +77,11 @@ class PrmsPlot(object):
         -------
 
         """
+        if ax is None:
+            ax = plt.gca()
+
+        nhru = self.prms_dis.nhru
+
 
     def plot_parameter_timeseries(self, parameter, ax=None, **kwargs):
         """
@@ -62,6 +96,7 @@ class PrmsPlot(object):
         -------
 
         """
+        return
 
     def plot_data_timeseries(self, data, names, ax=None, **kwargs):
         """
@@ -77,6 +112,8 @@ class PrmsPlot(object):
         -------
 
         """
+        return
+
 
     def plot_model_discretization(self, ax=None, **kwargs):
         """
@@ -94,3 +131,47 @@ class PrmsPlot(object):
             return self.prms_dis.plot_discretization(ax=ax, **kwargs)
         else:
             print("No discretization provided, cannot plot")
+
+    def __plot_patches(self, array, ax, **kwargs):
+        """
+        General patch plotter, workhorse of the class
+
+        Parameters
+        ----------
+        array : array to plot
+        ax : matplotlib.pyplot.axes
+        kwargs : matplotlib keyword arguments
+
+        Returns
+        -------
+            matplotlib.pyplot.axes
+        """
+        if "color" not in kwargs:
+            kwargs["facecolor"] = "None"
+
+        if 'vmin' in kwargs:
+            vmin = kwargs.pop('vmin')
+        else:
+            vmin = None
+
+        if 'vmax' in kwargs:
+            vmax = kwargs.pop('vmax')
+        else:
+            vmax = None
+
+        patches = []
+        for hru in self.prms_dis.xypts:
+            polygon = Polygon(hru, False)
+            patches.append(polygon)
+
+        p = PatchCollection(patches)
+        p.set_array(array)
+        p.set_clim(vmin=vmin, vmax=vmax)
+        p.set(**kwargs)
+
+        ax.add_collection(p)
+
+        extent = self.extent
+        ax.set_xlim([extent[0], extent[1]])
+        ax.set_ylim([extent[2], extent[3]])
+        return ax

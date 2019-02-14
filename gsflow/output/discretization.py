@@ -23,6 +23,7 @@ class PrmsDiscretization(object):
     """
     def __init__(self, xypts):
         self._xypts = xypts
+        self._nhru = len(xypts)
 
         xmin, xmax, ymin, ymax = (None, None, None, None)
         for hru in xypts:
@@ -44,6 +45,10 @@ class PrmsDiscretization(object):
                     ymax = np.max(hru.T[1])
 
         self._extent = (xmin, xmax, ymin, ymax)
+
+    @property
+    def nhru(self):
+        return self._nhru
 
     @property
     def xypts(self):
