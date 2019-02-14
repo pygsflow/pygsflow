@@ -37,7 +37,6 @@ addons:
       - libnetcdf-dev
       - gdal-bin
       - libgdal-dev
-      - openvpn
 
 env:
   global:
@@ -47,7 +46,6 @@ env:
 before_install:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"
-    - sudo openvpn path/to/conf.ovpn &>>openvpn=client.log &
 # command to install dependencies
 install:
     - if [[ ! -d "$HOME/.local/bin" ]]; then
@@ -79,6 +77,7 @@ install:
     - pip install coveralls
     - pip install pylint
 
+    
 # command to run tests
 script:
     - export PYTHONPATH=$PYTHONPATH:.
