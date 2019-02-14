@@ -460,7 +460,7 @@ class GsflowModel(object):
             else:
                 ext = out_file.split(".")[-1]
 
-            new_outfn = "{}_{}.{}".format(basename, ix + 1, ext)
+            new_outfn = "{}.{}".format(basename, ext)
             out_files_list.append(new_outfn)
         self.mf.output_fnames = out_files_list
 
