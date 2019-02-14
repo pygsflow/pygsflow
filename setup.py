@@ -21,8 +21,8 @@ setup_requirements = []
 test_requirements = []
 
 setup(
-    author="Ayman Alzraiee",
-    author_email='aalzraiee@usgs.gov',
+    author="Ayman Alzraiee, Joshua Larsen",
+    author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
