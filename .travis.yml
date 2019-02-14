@@ -90,3 +90,5 @@ script:
     - echo pylint version; pylint --version
     - nosetests -v --with-id --with-timer -w ./autotest --with-coverage --cover-package=pygsflow
 
+after_success:
+    - coveralls

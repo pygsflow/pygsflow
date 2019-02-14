@@ -1,0 +1,336 @@
+from __future__ import (absolute_import, division, print_function)
+import os
+import numpy as np
+import copy
+from .record_base import RecordBase
+from .param_base import ParameterBase
+from .utils import GsConstant
+from .utils import io
+import warnings
+warnings.simplefilter('always', PendingDeprecationWarning)
+
+
+class Control(object):
+    def __new__(cls, records_list=None, control_file="temp_cont.control"):
+        if records_list is not None:
+            err = "Control has been deprecated; Calling ControlFile()"
+            warnings.warn(err, PendingDeprecationWarning)
+            model_dir, name = os.path.split(control_file)
+            return ControlFile(records_list, name=name, model_dir=model_dir)
+
+        elif os.path.isfile(control_file):
+            err = "Control has been deprecated; Calling ControlFile.load_from_file()"
+            warnings.warn(err, PendingDeprecationWarning)
+            ControlFile.load_from_file(control_file)
+
+        else:
+            err = "Control has been deprecated; Calling ControlFile()"
+            warnings.warn(err, PendingDeprecationWarning)
+            records_list = []
+            model_dir, name = os.path.split(control_file)
+            return ControlFile(records_list, name=name, model_dir=model_dir)
+
+
+class ControlFile(ParameterBase):
+    """
+    Class to hold information about control file, also it reads and writes data.
+
+    Parameters
+    ----------
+    records_list : list
+        list of ControlRecord objects
+    name : str
+        file name
+    model_dir : str
+        model working directory
+    header : list
+        file header
+
+    """
+
+    def __init__(self, records_list, name="Control", model_dir="", header=None):
+        super(ControlFile, self).__init__(records_list, name=name, model_dir=model_dir, header=header)
+
+        if header is None:
+            self.header = ["Control File"]
+
+        self.control_file = os.path.join(self.model_dir, self.name)
+
+        self._make_pths_abs()
+
+    @property
+    def records_list(self):
+        return self._records_list
+
+    @staticmethod
+    def load_from_file(control_file):
+        """
+        Method to load and create a ControlFile object
+        from a pre-built gsflow control file.
+
+        Parameters
+        ----------
+        control_file : str
+
+        Returns
+        -------
+
+        """
+        if not (os.path.isfile(control_file)):
+            raise FileNotFoundError("Invalid file name ....")
+
+        with open(control_file, 'r') as fid:
+            headers = []
+            records_list = []
+            EndOfFile = False
+            _read_comments = True
+            while True:
+                if EndOfFile:
+                    break
+                record = fid.readline().strip()
+                # read comments
+                if _read_comments:
+                    if "####" in record:
+                        _read_comments = False
+                        continue
+                    headers.append(record)
+                    continue
+
+
+                # read records information
+                field_name = record
+                nvalues = int(fid.readline().strip())
+                data_type = int(fid.readline().strip())
+                values = []
+
+                # loop over values
+                while True:
+
+                    record = fid.readline()
+                    if record == '\n':
+                        continue  # empty line
+                    elif not record:  # end of the file
+                        EndOfFile = True
+                        curr_record = ControlRecord(name=field_name,
+                                                    values=values,
+                                                    datatype=data_type)
+                        records_list.append(curr_record)
+                        break
+
+                    else:
+                        record = record.strip()
+                        if "####" in record:
+                            curr_record = ControlRecord(name=field_name,
+                                                        values=values,
+                                                        datatype=data_type)
+                            records_list.append(curr_record)
+                            break
+                        else:
+                            values.append(record)
+
+        model_dir, name = os.path.split(control_file)
+
+        return ControlFile(records_list, name=name,
+                           model_dir=model_dir, header=headers)
+
+    def _make_pths_abs(self):
+        """
+        Makes all file paths in control absoulte paths
+
+        """
+        for file in GsConstant.GSFLOW_FILES:
+
+            if file in self._record_names:
+                gs_fn = self.get_values(file)
+                flist = []
+                for ff in gs_fn:
+                    abs_file = io.get_file_abs(control_file=self.control_file, fn=ff)
+                    flist.append(abs_file)
+                self.set_values(file, flist)
+
+    def _generate_attributes(self):
+        for rec in self.records_list:
+            setattr(self, rec.name, rec)
+
+    def get_record(self, name):
+        """
+        Get a complete record object
+
+        Parameters
+        ----------
+        name : str
+            ControlRecord name
+
+        Returns
+        -------
+            ControlRecord object
+        """
+        return super(ControlFile, self).get_record(name, ControlRecord)
+
+    def get_values(self, name):
+        """
+        Get a record's values
+
+        Parameters
+        ----------
+        name : str
+            record name
+        Returns
+        -------
+            np.ndarray or list
+        """
+        return super(ControlFile, self).get_values(name)
+
+    def set_values(self, name, values):
+        """
+
+        Parameters
+        ----------
+        name
+        values
+
+        Returns
+        -------
+
+        """
+
+        super(ControlFile, self).set_values(name, values)
+
+
+    def add_record(self, name=None, values=None, where=None, after=None):
+
+        add = self._check_before_add(name=name, values=values)
+
+        if add:
+            new_record = ControlRecord(name=name, values=values)
+            super(ControlFile, self).add_record(new_record, where=where, after=after)
+
+    def remove_record(self, name):
+        """
+
+        Parameters
+        ----------
+        name
+
+        Returns
+        -------
+
+        """
+        super(ControlFile, self).remove_record(name)
+
+    def write(self, name=None):
+        # make sure files are correct
+        #self._make_pths_abs()
+        if name is None:
+            filename = self.control_file
+        else:
+            filename = os.path.join(self.model_dir, name)
+
+        with open(filename, 'w') as fid:
+            for iline, header in enumerate(self.header):
+                if iline == 0:
+                    txt = header.strip()
+                else:
+                    txt = "\n" + header.strip()
+                fid.write(txt)
+
+            for record in self.records_list:
+                record.write(fid)
+            fid.write("\n")
+
+
+class Control_record(object):
+    def __new__(cls, name=None, values=None, datatype=None, nvalues=None):
+        err = "Control_record has been deprecated; Calling ControlRecord()"
+        return ControlRecord(name=name, values=values,
+                             datatype=datatype)
+
+
+class ControlRecord(RecordBase):
+    """
+
+    Parameters
+    ----------
+    name
+    values
+    datatype
+    nvalues
+
+    """
+    def __init__(self, name=None, values=None, datatype=None):
+
+        super(ControlRecord, self).__init__(name, values, datatype)
+
+    @property
+    def values(self):
+        return self._values
+
+    @values.setter
+    def values(self, values):
+        self._values = values
+        self._check_values(values)
+
+        if len(values) != self.nvalues:
+            print("Warning: the number of values is modefied")
+        self._check_dtype()
+        self._force_dtype()
+
+    """
+    @ comment JL
+    
+    these write methods can be cleaned up by using
+    a list and then .join()
+    
+    Furthermore; we could template these and fill using
+    a format string... Think about best method.
+    
+    Applies to PrmsParameters class too!
+    """
+
+    def write(self, fid):
+        fid.write("\n")
+        fid.write("####")
+        fid.write("\n")
+        fid.write(self.name)
+
+        # write nvalues
+        fid.write("\n")
+        fid.write(str(self.nvalues))
+
+        # write datatype
+        fid.write("\n")
+        fid.write(str(self.datatype))
+
+        # write values
+        for val in self.values:
+            fid.write("\n")
+            fid.write(str(val))
+
+    def __repr__(self):
+        try:
+            return self.name
+        except:
+            return "control Record"
+
+    def __str__(self):
+        print_str = ""
+        print_str = print_str + "\n"
+        print_str = print_str + "####"
+        print_str = print_str + "\n"
+        print_str = print_str + self.name
+        print_str = print_str + "\n"
+        print_str = print_str + str(self.nvalues)
+        print_str = print_str + "\n"
+        print_str = print_str + str(self.datatype)
+
+        # write values
+        for i, val in enumerate(self.values):
+            if i > 3:
+                print_str = print_str + ".\n.\n."
+                break
+            print_str = print_str + "\n"
+            print_str = print_str + str(val)
+
+        print_str = print_str + "\n"
+        print_str = print_str + "####"
+        return print_str
