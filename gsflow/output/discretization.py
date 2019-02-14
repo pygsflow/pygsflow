@@ -2,6 +2,9 @@ import os
 import sys
 import numpy as np
 import shapefile
+from matplotlib.patches import Polygon
+from matplotlib.collections import PatchCollection
+import matplotlib.pyplot as plt
 
 
 class PrmsDiscretization(object):
@@ -13,15 +16,47 @@ class PrmsDiscretization(object):
 
     Parameters
     ----------
+    xypts : list
+        list of hru [(x1, y1)....(xn, yn)] points
+        3 dimensional
 
+    extent : tuple of floats, optional
+        xmin, xmax, ymin, ymax
 
     """
-    def __init__(self, xypts):
+    def __init__(self, xypts, extent=None):
         self._xypts = xypts
+
+        self._extent = extent
+        if extent is None:
+            xmin, xmax, ymin, ymax = (None, None, None, None)
+            for hru in xypts:
+                hru = np.array(hru)
+                if xmin is None:
+                    xmin = np.min(hru.T[0])
+                    xmax = np.max(hru.T[0])
+                    ymin = np.min(hru.T[1])
+                    ymax = np.max(hru.T[1])
+
+                else:
+                    if np.min(hru.T[0]) < xmin:
+                        xmin = np.min(hru.T[0])
+                    if np.max(hru.T[0]) > xmax:
+                        xmax = np.max(hru.T[0])
+                    if np.min(hru.T[1]) < ymin:
+                        ymin = np.min(hru.T[1])
+                    if np.max(hru.T[1]) > ymax:
+                        ymax = np.max(hru.T[1])
+
+            self._extent = (xmin, xmax, ymin, ymax)
 
     @property
     def xypts(self):
         return self._xypts
+
+    @property
+    def extent(self):
+        return self._extent
 
     def get_hru_points(self, hru):
         """
@@ -34,7 +69,7 @@ class PrmsDiscretization(object):
         -------
 
         """
-        return self._xypts(hru - 1)
+        return self._xypts[hru - 1]
 
     @staticmethod
     def load_from_flopy(model, xll=None, yll=None, rotation=None):
@@ -129,7 +164,7 @@ class PrmsDiscretization(object):
         for ix, sh in enumerate(shapes):
             rec = sf.record(ix)
             hru_id = rec[hru_field]
-            xypts_dict[hru_id] = sh
+            xypts_dict[hru_id] = sh.points
 
         xypts = []
         for key, values in sorted(xypts_dict.items()):
@@ -147,9 +182,28 @@ class PrmsDiscretization(object):
         ax : matplotlib.pyplot.axes
             if None, gets current working axes
         kwargs : matplotlib.pyplot keyword arguments
+            only for Polygon patches
 
         Returns
         -------
             matplotlib.pyplot.axes object
+
         """
-        pass
+        if ax is None:
+            ax = plt.gca()
+
+        if "color" not in kwargs:
+            kwargs["facecolor"] = "None"
+
+        patches = []
+        for hru in self._xypts:
+            polygon = Polygon(hru, False, **kwargs)
+            patches.append(polygon)
+
+        p = PatchCollection(patches, facecolors="None")
+        ax.add_collection(p)
+
+        extent = self.extent
+        ax.set_xlim([extent[0], extent[1]])
+        ax.set_ylim([extent[2], extent[3]])
+        return ax
