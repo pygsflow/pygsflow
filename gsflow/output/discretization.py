@@ -20,35 +20,30 @@ class PrmsDiscretization(object):
         list of hru [(x1, y1)....(xn, yn)] points
         3 dimensional
 
-    extent : tuple of floats, optional
-        xmin, xmax, ymin, ymax
-
     """
-    def __init__(self, xypts, extent=None):
+    def __init__(self, xypts):
         self._xypts = xypts
 
-        self._extent = extent
-        if extent is None:
-            xmin, xmax, ymin, ymax = (None, None, None, None)
-            for hru in xypts:
-                hru = np.array(hru)
-                if xmin is None:
+        xmin, xmax, ymin, ymax = (None, None, None, None)
+        for hru in xypts:
+            hru = np.array(hru)
+            if xmin is None:
+                xmin = np.min(hru.T[0])
+                xmax = np.max(hru.T[0])
+                ymin = np.min(hru.T[1])
+                ymax = np.max(hru.T[1])
+
+            else:
+                if np.min(hru.T[0]) < xmin:
                     xmin = np.min(hru.T[0])
+                if np.max(hru.T[0]) > xmax:
                     xmax = np.max(hru.T[0])
+                if np.min(hru.T[1]) < ymin:
                     ymin = np.min(hru.T[1])
+                if np.max(hru.T[1]) > ymax:
                     ymax = np.max(hru.T[1])
 
-                else:
-                    if np.min(hru.T[0]) < xmin:
-                        xmin = np.min(hru.T[0])
-                    if np.max(hru.T[0]) > xmax:
-                        xmax = np.max(hru.T[0])
-                    if np.min(hru.T[1]) < ymin:
-                        ymin = np.min(hru.T[1])
-                    if np.max(hru.T[1]) > ymax:
-                        ymax = np.max(hru.T[1])
-
-            self._extent = (xmin, xmax, ymin, ymax)
+        self._extent = (xmin, xmax, ymin, ymax)
 
     @property
     def xypts(self):
