@@ -88,7 +88,7 @@ script:
     - echo jupyter version; jupyter --version
     - echo jupyter runtime directory; jupyter --runtime-dir
     - echo pylint version; pylint --version
-    - nosetests -v --with-id --with-timer -w ./autotest --with-coverage --cover-package=pygsflow
+    - nosetests -v --with-id --with-timer -w ./autotest --with-coverage --cover-package=gsflow
 
 after_success:
     - coveralls
