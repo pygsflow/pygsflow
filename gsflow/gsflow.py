@@ -61,7 +61,7 @@ class GsflowModel(object):
         self._modflow_only = modflow_only
         self._prms_only = prms_only
         self.prms = None
-        self.modflow = None
+        self.mf = None
 
         if gsflow_exe == None:
             self.gsflow_exe = os.path.join(os.path.dirname(__file__), r"bin\gsflow.exe")

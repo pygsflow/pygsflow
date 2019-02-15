@@ -129,23 +129,83 @@ class Modflow(fpModflow):
             "vsc": flopy.seawat.SeawatVsc
         }
 
+    @property
+    def model_ws(self):
+        return super(Modflow, self).model_ws
+
+    def change_model_ws(self, new_pth=None, reset_external=False):
+        """
+        Change the model work space.
+
+        Parameters
+        ----------
+        new_pth : str
+            Location of new model workspace.  If this path does not exist,
+            it will be created. (default is None, which will be assigned to
+            the present working directory).
+
+        Returns
+        -------
+        val : list of strings
+            Can be used to see what packages are in the model, and can then
+            be used with get_package to pull out individual packages.
+
+        """
+        super(Modflow, self).change_model_ws(new_pth, reset_external)
+
     def _set_relative_paths(self):
         """
-        Fix Gsflow relative paths
+        Fix Gsflow relative paths and names
 
         """
 
-        rpth = os.path.relpath(self.lst.file_name[0], self.model_ws)
-        self.lst.file_name[0] = rpth
+        if os.path.dirname(self.lst.fn_path) != self.model_ws:
+            tmp = self._check_basenames(self.lst)
+            self.lst.fn_path = os.path.join(self.model_ws, tmp)
+            self.lst.file_name[0] = tmp
+
+        else:
+            tmp = self._check_basenames(self.lst)
+            self.lst.file_name[0] = tmp
+        # rpth = os.path.relpath(self.lst.file_name[0], self.model_ws)
+        # self.lst.file_name[0] = rpth
 
         for pkg in self.packagelist:
-            rpth = os.path.relpath(pkg.file_name[0], self.model_ws)
-            pkg.file_name[0] = rpth
+            if os.path.dirname(pkg.fn_path) != self.model_ws:
+                tmp = self._check_basenames(pkg)
+                pkg.fn_path = os.path.join(self.model_ws, tmp)
+                pkg.file_name[0] = tmp
+
+            else:
+                tmp = self._check_basenames(pkg)
+                pkg.file_name[0] = tmp
+            # rpth = os.path.relpath(pkg.file_name[0], self.model_ws)
+            # pkg.file_name[0] = rpth
 
         # todo : skip external fnames for now and then update later
         # todo : maybe override the change_model_ws
         # for name in self.external_fnames:
         #     rpth = os.path.relpath()
+
+    def _check_basenames(self, pkg):
+        """
+        Fix to basename not transfering into the fn_path issue
+
+        Parameters
+        ----------
+        pkg : flopy.modflow.Package
+
+        Returns
+        -------
+            tmp : str
+                new basename for the package
+        """
+        name = os.path.split(self.name)[-1]
+        tmp = os.path.split(pkg.fn_path)[-1]
+        if tmp != name + "." + pkg.extension[0]:
+            tmp = "{}.{}".format(name, pkg.extension[0])
+        return tmp
+
 
     def write_name_file(self):
         """

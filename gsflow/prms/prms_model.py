@@ -46,6 +46,12 @@ class PrmsModel(object):
             data_file = control.get_values("data_file")
             self.data = PrmsModel._load_data(data_file)
 
+    @property
+    def Data(self):
+        err = "Data is depreciated, calling data"
+        warnings.warn(err, PendingDeprecationWarning)
+        return self.data
+
     @staticmethod
     def load_from_file(control_file):
         """
