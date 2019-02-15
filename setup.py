@@ -14,7 +14,8 @@ with open('HISTORY.rst') as history_file:
 requirements = ["pandas",
                 "numpy",
                 "flopy",
-                "pyshp"]
+                "pyshp",
+                "matplotlib"]
 
 setup_requirements = []
 
