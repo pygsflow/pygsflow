@@ -9,6 +9,6 @@ Ipython notebook example problems can be found in the examples directory
 ## Installation
 The pygsflow repository can be installed using pip after downloading the package
 Open a command prompt or anaconda prompt terminal and change directory to the trunk and run the command
->>> pip install .
+`pip install .`
 
 pygsflow is now installed
