@@ -63,7 +63,7 @@ class PrmsPlot(object):
             raise AssertionError("array size does not match nhru")
 
         if ax is None:
-            plt.gca()
+            ax = plt.gca()
 
         if not isinstance(array, np.ndarray):
             array = np.array(array)
