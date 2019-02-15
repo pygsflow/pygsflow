@@ -160,11 +160,12 @@ class PrmsPlot(object):
         if not self.__maps:
             raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
                                  " object to plot parameter maps")
-        if ax is None:
-            ax = plt.gca()
 
         dims = parameter.dims
         if len(dims) == 1:
+
+            if ax is None:
+                ax = plt.gca()
 
             if dims[0] != self.prms_dis.nhru:
                 raise AssertionError("Parameter dimensions do not match nhru")
@@ -173,9 +174,37 @@ class PrmsPlot(object):
             return self.plot_array(array, ax=ax, masked_values=masked_values,
                                    **kwargs)
 
+        elif len(dims) == 2:
+            if dims[0] != self.prms_dis.nhru:
+                raise AssertionError("Parameter dimensions do not match nhru")
+
+            hru_dim = dims[0]
+            nplot = dims[1]
+            values = parameter.values
+            values.shape = (nplot, hru_dim)
+            kwargs['vmin'] = np.min(values)
+            kwargs['vmax'] = np.max(values)
+
+            if nplot == 12:
+                fig = plt.figure(figsize=(22, 9))
+                for i in range(1, 13):
+                    ax = fig.add_subplot(3, 4, i)
+                    ax.set_aspect('auto')
+                    txt = "Month {}".format(i)
+                    ax.set_title(txt)
+                    ax.tick_params(axis='both', which='both', labelsize=8)
+                    ax.tick_params(axis="y", which='both', labelrotation=0)
+                    p = self.plot_array(values[i - 1], ax=ax,
+                                        masked_values=masked_values, **kwargs)
+
+                fig.subplots_adjust(left=0.10, right=0.85, wspace=0.3, hspace=0.3)
+                cbar_ax = fig.add_axes([0.9, 0.1, 0.05, 0.7])
+                fig.colorbar(p, cax=cbar_ax)
+                return p
+
+
         else:
-            # todo: do things
-            pass
+            raise ValueError("Valid number of dimensions is 1 or 2")
 
     def contour_parameter(self, parameter, ax=None,
                           masked_values=None, **kwargs):
@@ -200,11 +229,12 @@ class PrmsPlot(object):
         if not self.__maps:
             raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
                                  " object to plot parameter maps")
-        if ax is None:
-            ax = plt.gca()
 
         dims = parameter.dims
         if len(dims) == 1:
+
+            if ax is None:
+                ax = plt.gca()
 
             if dims[0] != self.prms_dis.nhru:
                 raise AssertionError("Parameter dimensions do not match nhru")
@@ -213,24 +243,37 @@ class PrmsPlot(object):
             return self.contour_array(array, ax=ax, masked_values=masked_values,
                                       **kwargs)
 
+        elif len(dims) == 2:
+            if dims[0] != self.prms_dis.nhru:
+                raise AssertionError("Parameter dimensions do not match nhru")
+
+            hru_dim = dims[0]
+            nplot = dims[1]
+            values = parameter.values
+            values.shape = (nplot, hru_dim)
+            kwargs['vmin'] = np.min(values)
+            kwargs['vmax'] = np.max(values)
+
+            if nplot == 12:
+                fig = plt.figure(figsize=(22, 9))
+                for i in range(1, 13):
+                    ax = fig.add_subplot(3, 4, i)
+                    ax.set_aspect('auto')
+                    txt = "Month {}".format(i)
+                    ax.set_title(txt)
+                    ax.tick_params(axis='both', which='both', labelsize=8)
+                    ax.tick_params(axis="y", which='both', labelrotation=0)
+
+                    p = self.contour_array(values[i-1], ax=ax,
+                                           masked_values=masked_values, **kwargs)
+
+                fig.subplots_adjust(left=0.10, right=0.85, wspace=0.3, hspace=0.3)
+                cbar_ax = fig.add_axes([0.9, 0.1, 0.05, 0.7])
+                fig.colorbar(p, cax=cbar_ax)
+                return p
+
         else:
-            # todo: do things
-            pass
-
-    def plot_parameter_timeseries(self, parameter, ax=None, **kwargs):
-        """
-
-        Parameters
-        ----------
-        parameter
-        ax
-        kwargs
-
-        Returns
-        -------
-
-        """
-        return
+            raise ValueError("Valid number of dimensions is 1 or 2")
 
     def plot_data_timeseries(self, data, names, ax=None, **kwargs):
         """
@@ -246,6 +289,8 @@ class PrmsPlot(object):
         -------
 
         """
+        # todo: not sure what the best approach for this is or
+        # todo: if it's really necessary considering pandas
         return
 
 
