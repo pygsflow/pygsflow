@@ -18,6 +18,7 @@ def test_dis_object_from_shp():
     assert dis.nhru == 6468
     assert dis.extent is not None
 
+
 def test_dis_object_from_flopy():
     from gsflow.modflow import Modflow
 
