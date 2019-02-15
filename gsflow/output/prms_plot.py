@@ -46,12 +46,22 @@ class PrmsPlot(object):
 
         ax : matplotlib.pyplot.axes
 
+        masked_values : list, optional
+            list of values to mask from plotting
+
         kwargs : matplotlib keyword arguments
 
         Returns
         -------
 
         """
+        if not self.__maps:
+            raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
+                                 " object to plot parameter maps")
+
+        if len(array) != self.prms_dis.nhru:
+            raise AssertionError("array size does not match nhru")
+
         if ax is None:
             plt.gca()
 
@@ -64,24 +74,148 @@ class PrmsPlot(object):
 
         return self.__plot_patches(array, ax=ax, **kwargs)
 
-    def plot_parameter_map(self, parameter, ax=None, **kwargs):
+    def contour_array(self, array, ax=None, masked_values=None, **kwargs):
+        """
+        Contour an array.
+
+        Parameters
+        ----------
+        a : numpy.ndarray
+            Array to plot.
+
+        ax : matplotlib.pyplot.axes
+            optional axes object
+
+        masked_values : iterable of floats, ints
+            Values to mask.
+
+        **kwargs : dictionary
+            keyword arguments passed to matplotlib.pyplot.pcolormesh
+
+        Returns
+        -------
+        contour_set : matplotlib.tri.tricontour object
+        """
+        import matplotlib.tri as tri
+
+        if not self.__maps:
+            raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
+                                 " object to plot parameter maps")
+
+        if len(array) != self.prms_dis.nhru:
+            raise AssertionError("array size does not match nhru")
+
+        if ax is None:
+            ax = plt.gca()
+
+        xcentergrid = np.array(self.prms_dis.x_hru_centers)
+        ycentergrid = np.array(self.prms_dis.y_hru_centers)
+
+        if not isinstance(array, np.ndarray):
+            array = np.array(array)
+
+        if masked_values is not None:
+            for mval in masked_values:
+                array = np.ma.masked_equal(array, mval)
+
+        if 'colors' in kwargs.keys():
+            if 'cmap' in kwargs.keys():
+                kwargs.pop('cmap')
+
+        triang = tri.Triangulation(xcentergrid, ycentergrid)
+
+        mask = None
+        try:
+            amask = array.mask
+            mask = [False for i in range(triang.triangles.shape[0])]
+            for ipos, (n0, n1, n2) in enumerate(triang.triangles):
+                if amask[n0] or amask[n1] or amask[n2]:
+                    mask[ipos] = True
+            triang.set_mask(mask)
+        except:
+            pass
+
+        contour_set = ax.tricontour(triang, array, **kwargs)
+
+        ax.set_xlim(self.extent[0], self.extent[1])
+        ax.set_ylim(self.extent[2], self.extent[3])
+
+        return contour_set
+
+    def plot_parameter(self, parameter, ax=None,
+                       masked_values=None, **kwargs):
         """
 
         Parameters
         ----------
         parameter
         ax
+        masked_values
         kwargs
 
         Returns
         -------
 
         """
+        if not self.__maps:
+            raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
+                                 " object to plot parameter maps")
         if ax is None:
             ax = plt.gca()
 
-        nhru = self.prms_dis.nhru
+        dims = parameter.dims
+        if len(dims) == 1:
 
+            if dims[0] != self.prms_dis.nhru:
+                raise AssertionError("Parameter dimensions do not match nhru")
+
+            array = parameter.values
+            return self.plot_array(array, ax=ax, masked_values=masked_values,
+                                   **kwargs)
+
+        else:
+            # todo: do things
+            pass
+
+    def contour_parameter(self, parameter, ax=None,
+                          masked_values=None, **kwargs):
+        """
+        Contour an array.
+
+        Parameters
+        ----------
+        a : numpy.ndarray
+            Array to plot.
+        ax : matplotlib.pyplot.axes
+            optional axes object
+        masked_values : iterable of floats, ints
+            Values to mask.
+        **kwargs : dictionary
+            keyword arguments passed to matplotlib.pyplot.pcolormesh
+
+        Returns
+        -------
+        contour_set : matplotlib.tri.tricontour object
+        """
+        if not self.__maps:
+            raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
+                                 " object to plot parameter maps")
+        if ax is None:
+            ax = plt.gca()
+
+        dims = parameter.dims
+        if len(dims) == 1:
+
+            if dims[0] != self.prms_dis.nhru:
+                raise AssertionError("Parameter dimensions do not match nhru")
+
+            array = parameter.values
+            return self.contour_array(array, ax=ax, masked_values=masked_values,
+                                      **kwargs)
+
+        else:
+            # todo: do things
+            pass
 
     def plot_parameter_timeseries(self, parameter, ax=None, **kwargs):
         """
@@ -146,23 +280,20 @@ class PrmsPlot(object):
         -------
             matplotlib.pyplot.axes
         """
-        if "color" not in kwargs:
-            kwargs["facecolor"] = "None"
+        # if "color" not in kwargs:
+        #    kwargs["facecolor"] = "None"
 
         if 'vmin' in kwargs:
             vmin = kwargs.pop('vmin')
         else:
-            vmin = None
+            vmin = np.min(array)
 
         if 'vmax' in kwargs:
             vmax = kwargs.pop('vmax')
         else:
-            vmax = None
+            vmax = np.max(array)
 
-        patches = []
-        for hru in self.prms_dis.xypts:
-            polygon = Polygon(hru, False)
-            patches.append(polygon)
+        patches = [Polygon(hru, True) for hru in self.prms_dis.xypts]
 
         p = PatchCollection(patches)
         p.set_array(array)
@@ -174,4 +305,4 @@ class PrmsPlot(object):
         extent = self.extent
         ax.set_xlim([extent[0], extent[1]])
         ax.set_ylim([extent[2], extent[3]])
-        return ax
+        return p

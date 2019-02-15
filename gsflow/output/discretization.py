@@ -24,6 +24,8 @@ class PrmsDiscretization(object):
     def __init__(self, xypts):
         self._xypts = xypts
         self._nhru = len(xypts)
+        self._xcenters = None
+        self._ycenters = None
 
         xmin, xmax, ymin, ymax = (None, None, None, None)
         for hru in xypts:
@@ -47,6 +49,20 @@ class PrmsDiscretization(object):
         self._extent = (xmin, xmax, ymin, ymax)
 
     @property
+    def x_hru_centers(self):
+        if self._xcenters is None:
+            self._get_centers()
+
+        return self._xcenters
+
+    @property
+    def y_hru_centers(self):
+        if self._ycenters is None:
+            self._get_centers()
+
+        return self._ycenters
+
+    @property
     def nhru(self):
         return self._nhru
 
@@ -57,6 +73,22 @@ class PrmsDiscretization(object):
     @property
     def extent(self):
         return self._extent
+
+    def _get_centers(self):
+        """
+        Method to get the mean center of the grid cell.
+        This method is limited and will eventually need to
+        be updated for complex shapes.
+        """
+        xc = []
+        yc = []
+        for hru in self._xypts:
+            hru = np.array(hru)
+            xc.append(np.mean(hru.T[0]))
+            yc.append(np.mean(hru.T[1]))
+
+        self._xcenters = xc
+        self._ycenters = yc
 
     def get_hru_points(self, hru):
         """
@@ -195,10 +227,7 @@ class PrmsDiscretization(object):
         if "color" not in kwargs:
             kwargs["facecolor"] = "None"
 
-        patches = []
-        for hru in self._xypts:
-            polygon = Polygon(hru, False, **kwargs)
-            patches.append(polygon)
+        patches = [Polygon(hru, False, **kwargs) for hru in self._xypts]
 
         p = PatchCollection(patches, facecolors="None")
         ax.add_collection(p)
