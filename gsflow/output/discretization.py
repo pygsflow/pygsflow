@@ -74,6 +74,8 @@ class PrmsDiscretization(object):
     def extent(self):
         return self._extent
 
+    # todo: add a method to flag hru_noflow
+
     def _get_centers(self):
         """
         Method to get the mean center of the grid cell.
