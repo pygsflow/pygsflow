@@ -339,7 +339,7 @@ class GsflowModel(object):
             # change mf
             if self.mf is not None:
                 curr_dir = self.mf.model_ws
-                self.mf._set_name(os.path.join(curr_dir, basename))
+                self.mf._set_name(basename)
                 self._update_mf_basename(basename)
                 mfnm = self.mf.name + ".nam"
                 self.control.set_values('modflow_name',[mfnm])
@@ -385,7 +385,8 @@ class GsflowModel(object):
                 self._update_mf_basename(basename)
 
             mfnm = basename + ".nam"
-            self.control.set_values('modflow_name', [os.path.join(workspace, mfnm)])
+            self.control.set_values('modflow_name', [os.path.relpath(self.control.model_dir,
+                                                                     os.path.join(workspace, mfnm))])
 
             # update file names in control object
             self._update_control_fnames(workspace, basename)
@@ -415,6 +416,7 @@ class GsflowModel(object):
                     for fil in file_values:
                         cnt_dir = os.path.dirname(self.control_file)
                         va = os.path.join(workspace, os.path.basename(fil))
+                        va = os.path.relpath(va, self.control.model_dir)
                         file_value.append(va)
                     self.control.set_values(rec_name, file_value)
 
@@ -437,7 +439,7 @@ class GsflowModel(object):
                             ext = "dat"
                         vvfile = basename + "_" + vvfile + "." + ext
                         filvalue = os.path.join(workspace, vvfile)
-
+                        filvalue = os.path.relpath(filvalue, self.control.model_dir)
                         file_value.append(filvalue)
                     self.control.set_values(rec_name, file_value)
 

@@ -36,7 +36,7 @@ def test_load_write_gsflow_modflow():
     assert len(ml.packagelist) == len(ml2.packagelist)
     assert ml.nrow_ncol_nlay_nper == ml2.nrow_ncol_nlay_nper
 
-"""
+
 def test_load_write_gsflow():
     # todo: this must be changed to write relative paths, not absolutes!
     ws = "../examples/data/sagehen/gsflow"
@@ -57,9 +57,9 @@ def test_load_write_gsflow():
     assert len(gs2.prms.parameters.record_names) == len(gs.prms.parameters.record_names)
     assert len(gs2.mf.packagelist) == len(gs.mf.packagelist)
     assert gs2.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
-"""
+
 
 if __name__ == "__main__":
-    test_load_write_model_prms_only()
-    test_load_write_gsflow_modflow()
+    #test_load_write_model_prms_only()
+    #test_load_write_gsflow_modflow()
     test_load_write_gsflow()
