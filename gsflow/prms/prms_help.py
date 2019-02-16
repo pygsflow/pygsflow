@@ -87,7 +87,6 @@ class Helper(object):
                         # read three lines
                         line = fid.readline()
                         key, name = line.split(":")  # dim name
-                        print(name)
                         curr_par = {}
                         for i in range(12):
                             line = fid.readline()
