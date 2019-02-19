@@ -7,22 +7,9 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 """
 @ comment JL
 
-lots (specifically, why are you creating a grid when flopy already does this?)
-dis.sr.xgrid, dis.sr.ygrid is the same as your self.X and self.Y
-
-mfid can easily be made using np.arange(dis.nrow * dis.ncol).reshape(dis.nrow, dis.ncol)
-
-consistant input parameter names must be used across a project. Use gsflow or model....
-
-what if the user wants to use a PRMS model with a custom discretization? I think we should
-support that.
-
-Maybe input for PrmsPlots should be __init__(self, prms, discretization=None)
-
-As usual CamelCase all classes!!!!
-Needs docstrings
-
-I have timeseries plotting code that can be added to this....
+this code is somewhat deprecated by the output.prms_plot()
+module. Some of this code could be scattered to built in's though,
+so I haven't removed it yet.
 
 """
 class Prms_plots(object):
@@ -44,41 +31,12 @@ class Prms_plots(object):
     def plot2D(self, param):
 
         plt.figure()
-        """
-        @ comment JL
-        
-        this method needs some work. If a user wants to layer things
-        it is not possible. 
-        
-        **kwargs need to be able to be passed.
-        
-        should return an axis object so the user can do more formatting
-        
-        user should be able to pass in an axis object to the plot2D function.
-        if none ax = plt.gca()
-        
-        much to do.... 
-        """
 
         nrow = self.gsf.modflow.dis.nrow
         ncol = self.gsf.modflow.dis.ncol
         if len(self.gsf.prms.parameters[param].shape) == 1:
             if len(self.gsf.prms.parameters[param]) == self.nhrus:
                 var2D = self.gsf.prms.parameters[param]
-                """
-                @ comment JL
-                
-                using an uninstantiated array and then instatiating with np.nan
-                is more efficient for large data sets
-                
-                a = np.empty((size))
-                a[:] = np.nan
-                
-                it seems like you're using the mfid only for it's size
-                
-                instead of storing an array you could just store mfid.size in init
-                and then that uses less memory, especially for large models (ex. russian river!)
-                """
                 hru_id = np.zeros((self.mfid.size), dtype=float) + np.nan
                 hru_id[self.gvr_cell_id - 1] = var2D
                 plt.imshow(np.reshape(hru_id, (nrow, ncol)), interpolation='none')
@@ -92,20 +50,6 @@ class Prms_plots(object):
                 pass # generate an error
 
         elif len(self.gsf.prms.parameters[param].shape) == 2:
-            """
-            @ comment JL
-            
-            This whole plotting function should be reconsidered.
-            
-            This is something that belongs in plot util and attached to the 
-            params class as a built in. 
-            
-            Plotting classes should be flexible and let the user decide
-            which portions of the data they want to represent!
-            
-            As stated before, this is better suited as a built-in method
-            attached to a specific class, ex. PrmsParameters() 
-            """
 
             if self.gsf.prms.parameters[param].shape[1] == self.nhrus:
                 allmons = self.gsf.prms.parameters[param]

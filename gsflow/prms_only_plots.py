@@ -13,12 +13,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 """
 @ comment JL
 
-Remove all of the unused imports!
-
-Not sure what hru_shp, proj is... Are you making plots
-from a shapefile, if that is the case I would rename this
-to make the function of the class/module clear. ShapefileToPlot()
-etc.... 
+This code is deprecated by the output.prms_plot module
+consider removing from project or scattering into built in methods
 """
 class Plotter(object):
     def __init__(self, hru_shp = None, proj = None):
@@ -26,23 +22,6 @@ class Plotter(object):
         self.proj = proj
 
 
-
-    """
-    @ comment JL
-        
-    this method needs some work. If a user wants to layer things
-    it is not possible. 
-    
-    **kwargs need to be able to be passed.
-    
-    should return an axis object so the user can do custom formatting
-    
-    user should be able to pass in an axis object to the plot2D function.
-    if ax = None; ax = plt.gca()
-    
-    much to do.... 
-
-    """
     def plot2D(self, param):
         plt.figure()
         para = self.proj.prms_parameters['Parameters'][param]

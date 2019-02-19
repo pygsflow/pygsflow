@@ -13,7 +13,7 @@ Version: 0.00
 @ comment JL
 
 utils of this sort should not be grouped into a class.
-As this project grows it is going to become unwieldly.
+As this project grows it is going to become unwieldly in a single class.
 
 I suggest thinking about refactoring to IO utilities module (contains IO related functions)
 data utilities modult (contains common functions), shapefile utilities module (...), 
@@ -62,7 +62,7 @@ class utils(object):
     modflow gridfile is a specific file created by 
     modflow 6. 
     
-    Rename this to read_modflow_grid_from_shapefile ?
+    Rename this to read_modflow_grid_from_shapefile?
     
     FloPy also has utilities to do this. Does it make
     sense to leverage those instead. Also pyshp seems 
