@@ -646,7 +646,7 @@ class GsflowModel(object):
             argv = self.__bat_file
         else:
             pass
-        
+
         model_ws = os.path.dirname(self.control_file)
         proc = sp.Popen(argv,
                         stdout=sp.PIPE, stderr=sp.STDOUT, cwd=model_ws)
