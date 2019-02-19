@@ -50,6 +50,7 @@ def test_load_write_gsflow():
 
     ws2 = "./temp"
 
+    # change ws only ...
     gs.write_input(workspace=ws2)
 
     gs2 = gsflow.GsflowModel.load_from_file(os.path.join(ws2, control_file))
@@ -57,6 +58,26 @@ def test_load_write_gsflow():
     assert len(gs2.prms.parameters.record_names) == len(gs.prms.parameters.record_names)
     assert len(gs2.mf.packagelist) == len(gs.mf.packagelist)
     assert gs2.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
+
+    ws = "../examples/data/sagehen/gsflow"
+    control_file = "saghen_new_cont.control"
+
+    gs = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    assert not gs.modflow_only
+    assert not gs.prms_only
+
+    ws2 = "./temp"
+    basename = "test2"
+    gs.write_input(basename=basename, workspace=ws2)
+
+    gs2 = gsflow.GsflowModel.load_from_file(os.path.join(ws2, "test2_cont.control"))
+    assert len(gs2.control.record_names) == len(gs.control.record_names)
+    assert len(gs2.prms.parameters.record_names) == len(gs.prms.parameters.record_names)
+    assert len(gs2.mf.packagelist) == len(gs.mf.packagelist)
+    assert gs2.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
+
+
+
 
 
 if __name__ == "__main__":

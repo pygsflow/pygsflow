@@ -277,6 +277,7 @@ class GsflowModel(object):
             if not (os.path.isdir(workspace)):
                 os.mkdir(workspace)
             fnn = os.path.basename(self.control.control_file)
+            self.control.model_dir = workspace
             self.control.control_file = os.path.join(workspace, fnn)
             self.control_file = os.path.join(workspace, fnn)
             self.prms.control_file = self.control_file
@@ -292,7 +293,8 @@ class GsflowModel(object):
             self.control.set_values('param_file', new_param_file_list)
 
             # change datafile
-            curr_file = os.path.join(workspace, self.prms.data.name)
+            curr_file = os.path.relpath(os.path.join(workspace, self.prms.data.name),
+                                        self.control.model_dir)
             self.prms.data.model_dir = workspace
             self.control.set_values('data_file', [curr_file])
 
@@ -355,6 +357,7 @@ class GsflowModel(object):
             if not (os.path.isdir(workspace)):
                 os.mkdir(workspace)
             cnt_file = basename + "_cont.control"
+            self.control.model_dir = workspace
             self.control.control_file = os.path.join(workspace, cnt_file)
             self.prms.control_file = self.control.control_file
             self.control_file = self.control.control_file
@@ -366,14 +369,16 @@ class GsflowModel(object):
             for ifile, par_record in enumerate(self.prms.parameters.parameters_list):
                 file_index = flist.index(par_record.file_name)
                 par_file = basename + "_par_{}.params".format(file_index)
-                curr_file = os.path.join(workspace, par_file)
+                curr_file = os.path.relpath(os.path.join(workspace, par_file),
+                                            self.control.model_dir)
                 par_record.file_name = curr_file
                 if not (curr_file in new_param_file_list):
                     new_param_file_list.append(curr_file)
             self.control.set_values('param_file', new_param_file_list)
             # change datafile
             dfile = basename + "_dat.data"
-            curr_file = os.path.join(workspace, dfile)
+            curr_file = os.path.relpath(os.path.join(workspace, dfile),
+                                        self.control.model_dir)
             self.prms.data.model_dir = workspace
             self.prms.data.name = dfile
             self.control.set_values('data_file', [curr_file])
@@ -385,9 +390,8 @@ class GsflowModel(object):
                 self._update_mf_basename(basename)
 
             mfnm = basename + ".nam"
-            self.control.set_values('modflow_name', [os.path.relpath(self.control.model_dir,
-                                                                     os.path.join(workspace, mfnm))])
-
+            self.control.set_values('modflow_name', [os.path.relpath(os.path.join(workspace, mfnm),
+                                                                     self.control.model_dir)])
             # update file names in control object
             self._update_control_fnames(workspace, basename)
             self.prms.control = self.control
