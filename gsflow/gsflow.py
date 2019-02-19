@@ -529,7 +529,7 @@ class GsflowModel(object):
     def __run(self, exe_name, namefile, model_ws='./',
               silent=False, pause=False, report=False,
               normal_msg='normal termination',
-              async=False, cargs=None):
+              async_run=False, cargs=None):
         """
         This function will run the model using subprocess.Popen.  It
         communicates with the model's stdout asynchronously and reports
@@ -555,7 +555,7 @@ class GsflowModel(object):
         normal_msg : str
             Normal termination message used to determine if the
             run terminated normally. (default is 'normal termination')
-        async : boolean
+        async_run : boolean
             asynchonously read model stdout and report with timestamps.  good for
             models that take long time to run.  not good for models that run
             really fast
@@ -651,7 +651,7 @@ class GsflowModel(object):
         proc = sp.Popen(argv,
                         stdout=sp.PIPE, stderr=sp.STDOUT, cwd=model_ws)
 
-        if not async:
+        if not async_run:
             while True:
                 line = proc.stdout.readline()
                 c = line.decode('utf-8')
