@@ -62,8 +62,9 @@ class GsflowModel(object):
         self._prms_only = prms_only
         self.prms = None
         self.mf = None
+        self.gsflow_exe = gsflow_exe
 
-        if gsflow_exe == None:
+        if gsflow_exe is None:
             self.gsflow_exe = os.path.join(os.path.dirname(__file__), r"bin\gsflow.exe")
 
         # set prms modflow object
@@ -512,14 +513,15 @@ class GsflowModel(object):
             print ("Warning : The executable of the model is not specified. Use .gsflow_exe "
                    "to define its path... ")
             return None
-        self.__run(exe_name=self.gsflow_exe, namefile=fn)
+        return self.__run(exe_name=self.gsflow_exe, namefile=fn)
 
     def _generate_batch_file(self):
         fn = os.path.dirname(self.control_file)
         fn = os.path.join(fn, "__run_gsflow.bat")
         self.__bat_file = fn
         fidw = open(fn, 'w')
-        cmd = self.gsflow_exe + " " + self.control_file
+        exe = os.path.normpath(os.path.join(os.getcwd(), self.gsflow_exe))
+        cmd = exe + " " + self.control_file
         fidw.write(cmd)
         fidw.close()
 
@@ -614,6 +616,8 @@ class GsflowModel(object):
                     exe)
                 print(s)
 
+        exe = os.path.normpath(os.path.join(os.getcwd(), exe))
+
         if not os.path.isfile(os.path.join(model_ws, namefile)):
             s = 'The namefile for this model does not exists: {}'.format(namefile)
             raise Exception(s)
@@ -627,7 +631,7 @@ class GsflowModel(object):
 
         # create a list of arguments to pass to Popen
 
-        argv = [exe_name, namefile]
+        argv = [exe, namefile]
 
         # add additional arguments to Popen arguments
         if cargs is not None:
