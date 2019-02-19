@@ -12,6 +12,7 @@ def test_open_write_run():
     if platform.system().lower() == "windows":
         exe = r"..\bin\gsflow.exe"
 
+    exe = os.path.abspath(exe)
     gs = GsflowModel.load_from_file(os.path.join(ws, control_file),
                                     gsflow_exe=exe)
 

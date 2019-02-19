@@ -8,6 +8,7 @@ from .prms import Helper
 import flopy
 from .modflow import Modflow
 import subprocess as sp
+import platform
 
 if sys.version_info > (3, 0):
     import queue as Queue
@@ -602,7 +603,6 @@ class GsflowModel(object):
         # Check to make sure that program and namefile exist
         exe = which(exe_name)
         if exe is None:
-            import platform
             if platform.system() in 'Windows':
                 if not exe_name.lower().endswith('.exe'):
                     exe = which(exe_name + '.exe')
