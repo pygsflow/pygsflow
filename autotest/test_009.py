@@ -89,10 +89,17 @@ def test_load_write_gsflow():
     assert len(gs3.mf.packagelist) == len(gs.mf.packagelist)
     assert gs3.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
 
+    # no basename, no workspace
+    gs.write_input()
 
+    gs4 = gsflow.GsflowModel.load_from_file(os.path.join(ws2, "test3_cont.control"))
+    assert len(gs4.control.record_names) == len(gs.control.record_names)
+    assert len(gs4.prms.parameters.record_names) == len(gs.prms.parameters.record_names)
+    assert len(gs4.mf.packagelist) == len(gs.mf.packagelist)
+    assert gs4.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
 
 
 if __name__ == "__main__":
-    #test_load_write_model_prms_only()
-    #test_load_write_gsflow_modflow()
+    test_load_write_model_prms_only()
+    test_load_write_gsflow_modflow()
     test_load_write_gsflow()
