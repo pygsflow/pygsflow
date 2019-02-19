@@ -8,9 +8,9 @@ def test_open_write_run():
     ws = "../examples/data/sagehen/gsflow"
     control_file = "saghen_new_cont.control"
 
-    exe = r"..\bin\gsflow"
+    exe = "../bin/gsflow"
     if platform.system().lower() == "windows":
-        exe += ".exe"
+        exe = r"..\bin\gsflow.exe"
 
     gs = GsflowModel.load_from_file(os.path.join(ws, control_file),
                                     gsflow_exe=exe)
