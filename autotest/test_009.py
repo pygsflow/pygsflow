@@ -68,6 +68,8 @@ def test_load_write_gsflow():
 
     ws2 = "./temp"
     basename = "test2"
+
+    # change ws and basename...
     gs.write_input(basename=basename, workspace=ws2)
 
     gs2 = gsflow.GsflowModel.load_from_file(os.path.join(ws2, "test2_cont.control"))
@@ -76,6 +78,16 @@ def test_load_write_gsflow():
     assert len(gs2.mf.packagelist) == len(gs.mf.packagelist)
     assert gs2.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
 
+
+    # change basename only
+    basename = "test3"
+    gs.write_input(basename="test3")
+
+    gs3 = gsflow.GsflowModel.load_from_file(os.path.join(ws2, "test3_cont.control"))
+    assert len(gs3.control.record_names) == len(gs.control.record_names)
+    assert len(gs3.prms.parameters.record_names) == len(gs.prms.parameters.record_names)
+    assert len(gs3.mf.packagelist) == len(gs.mf.packagelist)
+    assert gs3.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
 
 
 

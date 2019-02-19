@@ -325,7 +325,7 @@ class GsflowModel(object):
             for ifile, par_record in enumerate(self.prms.parameters.parameters_list):
                 file_index = flist.index(par_record.file_name)
                 par_file = basename + "_par_{}.params".format(file_index)
-                curr_dir = os.path.dirname(par_record.file_name)
+                curr_dir = self.control.model_dir # os.path.dirname(par_record.file_name)
                 curr_file = os.path.join(curr_dir, par_file)
                 par_record.file_name = curr_file
                 if not (curr_file in new_param_file_list):
@@ -334,7 +334,8 @@ class GsflowModel(object):
 
             # change datafile
             dfile = basename + "_dat.data"
-            curr_file = os.path.join(self.prms.data.model_dir, dfile)
+            curr_file = os.path.relpath(os.path.join(self.prms.data.model_dir, dfile),
+                                        self.control.model_dir)
             self.prms.data.name = dfile
             self.control.set_values('data_file', [curr_file])
 
@@ -369,8 +370,7 @@ class GsflowModel(object):
             for ifile, par_record in enumerate(self.prms.parameters.parameters_list):
                 file_index = flist.index(par_record.file_name)
                 par_file = basename + "_par_{}.params".format(file_index)
-                curr_file = os.path.relpath(os.path.join(workspace, par_file),
-                                            self.control.model_dir)
+                curr_file = os.path.join(workspace, par_file)
                 par_record.file_name = curr_file
                 if not (curr_file in new_param_file_list):
                     new_param_file_list.append(curr_file)
@@ -427,25 +427,40 @@ class GsflowModel(object):
         else:
             for rec_name in GsConstant.GSFLOW_FILES:
                 if rec_name in self.control.record_names:
-                    if rec_name in ('modflow_name', 'param_file', 'data_file'):
+                    if rec_name in ('modflow_name'):
                         continue
-                    file_values = self.control.get_values(rec_name)
-                    file_value = []
-                    for fil in file_values:
-                        if workspace is None:
-                            workspace = os.path.dirname(fil)
-                        vvfile = rec_name.split("_")
-                        del vvfile[-1]
-                        vvfile = "_".join(vvfile)
-                        if "." in fil:
-                            ext = fil.split(".")[-1]
-                        else:
-                            ext = "dat"
-                        vvfile = basename + "_" + vvfile + "." + ext
-                        filvalue = os.path.join(workspace, vvfile)
-                        filvalue = os.path.relpath(filvalue, self.control.model_dir)
-                        file_value.append(filvalue)
-                    self.control.set_values(rec_name, file_value)
+
+                    elif rec_name in ('modflow_name', 'param_file', 'data_file'):
+                        file_values = self.control.get_values(rec_name)
+                        file_value = []
+                        for fil in file_values:
+                            ws, filvalue = os.path.split(fil)
+                            if not ws:
+                                pass
+                            else:
+                                filvalue = os.path.relpath(fil, self.control.model_dir)
+
+                            file_value.append(filvalue)
+                        self.control.set_values(rec_name, file_value)
+
+                    else:
+                        file_values = self.control.get_values(rec_name)
+                        file_value = []
+                        for fil in file_values:
+                            if workspace is None:
+                                workspace = self.control.model_dir # os.path.dirname(fil)
+                            vvfile = rec_name.split("_")
+                            del vvfile[-1]
+                            vvfile = "_".join(vvfile)
+                            if "." in fil:
+                                ext = fil.split(".")[-1]
+                            else:
+                                ext = "dat"
+                            vvfile = basename + "_" + vvfile + "." + ext
+                            filvalue = os.path.join(workspace, vvfile)
+                            filvalue = os.path.relpath(filvalue, self.control.model_dir)
+                            file_value.append(filvalue)
+                        self.control.set_values(rec_name, file_value)
 
     def _update_mf_basename(self, basename):
         """
