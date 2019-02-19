@@ -3,6 +3,7 @@ from ..utils import GsConstant
 import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
+import os
 import warnings
 warnings.simplefilter('always', PendingDeprecationWarning)
 
@@ -51,6 +52,9 @@ class StatVar(object):
             Statistics object
         """
         statvar_file = control.get_values("stat_var_file")[0]
+        ws, fil = os.path.split(statvar_file)
+        if not ws:
+            statvar_file = os.path.join(control.model_dir, fil)
         statvar_flg = control.get_values("statsON_OFF")[0]
         if statvar_flg == 0:
             print("There is no statvar output since statsON_OFF = 0 ")
@@ -59,7 +63,7 @@ class StatVar(object):
         statvar_names = control.get_values("statVar_names")
         statvar_elements = control.get_values("statVar_element")
 
-        return StatVar(statvar_file, statvar_names, statvar_elements)
+        return StatVar(os.path.join(control.model_dir, statvar_file), statvar_names, statvar_elements)
 
     def _load_statvar_file(self):
         """
