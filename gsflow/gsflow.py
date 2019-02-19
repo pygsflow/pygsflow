@@ -641,8 +641,12 @@ class GsflowModel(object):
                 argv.append(t)
 
         # run the model with Popen
-        self._generate_batch_file()
-        argv = self.__bat_file
+        if platform.system().lower() == "windows":
+            self._generate_batch_file()
+            argv = self.__bat_file
+        else:
+            pass
+        
         model_ws = os.path.dirname(self.control_file)
         proc = sp.Popen(argv,
                         stdout=sp.PIPE, stderr=sp.STDOUT, cwd=model_ws)
