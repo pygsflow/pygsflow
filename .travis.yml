@@ -7,14 +7,14 @@ compiler: gcc
 matrix:
   include:
     - python: 2.7
-    - python: 3.4
     - python: 3.5
     - python: 3.6
-    - python: "3.6-dev"
+    - python: 3.7
+    - python: "3.7-dev"
     - python: "nightly"
 
   allow_failures:
-    - python: "3.6-dev"
+    - python: 3.7
     - python: "3.7-dev"
     - python: "nightly"
 
@@ -60,12 +60,9 @@ install:
     - ls -l /usr/bin/g++-6
     - export CXX="g++"
     - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then
-      pip install -r requirements2-34.travis.txt;
+      pip install -r requirements27.travis.txt;
       pip install requests;
       echo requests version1; python -c "import requests; print(requests.__version__)";
-      fi
-    - if [[ $TRAVIS_PYTHON_VERSION == 3.4 ]];
-      then pip install -r requirements2-34.travis.txt;
       fi
     - if [[ $TRAVIS_PYTHON_VERSION > 3.4 ]];
       then pip install -r requirements.travis.txt;
