@@ -77,3 +77,42 @@ def find_parameter(name, parameters_list):
         warnings.warn(err, UserWarning)
         return None
 
+
+def line_strip(line):
+    """
+    Remove comments and replace commas from input text
+    for a free formatted modflow input file
+
+    Parameters
+    ----------
+        line : str
+            a line of text from a modflow input file
+
+    Returns
+    -------
+        str : line with comments removed and commas replaced
+    """
+    for comment_flag in [';', '#', '!!']:
+        line = line.split(comment_flag)[0]
+    line = line.strip()
+    return line.replace(',', ' ')
+
+
+def multi_line_strip(fobj):
+    """
+    Remove comments and replace commas from input text
+    for a free formatted modflow input file
+
+    Parameters
+    ----------
+        fobj : open file object
+            a line of text from an input file
+
+    Returns
+    -------
+        str : line with comments removed and commas replaced
+    """
+    while True:
+        line = line_strip(fobj.readline())
+        if line:
+            return line.lower()

@@ -61,7 +61,7 @@ class Modflow(fpModflow):
 
     """
     def __init__(self, modelname='modflowtest', namefile_ext='nam',
-                 version='mfnwt', exe_name='mfnwt.exe',
+                 version='mfnwt', version2='gsflow', exe_name='mfnwt.exe',
                  structured=True, listunit=2, model_ws='.', external_path=None,
                  verbose=False, **kwargs):
 
@@ -79,6 +79,7 @@ class Modflow(fpModflow):
                                       model_ws=model_ws, external_path=external_path,
                                       verbose=verbose, **kwargs)
 
+        self.version2 = version2
         # we can override packages here by setting the package object
         # a custom written package if flopy doesn't work with pygsflow
         self.mfnam_packages = {
