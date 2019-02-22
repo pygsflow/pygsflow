@@ -1,3 +1,4 @@
+import os
 import flopy
 import numpy as np
 from flopy.pakbase import Package
@@ -121,10 +122,9 @@ class ModflowAg(Package):
 
         # set up class
         self.heading = "# {} package for {}, generated " \
-                       "by gsflopy\n".format(self.name[0],
-                                           model.version_types[model.version])
+                       "by pygsflow\n".format(self.name[0],
+                                              model.version_types[model.version])
         self.url = "ag.htm"
-        # todo: package specific code
 
         # options
         self.noprint = None
@@ -209,7 +209,7 @@ class ModflowAg(Package):
         """
         ws = self.parent.model_ws
         name = self.file_name[0]
-        with open(ws, name) as foo:
+        with open(os.path.join(ws, name), "w") as foo:
             foo.write(self.heading)
 
             # update options
@@ -218,19 +218,21 @@ class ModflowAg(Package):
 
             # check if there is a timeseries block and write output
             if self.time_series is not None:
+                foo.write("# ag time series\n")
                 fmt = "{}   {:d}   {:d}\n"
                 foo.write("TIME SERIES \n")
                 for record in self.time_series:
                     if record["keyword"] in ('welletall', 'wellall'):
                         foo.write("{}   {:d}\n".format(record['keyword'],
-                                                       record['unit']))
+                                                       record['unit']).upper())
                     else:
-                        foo.write(fmt.format(*record))
+                        foo.write(fmt.format(*record).upper())
 
                 foo.write("END \n")
 
             # check if item 1 exists and write item 1 and 2
             if self.well_list is not None:
+                foo.write("# ag well list\n")
                 foo.write("WELL LIST \n")
                 if self.tabfiles:
                     # item 2a
@@ -239,23 +241,24 @@ class ModflowAg(Package):
                 else:
                     # item 2b
                     fmt2a = False
-                    fmt2 = "{:d}   {:d}   {:d}   {:d}\n"
+                    fmt2 = "{:d}   {:d}   {:d}   {:f}\n"
 
                 for record in self.well_list:
                     if fmt2a:
                         foo.write(fmt2.format(record["unit"],
                                               record["tabval"],
-                                              record["k"] - 1,
-                                              record["i"] - 1,
-                                              record["j"] - 1))
+                                              record["k"] + 1,
+                                              record["i"] + 1,
+                                              record["j"] + 1))
                     else:
-                        foo.write(fmt2.format(record["k"] - 1,
-                                              record["i"] - 1,
-                                              record["j"] - 1,
+                        foo.write(fmt2.format(record["k"] + 1,
+                                              record["i"] + 1,
+                                              record["j"] + 1,
                                               record["flux"]))
 
                 foo.write("END \n")
 
+            foo.write("# ag stress period data\n")
             for per in range(self._nper):
                 foo.write("STRESS PERIOD {}\n".format(per + 1))
 
@@ -305,12 +308,11 @@ class ModflowAg(Package):
                                 else:
                                     foo.write(fmt6.format(rec['hru_id{}'.format(i)] + 1,
                                                           rec["eff_fact{}".format(i)],
-                                                          rec['field_fact{}'].format(i)))
+                                                          rec['field_fact{}'.format(i)]))
+
                     else:
                         # write item 4
                         foo.write("0  \n")
-
-                    foo.write("END \n")
 
                 # check for item 7 and write 7, 8, 9, 10
                 if self.irrwell is not None:
@@ -344,34 +346,56 @@ class ModflowAg(Package):
                                                       rec['period'],
                                                       rec['triggerfact']))
                             else:
-                                foo.write(fmt9.format(rec['segid'] + 1,
+                                foo.write(fmt9.format(rec['wellid'] + 1,
                                                       rec['numcell']))
 
                             for i in range(num):
                                 if fmt10a:
-                                    foo.write(fmt10.format(rec['i{}'.format(i)] + 1,
-                                                           rec["j{}".format(i)] + 1,
-                                                           rec["eff_fact{}".format(i)],
-                                                           rec['field_fact{}'].format(i)))
-                                else:
                                     foo.write(fmt10.format(rec['hru_id{}'.format(i)] + 1,
                                                            rec['dum{}'.format(i)] + 1,
+                                                           rec["eff_fact{}".format(i)],
+                                                           rec['field_fact{}'.format(i)]))
+                                else:
+                                    foo.write(fmt10.format(rec['i{}'.format(i)] + 1,
+                                                           rec["j{}".format(i)] + 1,
                                                            rec["eff_fact{}".format(i)],
                                                            rec['field_fact{}'].format(i)))
                     else:
                         # write item 4
                         foo.write("0  \n")
 
-                    foo.write("END \n")
-
+                # check if item 11 and write items 11, 12, 13 , 14
                 if self.supwell is not None:
-                    # todo: do stuff!
-                    pass
+                    foo.write("SUPWELL \n")
 
+                    fmt13 = "{:d}   {:d}\n"
 
+                    if per in self.supwell:
+                        recarray = self.supwell[per]
 
+                        # write item 9
+                        foo.write("{:d} \n".format(len(recarray)))
 
+                        for rec in recarray:
+                            num = rec['numcell']
 
+                            foo.write(fmt13.format(rec["wellid"] + 1,
+                                                   rec["numcell"]))
+
+                            for i in range(num):
+                                if rec["fracsupmax{}".format(i)] != -1e+10:
+                                    foo.write("{:d}   {:f}   {:f}\n".format(rec['segid{}'.format(i)] + 1,
+                                                                            rec['fracsup{}'.format(i)],
+                                                                            rec['fracsupmax{}'.format(i)]))
+
+                                else:
+                                    foo.write("{:d}   {:f}\n".format(rec['segid{}'.format(i)] + 1,
+                                                                     rec['fracsup{}'.format(i)]))
+
+                    else:
+                        foo.write("0 \n")
+
+                foo.write("END \n")
 
     @staticmethod
     def get_empty(numrecords, maxells=0, block="well"):
@@ -492,10 +516,6 @@ class ModflowAg(Package):
 
             # read the options block
             options = OptionBlock.load_options(mfag, ModflowAg)
-
-            nummaxwell = 0
-            if options.nummaxwell is not None:
-                nummaxwell = options.nummaxwell
 
             line = multi_line_strip(mfag)
 
@@ -662,6 +682,10 @@ class ModflowAg(Package):
     def ftype():
         return "AG"
 
+    @property
+    def plotable(self):
+        return False
+
 
 def _read_block_6_10_or_14(fobj, nrec, recarray, block):
     """
@@ -678,7 +702,6 @@ def _read_block_6_10_or_14(fobj, nrec, recarray, block):
     -------
 
     """
-    # todo: update the function for 0 based numbering adjustments
     t = []
 
     hrus = False
@@ -701,7 +724,7 @@ def _read_block_6_10_or_14(fobj, nrec, recarray, block):
             t1 += ll[:4]
 
         elif block == 14:
-             t1 += ll[:2]
+            t1 += ll[:2]
 
         else:
             raise AssertionError("block number must be 6, 10, or 14")
