@@ -27,7 +27,7 @@ class ModflowAg(Package):
                                                       OptionBlock.n_nested: 2,
                                                       OptionBlock.vars: OrderedDict(
                                                           [('numirrdiversions', OptionBlock.simple_int),
-                                                           ('maxcellsdiversions', OptionBlock.simple_int)]
+                                                           ('maxcellsdiversion', OptionBlock.simple_int)]
                                                       )}),
                             ('irrigation_well', {OptionBlock.dtype: np.bool_,
                                                  OptionBlock.nested: True,
@@ -94,8 +94,10 @@ class ModflowAg(Package):
                                          )})
                             ])
 
-    def __init__(self, model,
-                 extension="ag", options=None, unitnumber=None, filenames=None):
+    def __init__(self, model, options=None, time_series=None, well_list=None,
+                 irrdiversion=None, irrwell=None, supwell=None,
+                 extension="ag", unitnumber=None, filenames=None,
+                 nper=0):
 
         # setup the package parent class
         if unitnumber is None:
@@ -113,24 +115,263 @@ class ModflowAg(Package):
         # set package name
         fname = [filenames[0]]
 
-        super(ModflowAg, self).__init__(model,extension=extension,
+        super(ModflowAg, self).__init__(model, extension=extension,
                                         name=name, unit_number=units,
                                         extra=extra, filenames=fname)
 
         # set up class
         self.heading = "# {} package for {}, generated " \
-                       "by gsflopy".format(self.name[0],
+                       "by gsflopy\n".format(self.name[0],
                                            model.version_types[model.version])
         self.url = "ag.htm"
         # todo: package specific code
 
-    @staticmethod
-    def defaultunit():
-        return 69
+        # options
+        self.noprint = None
+        self.irrigation_diversion = False
+        self.numirrdiversions = 0
+        self.maxcellsdiversion = 0
+        self.irrigation_well = False
+        self.numirrwells = 0
+        self.supplemental_well = False
+        self.numsupwells = 0
+        self.maxdiversions = 0
+        self.maxwell = False
+        self.nummaxwell = 0
+        self.tabfiles = False
+        self.numtab = 0
+        self.maxval = 0
+        self.phiramp = None
+        self.etdemand = False
+        self.accel = None
+        self.trigger = False
+        self.timeseries_diversion = False
+        self.timeseries_well = False
+        self.timeseries_diversionet = False
+        self.timeseries_wellet = False
+        self.diversionlist = False
+        self.unit_diversionlist = None
+        self.welllist = False
+        self.unit_welllist = None
+        self.wellirrlist = False
+        self.unit_wellirrlist = None
+        self.diversionirrlist = False
+        self.unit_diversionirrlist = None
+        self.wellcbc = False
+        self.unitcbc = None
 
-    @staticmethod
-    def ftype():
-        return "AG"
+        if isinstance(options, OptionBlock):
+            self.options = options
+            self._update_attrs_from_option_block(options)
+        else:
+            self.options = OptionBlock("", ModflowAg)
+
+        self.time_series = time_series
+        self.well_list = well_list
+        self.irrdiversion = irrdiversion
+        self.irrwell = irrwell
+        self.supwell = supwell
+
+        self._nper = self.parent.nper
+        if self.parent.nper == 0:
+            self._nper = nper
+
+        self.parent.add_package(self)
+
+    def _update_attrs_from_option_block(self, options):
+        """
+        Method to update option attributes from the
+        option block
+
+        Parameters
+        ----------
+        options : OptionBlock object
+
+        """
+        for key, ctx in options._context.items():
+            if key in options.__dict__:
+                val = options.__dict__[key]
+                self.__setattr__(key, val)
+                if ctx[OptionBlock.nested]:
+                    for k2, ctx2 in ctx[OptionBlock.vars].items():
+                        if k2 in options.__dict__:
+                            v2 = options.__dict__[k2]
+                            self.__setattr__(k2, v2)
+
+    def write_file(self, check=False):
+        """
+        Write method for ModflowAg
+
+        Parameters
+        ----------
+        check
+
+        """
+        ws = self.parent.model_ws
+        name = self.file_name[0]
+        with open(ws, name) as foo:
+            foo.write(self.heading)
+
+            # update options
+            self.options.update_from_package(self)
+            self.options.write_options(foo)
+
+            # check if there is a timeseries block and write output
+            if self.time_series is not None:
+                fmt = "{}   {:d}   {:d}\n"
+                foo.write("TIME SERIES \n")
+                for record in self.time_series:
+                    if record["keyword"] in ('welletall', 'wellall'):
+                        foo.write("{}   {:d}\n".format(record['keyword'],
+                                                       record['unit']))
+                    else:
+                        foo.write(fmt.format(*record))
+
+                foo.write("END \n")
+
+            # check if item 1 exists and write item 1 and 2
+            if self.well_list is not None:
+                foo.write("WELL LIST \n")
+                if self.tabfiles:
+                    # item 2a
+                    fmt2a = True
+                    fmt2 = "{:d}   {:d}   {:d}   {:d}   {:d}\n"
+                else:
+                    # item 2b
+                    fmt2a = False
+                    fmt2 = "{:d}   {:d}   {:d}   {:d}\n"
+
+                for record in self.well_list:
+                    if fmt2a:
+                        foo.write(fmt2.format(record["unit"],
+                                              record["tabval"],
+                                              record["k"] - 1,
+                                              record["i"] - 1,
+                                              record["j"] - 1))
+                    else:
+                        foo.write(fmt2.format(record["k"] - 1,
+                                              record["i"] - 1,
+                                              record["j"] - 1,
+                                              record["flux"]))
+
+                foo.write("END \n")
+
+            for per in range(self._nper):
+                foo.write("STRESS PERIOD {}\n".format(per + 1))
+
+                # check for item 3 and write item 3, 4, 5
+                if self.irrdiversion is not None:
+                    foo.write("IRRDIVERSION \n")
+
+                    if self.trigger:
+                        # item 5
+                        fmt5 = "{:d}   {:d}   {:f}   {:f}\n"
+                    else:
+                        # item 5
+                        fmt5 = "{:d}   {:d}\n"
+
+                    if per in self.irrdiversion:
+                        recarray = self.irrdiversion[per]
+
+                        # write item 4
+                        foo.write("{:d} \n".format(len(recarray)))
+
+                        if "i0" in recarray.dtype.names:
+                            # item 6a
+                            fmt6a = True
+                            fmt6 = "{:d}   {:d}   {:f}   {:f}\n"
+                        else:
+                            # item 6b
+                            fmt6a = False
+                            fmt6 = "{:d}   {:f}   {:f}\n"
+
+                        for rec in recarray:
+                            num = rec['numcell']
+                            if self.trigger:
+                                foo.write(fmt5.format(rec['segid'] + 1,
+                                                      rec['numcell'],
+                                                      rec['period'],
+                                                      rec['triggerfact']))
+                            else:
+                                foo.write(fmt5.format(rec['segid'] + 1,
+                                                      rec['numcell']))
+
+                            for i in range(num):
+                                if fmt6a:
+                                    foo.write(fmt6.format(rec['i{}'.format(i)] + 1,
+                                                          rec["j{}".format(i)] + 1,
+                                                          rec["eff_fact{}".format(i)],
+                                                          rec['field_fact{}'].format(i)))
+                                else:
+                                    foo.write(fmt6.format(rec['hru_id{}'.format(i)] + 1,
+                                                          rec["eff_fact{}".format(i)],
+                                                          rec['field_fact{}'].format(i)))
+                    else:
+                        # write item 4
+                        foo.write("0  \n")
+
+                    foo.write("END \n")
+
+                # check for item 7 and write 7, 8, 9, 10
+                if self.irrwell is not None:
+                    foo.write("IRRWELL \n")
+
+                    if self.trigger:
+                        # item 9
+                        fmt9 = "{:d}   {:d}   {:f}   {:f}\n"
+                    else:
+                        # item 9
+                        fmt9 = "{:d}   {:d}\n"
+
+                    if per in self.irrwell:
+                        recarray = self.irrwell[per]
+
+                        # write item 4
+                        foo.write("{:d} \n".format(len(recarray)))
+
+                        if "i0" in recarray.dtype.names:
+                            fmt10a = False
+                        else:
+                            fmt10a = True
+
+                        fmt10 = "{:d}   {:d}   {:f}   {:f}\n"
+
+                        for rec in recarray:
+                            num = rec['numcell']
+                            if self.trigger:
+                                foo.write(fmt9.format(rec['wellid'] + 1,
+                                                      rec['numcell'],
+                                                      rec['period'],
+                                                      rec['triggerfact']))
+                            else:
+                                foo.write(fmt9.format(rec['segid'] + 1,
+                                                      rec['numcell']))
+
+                            for i in range(num):
+                                if fmt10a:
+                                    foo.write(fmt10.format(rec['i{}'.format(i)] + 1,
+                                                           rec["j{}".format(i)] + 1,
+                                                           rec["eff_fact{}".format(i)],
+                                                           rec['field_fact{}'].format(i)))
+                                else:
+                                    foo.write(fmt10.format(rec['hru_id{}'.format(i)] + 1,
+                                                           rec['dum{}'.format(i)] + 1,
+                                                           rec["eff_fact{}".format(i)],
+                                                           rec['field_fact{}'].format(i)))
+                    else:
+                        # write item 4
+                        foo.write("0  \n")
+
+                    foo.write("END \n")
+
+                if self.supwell is not None:
+                    # todo: do stuff!
+                    pass
+
+
+
+
+
 
     @staticmethod
     def get_empty(numrecords, maxells=0, block="well"):
@@ -191,18 +432,41 @@ class ModflowAg(Package):
 
             for i in range(maxells):
                 dtype += [("hru_id{}".format(i), np.int),
+                          ("eff_fact{}".format(i), np.float),
+                          ("field_fact{}".format(i), np.float)]
+
+        elif block == "irrwell_modflow":
+            dtype = [("wellid", np.int), ("numcell", np.int),
+                     ("period", np.float), ("triggerfact", np.float)]
+
+            for i in range(maxells):
+                dtype += [("i{}".format(i), np.int),
+                          ("j{}".format(i), np.int),
+                          ("eff_fact{}".format(i), np.float),
+                          ("field_fact{}".format(i), np.float)]
+
+        elif block == "irrwell_gsflow":
+            dtype = [("wellid", np.int), ("numcell", np.int),
+                     ("period", np.float), ("triggerfact", np.float)]
+
+            for i in range(maxells):
+                dtype += [("hru_id{}".format(i), np.int),
                           ("dum{}".format(i), np.int),
-                          ("hru_eff_fact{}".format(i), np.float),
-                          ("hru_field_fact{}".format(i), np.float)]
+                          ("eff_fact{}".format(i), np.float),
+                          ("field_fact{}".format(i), np.float)]
+
+        elif block == "supwell":
+            dtype = [("wellid", np.int), ("numcell", np.int)]
+
+            for i in range(maxells):
+                dtype += [("segid{}".format(i), np.int),
+                          ("fracsup{}".format(i), np.float),
+                          ("fracsupmax{}".format(i), np.float)]
 
         else:
-            dtype = None
+            raise NotImplementedError("block type {}, not supported".format(block))
 
         return np.dtype(dtype)
-
-    def write_file(self, check=False):
-        pass
-
 
     @staticmethod
     def load(f, model, nper=0, method="gsflow", ext_unit_dict=None):
@@ -218,7 +482,6 @@ class ModflowAg(Package):
         -------
             ModflowAg object
         """
-
         with open(f) as mfag:
 
             # strip the file header if it exists
@@ -236,6 +499,7 @@ class ModflowAg(Package):
 
             line = multi_line_strip(mfag)
 
+            time_series = None
             if "time series" in line:
                 # read time_series
                 t = []
@@ -249,7 +513,6 @@ class ModflowAg(Package):
                         t.append(line.split())
 
                 if len(t) > 0:
-                    # todo: set data to a timeseries object (recarray...)
                     nrec = len(t)
                     time_series = ModflowAg.get_empty(nrec, block="time series")
 
@@ -260,6 +523,7 @@ class ModflowAg(Package):
                             time_series[ix] = tuple(rec[:3])
 
             # read item 1-2 well_list
+            well = None
             if "well list" in line:
                 # read item 2
                 t = []
@@ -277,63 +541,192 @@ class ModflowAg(Package):
 
                     # check if this is block 2a
                     if isinstance(options.tabfiles, np.recarray):
+                        tf = True
                         well = ModflowAg.get_empty(nrec, block='tabfile_well')
                     else:
+                        tf = False
                         well = ModflowAg.get_empty(nrec, block="well")
 
                     for ix, rec in enumerate(t):
-                        well[ix] = tuple(rec[:4])
+                        if not tf:
+                            k = int(rec[0]) - 1
+                            i = int(rec[1]) - 1
+                            j = int(rec[2]) - 1
+                            well[ix] = (k, i, j, rec[3])
+                        else:
+                            k = int(rec[2]) - 1
+                            i = int(rec[3]) - 1
+                            j = int(rec[4]) - 1
+                            well[ix] = (rec[0], rec[1], k, i, j)
+
+            maxcellsdiversion = 0
+            if options.maxcellsdiversion is not None:
+                maxcellsdiversion = options.maxcellsdiversion
+
+            maxcellswell = 0
+            if options.maxcellswell is not None:
+                maxcellswell = options.maxcellswell
+
+            maxdiversions = 0
+            if options.maxdiversions is not None:
+                maxdiversions = options.maxdiversions
 
             irr_diversion = {}
             irr_well = {}
             sup_well = {}
+            # get the stress period data from blocks 3 - 14
             for per in range(nper):
-                if 'stress period' in line:
-                    line = multi_line_strip(mfag)
-
                 while True:
-                    if 'irrdiversion' in line:
-                        nrec = int(multi_line_strip(mfag).split()[0])
-                        # model.version2 will need to be changed
-                        # for pure flopy compatibility if migrated
-                        if model.version2 == "gsflow":
-                            irr = ModflowAg.get_empty(nrec, block="irrdiversion_gsflow")
-                        else:
-                            irr = ModflowAg.get_empty(nrec, block="irrdiversion_modflow")
+                    if 'stress period' in line:
+                        line = multi_line_strip(mfag)
 
-                        irr = _read_block_6_or_10(mfag, nrec, irr)
+                    # block 3
+                    elif 'irrdiversion' in line:
+                        # read block 4
+                        nrec = int(multi_line_strip(mfag).split()[0])
+                        if nrec == -1:
+                            irr = np.copy(irr_diversion[per - 1])
+                        else:
+                            # model.version2 will need to be changed
+                            # for pure flopy compatibility if migrated
+                            if model.version2 == "gsflow":
+                                irr = ModflowAg.get_empty(nrec, maxells=maxcellsdiversion,
+                                                          block="irrdiversion_gsflow")
+                            else:
+                                irr = ModflowAg.get_empty(nrec, maxells=maxcellsdiversion,
+                                                          block="irrdiversion_modflow")
+
+                            # read blocks 5 & 6
+                            irr = _read_block_6_10_or_14(mfag, nrec, irr, 6)
                         irr_diversion[per] = irr
                         line = multi_line_strip(mfag)
 
-                    if 'irrwell' in line:
-                        pass
+                    # block 7
+                    elif 'irrwell' in line:
+                        # read block 8
+                        nrec = int(multi_line_strip(mfag).split()[0])
+                        if nrec == -1:
+                            irr = np.copy(irr_well[per - 1])
+                        else:
+                            # model.version2 will need to be changed
+                            # for pure flopy compatibility if migrated
+                            if model.version2 == "gsflow":
+                                irr = ModflowAg.get_empty(nrec, maxells=maxcellswell,
+                                                          block="irrwell_gsflow")
+                            else:
+                                irr = ModflowAg.get_empty(nrec, maxells=maxcellswell,
+                                                          block="irrwell_modflow")
 
-                    if 'supwel' in line:
-                        pass
+                            # read blocks 9 & 10
+                            irr = _read_block_6_10_or_14(mfag, nrec, irr, 10)
 
-            print(line)
-            print('break')
+                        irr_well[per] = irr
+                        line = multi_line_strip(mfag)
+
+                    # block 11
+                    elif 'supwel' in line:
+                        # read block 12
+                        nrec = int(multi_line_strip(mfag).split()[0])
+                        if nrec == -1:
+                            sup = np.copy(sup_well[per - 1])
+
+                        else:
+                            sup = ModflowAg.get_empty(nrec, maxells=maxdiversions,
+                                                      block="supwell")
+                            # read blocks 13 & 14
+                            sup = _read_block_6_10_or_14(mfag, nrec, sup, 14)
+
+                        sup_well[per] = sup
+                        line = multi_line_strip(mfag)
+
+                    # block 15?
+                    elif "end" in line:
+                        if per == nper - 1:
+                            break
+
+                        line = multi_line_strip(mfag)
+                        break
+
+                    else:
+                        raise ValueError("Something went wrong at: {}".format(line))
+
+        return ModflowAg(model, options=options, time_series=time_series,
+                         well_list=well, irrwell=irr_well, irrdiversion=irr_diversion,
+                         supwell=sup_well, nper=nper)
+
+    @staticmethod
+    def defaultunit():
+        return 69
+
+    @staticmethod
+    def ftype():
+        return "AG"
 
 
+def _read_block_6_10_or_14(fobj, nrec, recarray, block):
+    """
 
-        return ModflowAg(model,)
+    Parameters
+    ----------
+    fobj
+    nrec
+    recarray
+    block : int
+        valid options are 6, 10, or 14
 
+    Returns
+    -------
 
-def _read_block_6_or_10(fobj, nrec, recarray):
+    """
+    # todo: update the function for 0 based numbering adjustments
     t = []
+
+    hrus = False
+    if "hru_id0" in recarray.dtype.names and \
+            "segid" in recarray.dtype.names:
+        hrus = True
+
     for _ in range(nrec):
         t1 = []
         ll = multi_line_strip(fobj).split()
-        t1.append(ll[:4])
+        ll[0] = int(ll[0]) - 1
+
+        if block in (6, 10):
+            # correct list length if not using trigger factor
+            if len(ll) == 2:
+                ll += [-1e+10, 1e+10]
+            elif len(ll) == 3:
+                ll += [1e-10]
+
+            t1 += ll[:4]
+
+        elif block == 14:
+             t1 += ll[:2]
+
+        else:
+            raise AssertionError("block number must be 6, 10, or 14")
 
         for numcell in range(int(ll[1])):
-            t1.append(multi_line_strip(fobj).split()[:4])
+            if block == 14:
+                if len(ll) == 2:
+                    ll += [1e-10]
+
+            if hrus or block == 14:
+                tmp = multi_line_strip(fobj).split()[:3]
+                tmp[0] = int(tmp[0]) - 1
+            else:
+                tmp = multi_line_strip(fobj).split()[:4]
+                tmp[0:2] = [int(tmp[0]) - 1, int(tmp[1]) - 1]
+
+            t1 += tmp
 
         t.append(t1)
 
     if len(t) > 0:
         for ix, rec in enumerate(t):
-            for ix2, name in enumerate(recarray):
-                recarray[ix][name] = rec[ix][ix2]
-
+            for ix2, name in enumerate(recarray.dtype.names):
+                if ix2 >= len(rec):
+                    pass
+                else:
+                    recarray[name][ix] = rec[ix2]
     return recarray

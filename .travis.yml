@@ -1,8 +1,11 @@
 language: python
 os: linux
-dist: trusty
-sudo: required
+dist: xenial
+sudo: false
 compiler: gcc
+
+services:
+    - xvfb
 
 matrix:
   include:
@@ -42,10 +45,6 @@ env:
   global:
     - NO_NET=1
 
-# start Virtual X, so default matplotlib backend works
-before_install:
-    - "export DISPLAY=:99.0"
-    - "sh -e /etc/init.d/xvfb start"
 # command to install dependencies
 install:
     - if [[ ! -d "$HOME/.local/bin" ]]; then

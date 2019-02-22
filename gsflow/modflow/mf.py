@@ -80,6 +80,10 @@ class Modflow(fpModflow):
                                       verbose=verbose, **kwargs)
 
         self.version2 = version2
+
+        # Using a local gsflow import to avoid circular imports with python 2.7
+        import gsflow
+
         # we can override packages here by setting the package object
         # a custom written package if flopy doesn't work with pygsflow
         self.mfnam_packages = {
@@ -127,7 +131,8 @@ class Modflow(fpModflow):
             "hyd": flopy.modflow.ModflowHyd,
             "hob": flopy.modflow.ModflowHob,
             "vdf": flopy.seawat.SeawatVdf,
-            "vsc": flopy.seawat.SeawatVsc
+            "vsc": flopy.seawat.SeawatVsc,
+            "ag": gsflow.modflow.ModflowAg
         }
 
     @property
