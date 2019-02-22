@@ -86,8 +86,8 @@ class PrmsPlot(object):
         ax : matplotlib.pyplot.axes
             optional axes object
 
-        masked_values : iterable of floats, ints
-            Values to mask.
+        masked_values : list, optional
+            list of values to mask.
 
         **kwargs : dictionary
             keyword arguments passed to matplotlib.pyplot.pcolormesh
@@ -200,7 +200,7 @@ class PrmsPlot(object):
                 fig.subplots_adjust(left=0.10, right=0.85, wspace=0.3, hspace=0.3)
                 cbar_ax = fig.add_axes([0.9, 0.1, 0.05, 0.7])
                 fig.colorbar(p, cax=cbar_ax)
-                return p
+                return fig
 
 
         else:
@@ -270,7 +270,7 @@ class PrmsPlot(object):
                 fig.subplots_adjust(left=0.10, right=0.85, wspace=0.3, hspace=0.3)
                 cbar_ax = fig.add_axes([0.9, 0.1, 0.05, 0.7])
                 fig.colorbar(p, cax=cbar_ax)
-                return p
+                return fig
 
         else:
             raise ValueError("Valid number of dimensions is 1 or 2")
