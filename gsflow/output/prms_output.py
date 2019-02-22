@@ -29,7 +29,7 @@ class StatVar(object):
     statvar_elements : list
 
     """
-    def __init__(self, statvar_file, statvar_names, statvar_elements):
+    def __init__(self, statvar_file, statvar_names=None, statvar_elements=None):
 
         self.statvar_file = statvar_file
         self.statvar_names = statvar_names
@@ -55,6 +55,9 @@ class StatVar(object):
         ws, fil = os.path.split(statvar_file)
         if not ws:
             statvar_file = os.path.join(control.model_dir, fil)
+        else:
+            statvar_file = os.path.join(control.model_dir, statvar_file)
+
         statvar_flg = control.get_values("statsON_OFF")[0]
         if statvar_flg == 0:
             print("There is no statvar output since statsON_OFF = 0 ")
@@ -63,13 +66,24 @@ class StatVar(object):
         statvar_names = control.get_values("statVar_names")
         statvar_elements = control.get_values("statVar_element")
 
-        return StatVar(os.path.join(control.model_dir, statvar_file), statvar_names, statvar_elements)
+        return StatVar(statvar_file, statvar_names, statvar_elements)
 
     def _load_statvar_file(self):
         """
         Loads the statvar file into memory as a pandas array
 
         """
+        # check to see if statvar elements and names were supplied
+        sve = False
+        svn = False
+        if self.statvar_elements is None:
+            sve = True
+            self.statvar_elements = []
+
+        if self.statvar_names is None:
+            svn = True
+            self.statvar_names = []
+
         print ("Loading the statvar output file .....")
         with open(self.statvar_file, 'r') as fid:
             nvals = int(fid.readline().strip())
@@ -77,6 +91,12 @@ class StatVar(object):
             var_element = []
             for header in range(nvals):
                 nm, elem = fid.readline().strip().split()
+
+                if svn:
+                    self.statvar_names.append(nm)
+                if sve:
+                    self.statvar_elements.append(elem)
+
                 nm = nm + "_" + elem
                 var_names.append(nm)
                 var_element.append(int(elem))
