@@ -32,8 +32,11 @@ class PrmsParameters(ParameterBase):
 
     Parameters
     ----------
-    parameters_list
-    headers
+    parameters_list : list
+        list of ParameterRecord objects
+
+    headers : str, optional
+        file header
 
     """
 
@@ -57,7 +60,7 @@ class PrmsParameters(ParameterBase):
 
         Returns
         -------
-
+            list of parameter file names
         """
         all_files = []
 
@@ -77,14 +80,16 @@ class PrmsParameters(ParameterBase):
     @staticmethod
     def load_from_file(param_files):
         """
+        Create a PrmsParameters object from parameter file(s)
 
         Parameters
         ----------
-        param_files
+        param_files : list
+            list of parameter files
 
         Returns
         -------
-
+            PrmsParameters
         """
         if isinstance(param_files, str):
             param_files = [param_files]
@@ -197,40 +202,45 @@ class PrmsParameters(ParameterBase):
 
     def get_record(self, name):
         """
+        Method to get a parameter record by name
 
         Parameters
         ----------
-        name
+        name : str
+            parameter name
 
         Returns
         -------
-
+            ParameterRecord object
         """
         return super(PrmsParameters, self).get_record(name, ParameterRecord)
 
     def get_values(self, name):
         """
+        Method to get values from a parameter
 
         Parameters
         ----------
-        name
+        name : str
+            parameter name
 
         Returns
         -------
+            np.array
 
         """
         return super(PrmsParameters, self).get_values(name)
 
     def set_values(self, name, values):
         """
+        Method to set values to an existing parameter
 
         Parameters
         ----------
-        name
-        values
-
-        Returns
-        -------
+        name : str
+            parameter name
+        values : list
+            list of values
 
         """
         return super(PrmsParameters, self).set_values(name, values)
@@ -242,17 +252,22 @@ class PrmsParameters(ParameterBase):
 
         Parameters
         ----------
-        name
-        values
-        dimensions
-        datatype
-        width
-        file_name
-        where
-        after
+        name : str
+            parameter name
+        values : list
+            parameter values
+        dimensions : list
+            parameter dimensions
+        datatype : int
+            datatype flag
+        width : int, optional
 
-        Returns
-        -------
+        file_name : str
+            filename parameter will be written to
+        where : int, optional
+            index location to insert parameter
+        after : int, optional
+            index location - 1 to insert parameter
 
         """
 
@@ -267,13 +282,12 @@ class PrmsParameters(ParameterBase):
 
     def remove_record(self, name):
         """
+        Method to remove a parameter record
 
         Parameters
         ----------
-        name
-
-        Returns
-        -------
+        name: str
+            parameter name
 
         """
         super(PrmsParameters, self).remove_record(name)
@@ -284,11 +298,8 @@ class PrmsParameters(ParameterBase):
 
         Parameters
         ----------
-        name : str
-
-
-        Returns
-        -------
+        name : str, optional
+            file name
 
         """
         if name is not None:
@@ -345,15 +356,21 @@ class Parm_record(object):
 
 class ParameterRecord(RecordBase):
     """
+    ParameterRecord is a class for storing parameters
 
     Parameters
     ----------
-    name
-    values
-    dimensions
-    datatype
-    width
-    file_name
+    name : str
+        parameter name
+    values : list
+        parameter values
+    dimensions : list
+        dimensions of the record
+    datatype : int
+        datatype flag of the record
+    width : int, optional
+    file_name : str
+        parameter file to write the parameter to
 
     """
     def __init__(self, name=None, values=None, dimensions=None,
@@ -417,6 +434,14 @@ class ParameterRecord(RecordBase):
         self._check_dtype()
 
     def _write_dimension(self, fid):
+        """
+        Write method for dimensions ParameterRecord
+
+        Parameters
+        ----------
+        fid : File object
+
+        """
         fid.write("\n")
         fid.write("####\n")
         fid.write(self.name)
@@ -426,6 +451,14 @@ class ParameterRecord(RecordBase):
             fid.write(str(val))
 
     def _write_parameter(self, fid):
+        """
+        Write method for parameters ParameterRecord
+
+        Parameters
+        ----------
+        fid : File object
+
+        """
         fid.write("\n")
         fid.write("####\n")
         fid.write(self.name)
@@ -458,7 +491,7 @@ class ParameterRecord(RecordBase):
 
         Parameters
         ----------
-        fid : file object
+        fid : File object
 
         """
         if self.section == "Dimensions":

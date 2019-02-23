@@ -34,12 +34,14 @@ def _get_relative_path(control, fn):
 
     Parameters
     ----------
-    control
-    fn
+    control : str
+        control file path and name
+    fn : str
+        file path and name
 
     Returns
     -------
-
+        str : relative path
     """
     control_file_abs = os.path.abspath(control)
     fn_abs = os.path.abspath(fn)

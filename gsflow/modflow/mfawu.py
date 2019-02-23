@@ -16,11 +16,17 @@ class ModflowAg(Package):
 
     Parameters
     ----------
-    model
-    extension
-    options
-    unitnumber
-    filenames
+    model : gsflow.modflow.Modflow object
+        model object
+    extension : str, optional
+        default is .ag
+    options : flopy.utils.OptionBlock object
+        option block utility from flopy
+    unitnumber : list, optional
+        fortran unit number for modflow, default 69
+    filenames : list, optional
+        file name for ModflowAg package to write input
+
     """
     _options = OrderedDict([('noprint', OptionBlock.simple_flag),
                             ('irrigation_diversion', {OptionBlock.dtype: np.bool_,
@@ -204,8 +210,8 @@ class ModflowAg(Package):
 
         Parameters
         ----------
-        check
-
+        check: bool
+            not implemented currently
         """
         ws = self.parent.model_ws
         name = self.file_name[0]
@@ -405,11 +411,23 @@ class ModflowAg(Package):
 
         Parameters
         ----------
-            numrecords :
-            maxells :
-            block :
+        numrecords : int
+            number of records to create recarray with
+        maxells : int, optional
+            maximum number of irrigation links
+        block : str
+            str which indicates data set valid options are
+            "well" ,
+            "tabfile_well" ,
+            "timeseries" ,
+            "irrdiversion_modflow" ,
+            "irrdiversion_gsflow" ,
+            "irrwell_modflow" ,
+            "irrwell_gsflow" ,
+            "supwell"
 
         Returns:
+            np.recarray
 
         """
         dtype = ModflowAg.get_default_dtype(maxells=maxells, block=block)
@@ -421,8 +439,18 @@ class ModflowAg(Package):
 
         Parameters
         ----------
-            maxells :
-            block :
+        maxells : int
+             maximum number of irrigation links
+        block : str
+            str which indicates data set valid options are
+            "well" ,
+            "tabfile_well" ,
+            "timeseries" ,
+            "irrdiversion_modflow" ,
+            "irrdiversion_gsflow" ,
+            "irrwell_modflow" ,
+            "irrwell_gsflow" ,
+            "supwell"
 
         Returns
         -------
@@ -495,12 +523,19 @@ class ModflowAg(Package):
     @staticmethod
     def load(f, model, nper=0, method="gsflow", ext_unit_dict=None):
         """
+        Method to load the AG package from file
 
         Parameters
         ----------
-        f
-        model
-        ext_unit_dict
+        f : str
+            filename
+        model : gsflow.modflow.Modflow object
+            model to attach the ag pacakge to
+        nper : int
+            number of stress periods in model
+        method : str
+            "gsflow" or "modflow"
+        ext_unit_dict : dict, optional
 
         Returns
         -------
@@ -689,18 +724,21 @@ class ModflowAg(Package):
 
 def _read_block_6_10_or_14(fobj, nrec, recarray, block):
     """
+    Method to read blocks 6, 10, and 14 from the AG package
 
     Parameters
     ----------
-    fobj
-    nrec
-    recarray
+    fobj : File object
+    nrec : int
+        number of records
+    recarray : np.recarray
+        recarray to add data to
     block : int
         valid options are 6, 10, or 14
 
     Returns
     -------
-
+        recarray : np.recarray
     """
     t = []
 

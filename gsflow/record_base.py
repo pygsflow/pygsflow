@@ -4,6 +4,7 @@ import numpy as np
 import warnings
 from .utils import io
 from .utils import GsConstant
+import warnings
 
 
 class RecordBase(object):
@@ -38,7 +39,11 @@ class RecordBase(object):
         self._force_dtype()
 
     def _infer_dtype(self):
-        print("Warning: data type will be infered from data supplied")
+        """
+        Method to infer the dtype from data available
+
+        """
+        print("Warning: {} data type will be infered from data supplied".format(self.name))
         if 'float' in self._values.dtype.name:
             self.datatype = 2
         elif 'int' in self._values.dtype.name:
@@ -49,6 +54,14 @@ class RecordBase(object):
             raise ValueError("Value type is not recognized...{}", self.values.dtype)
 
     def _check_values(self, new_values):
+        """
+        Method to check if values can be numpy array
+
+        Parameters
+        ----------
+        new_values : list
+
+        """
         if isinstance(new_values, np.ndarray):
             self._values = new_values
         elif isinstance(new_values, list):
@@ -75,6 +88,10 @@ class RecordBase(object):
             return 0
 
     def _check_dtype(self):
+        """
+        Method that checks if a valid dtype has been suplied
+
+        """
         if 'float' in self._values.dtype.name:
             self.datatype = 2
         elif 'int' in self._values.dtype.name:
@@ -85,6 +102,10 @@ class RecordBase(object):
             raise ValueError("Value type is not recognized...{}".format(self._values.dtype))
 
     def _force_dtype(self):
+        """
+        Method to force the dtype on an array
+
+        """
         dtype = GsConstant.PRMS_DATA_TYPES[self.datatype]
         if dtype == 'integer':
             self._values = self._values.astype(int)

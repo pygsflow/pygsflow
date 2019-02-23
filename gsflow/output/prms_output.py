@@ -25,8 +25,11 @@ class StatVar(object):
     Parameters
     ----------
     statvar_file : str
-    statvar_names : list
-    statvar_elements : list
+        name of the stat var file
+    statvar_names : list, optional
+        statvar_names will be determined from file if None
+    statvar_elements : list, optional
+        statvar_elements will be determined from file if None
 
     """
     def __init__(self, statvar_file, statvar_names=None, statvar_elements=None):

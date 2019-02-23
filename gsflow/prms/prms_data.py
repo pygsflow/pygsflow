@@ -40,6 +40,7 @@ class PrmsData(object):
             model directory to write file to
         header : str
             prms data header
+
     """
     data_names = ['tmax', 'tmin', 'precip', 'runoff', 'pan_evap', 'solrad', 'from_data', 'rain_day']
 
@@ -55,6 +56,19 @@ class PrmsData(object):
 
     @staticmethod
     def load_from_file(data_file):
+        """
+        Method to load a data file into a PrmsData object
+
+        Parameters
+        ----------
+        data_file : str
+            data file path and name
+
+        Returns
+        -------
+            PrmsData object
+
+        """
 
         model_dir, name = os.path.split(data_file)
 

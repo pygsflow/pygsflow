@@ -94,29 +94,32 @@ class PrmsDiscretization(object):
 
     def get_hru_points(self, hru):
         """
+        Get the x, y coordinate points for a hru
 
         Parameters
         ----------
-        hru
+        hru : int
+            hru number
 
         Returns
         -------
-
+            list
         """
         return self._xypts[hru - 1]
 
     @staticmethod
     def load_from_flopy(model, xll=None, yll=None, rotation=None):
         """
+        Method to load discretization from a flopy model
 
         Parameters
         ----------
         model : flopy.modflow.Modflow or gsflow.modflow.Modflow object
-        xll : float
+        xll : float, optional
             xoffset for modflow grid
-        yll : float
+        yll : float, optional
             yoffset for modflow grid
-        rotation : float
+        rotation : float, optional
             rotation for modflow grid
 
         Returns

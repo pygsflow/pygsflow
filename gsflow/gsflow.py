@@ -39,15 +39,24 @@ class Gsflow(object):
 
 class GsflowModel(object):
     """
+    GsflowModel is the GSFLOW model object. This class can be used
+    to build a GSFLOW model, to load a GSFLOW model from it's control file,
+    to write input files for GSFLOW and to run GSFLOW.
 
     Parameters
     ----------
-    control_file
-    prms
-    mf
-    mf_load_only
-    prms_load_only
-    gsflow_exe
+    control_file : str
+        control file path and name
+    prms : PrmsModel object
+        gsflow.prms.PrmsModel
+    mf : Modflow object
+        gsflow.modflow.Modflow
+    mf_load_only : bool
+        flag that indicates only Modflow model
+    prms_load_only : bool
+        flag that indicates only PRMS model
+    gsflow_exe : str
+        GSFLOW executable path and name
 
     """
     def __init__(self, control=None, prms=None, mf=None, modflow_only=False,
@@ -123,13 +132,18 @@ class GsflowModel(object):
 
         Parameters
         ----------
-        control_file
-        gsflow_exe
-        modflow_only
-        prms_only
+        control_file : str
+            control file path & name
+        gsflow_exe : str
+            gsflow executable path & name
+        modflow_only : bool
+            flag to load only modflow from the control file
+        prms_only : bool
+            flag to load only prms from the control file
 
         Returns
         -------
+            GsflowModel object
 
         """
         prms = None
@@ -180,7 +194,7 @@ class GsflowModel(object):
 
         Returns
         -------
-
+            Modflow object
         """
         name = control.get_values('modflow_name')
         control_file = control.control_file
@@ -256,15 +270,12 @@ class GsflowModel(object):
 
         Parameters
         ----------
-        basename
-        workspace
-
-        Returns
-        -------
+        basename : str
+            project basename
+        workspace :  str
+            model output directory
 
         """
-        # overwrite
-
         print("Writing the project files .....")
         if workspace is not None:
             workspace = os.path.abspath(workspace)
@@ -272,10 +283,9 @@ class GsflowModel(object):
         if (basename, workspace) == (None, None):
             print("Warning: input files will be overwritten....")
             self._write_all()
-            return
 
         # only change the directory
-        if basename is None and workspace is not None:
+        elif basename is None and workspace is not None:
             if not (os.path.isdir(workspace)):
                 os.mkdir(workspace)
             fnn = os.path.basename(self.control.control_file)
@@ -311,10 +321,9 @@ class GsflowModel(object):
             # write
             self.prms.control = self.control
             self._write_all()
-            return
 
         # only change the basename
-        if basename is not None and workspace is None:
+        elif basename is not None and workspace is None:
             cnt_file = basename + "_cont.control"
             ws_ = os.path.dirname(self.control.control_file)
             self.control.control_file = os.path.join(ws_, cnt_file)
@@ -353,10 +362,9 @@ class GsflowModel(object):
             self._update_control_fnames(workspace, basename)
             self.prms.control = self.control
             self._write_all()
-            return
 
         # change both directory & basename
-        if basename is not None and workspace is not None:
+        elif basename is not None and workspace is not None:
             if not (os.path.isdir(workspace)):
                 os.mkdir(workspace)
             cnt_file = basename + "_cont.control"
@@ -398,7 +406,9 @@ class GsflowModel(object):
             self._update_control_fnames(workspace, basename)
             self.prms.control = self.control
             self._write_all()
-            return
+
+        else:
+            raise NotImplementedError()
 
     def _update_control_fnames(self, workspace, basename):
         """
@@ -406,11 +416,10 @@ class GsflowModel(object):
 
         Parameters
         ----------
-        workspace : model output directory
-        basename : project basename
-
-        Returns
-        -------
+        workspace :  str
+            model output directory
+        basename : str
+            project basename
 
         """
         if workspace is not None and basename is None:
@@ -471,6 +480,7 @@ class GsflowModel(object):
         Parameters
         ----------
         basename : str
+            basename of the Modflow object
 
         """
         out_files_list = []
@@ -527,13 +537,11 @@ class GsflowModel(object):
         fidw.close()
 
     def __run(self, exe_name, namefile, model_ws='./',
-              silent=False, pause=False, report=False,
+              silent=False, report=False,
               normal_msg='normal termination',
-              async_run=False, cargs=None):
+              cargs=None):
         """
-        This function will run the model using subprocess.Popen.  It
-        communicates with the model's stdout asynchronously and reports
-        progress to the screen with timestamps
+        This function will run the model using subprocess.Popen.
 
         Parameters
         ----------
@@ -547,18 +555,12 @@ class GsflowModel(object):
             current working directory - './')
         silent : boolean
             Echo run information to screen (default is True).
-        pause : boolean, optional
-            Pause upon completion (default is False).
         report : boolean, optional
             Save stdout lines to a list (buff) which is returned
             by the method . (default is False).
         normal_msg : str
             Normal termination message used to determine if the
             run terminated normally. (default is 'normal termination')
-        async_run : boolean
-            asynchonously read model stdout and report with timestamps.  good for
-            models that take long time to run.  not good for models that run
-            really fast
         cargs : str or list of strings
             additional command line arguments to pass to the executable.
             Default is None
@@ -651,68 +653,20 @@ class GsflowModel(object):
         proc = sp.Popen(argv,
                         stdout=sp.PIPE, stderr=sp.STDOUT, cwd=model_ws)
 
-        if not async_run:
-            while True:
-                line = proc.stdout.readline()
-                c = line.decode('utf-8')
-                if c != '':
-                    for msg in normal_msg:
-                        if msg in c.lower():
-                            success = True
-                            break
-                    c = c.rstrip('\r\n')
-                    if not silent:
-                        print('{}'.format(c))
-                    if report == True:
-                        buff.append(c)
-                else:
-                    break
-            return success, buff
 
-        # some tricks for the async stdout reading
-        q = Queue.Queue()
-        thread = threading.Thread(target=q_output, args=(proc.stdout, q))
-        thread.daemon = True
-        thread.start()
-
-        failed_words = ["fail", "error"]
-        last = datetime.now()
-        lastsec = 0.
         while True:
-            try:
-                line = q.get_nowait()
-            except Queue.Empty:
-                pass
+            line = proc.stdout.readline()
+            c = line.decode('utf-8')
+            if c != '':
+                for msg in normal_msg:
+                    if msg in c.lower():
+                        success = True
+                        break
+                c = c.rstrip('\r\n')
+                if not silent:
+                    print('{}'.format(c))
+                if report == True:
+                    buff.append(c)
             else:
-                if line == '':
-                    break
-                line = line.decode().lower().strip()
-                if line != '':
-                    now = datetime.now()
-                    dt = now - last
-                    tsecs = dt.total_seconds() - lastsec
-                    line = "(elapsed:{0})-->{1}".format(tsecs, line)
-                    lastsec = tsecs + lastsec
-                    buff.append(line)
-                    if not silent:
-                        print(line)
-                    for fword in failed_words:
-                        if fword in line:
-                            success = False
-                            break
-            if proc.poll() is not None:
                 break
-        proc.wait()
-        thread.join(timeout=1)
-        buff.extend(proc.stdout.readlines())
-        proc.stdout.close()
-
-        for line in buff:
-            if normal_msg in line:
-                print("success")
-                success = True
-                break
-
-        if pause:
-            input('Press Enter to continue...')
         return success, buff

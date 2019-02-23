@@ -15,6 +15,7 @@ class PrmsPlot(object):
 
         extent : tuple of floats, optional
             plot extent, if None PrmsPlot will get extent from PrmsDiscretization
+
     """
     def __init__(self, prms_dis=None, extent=None):
 
@@ -53,6 +54,7 @@ class PrmsPlot(object):
 
         Returns
         -------
+            matplotlib.collections.PatchCollection
 
         """
         if not self.__maps:
@@ -95,6 +97,7 @@ class PrmsPlot(object):
         Returns
         -------
         contour_set : matplotlib.tri.tricontour object
+
         """
         import matplotlib.tri as tri
 
@@ -145,16 +148,24 @@ class PrmsPlot(object):
     def plot_parameter(self, parameter, ax=None,
                        masked_values=None, **kwargs):
         """
+        Method to plot a parameter from a ParameterRecord
 
         Parameters
         ----------
-        parameter
-        ax
-        masked_values
-        kwargs
+        array : array to plot.
+            size must be equal to nhru
+
+        ax : matplotlib.pyplot.axes
+
+        masked_values : list, optional
+            list of values to mask from plotting
+
+        kwargs : matplotlib keyword arguments
 
         Returns
         -------
+            matplotlib.collections.PatchCollection or
+            matplotlib.figure.Figure
 
         """
         if not self.__maps:
@@ -225,6 +236,7 @@ class PrmsPlot(object):
         Returns
         -------
         contour_set : matplotlib.tri.tricontour object
+
         """
         if not self.__maps:
             raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
@@ -296,14 +308,14 @@ class PrmsPlot(object):
 
     def plot_model_discretization(self, ax=None, **kwargs):
         """
+        Plots the model grid
 
         Parameters
         ----------
-        ax
-        kwargs
+        ax : matplotlib.axes object, optional
 
-        Returns
-        -------
+        kwargs :
+            matplotlib keyword arguments
 
         """
         if self.__maps:

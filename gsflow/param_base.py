@@ -15,10 +15,14 @@ class ParameterBase(object):
 
     Parameters
     ----------
-    records_list
-    name
-    model_dir
-    header
+    records_list : list
+        list of ParameterRecord objects
+    name : str, optional
+        parameter file name
+    model_dir : str, optional
+        parameter file directory
+    header : str, optional
+        header for the parameter file
     """
     def __init__(self, records_list, name=None, model_dir=None, header=None):
         self._record_names = []
@@ -48,10 +52,12 @@ class ParameterBase(object):
 
     def get_record(self, name, rectype):
         """
+        Method to get records
 
         Parameters
         ----------
         name : str
+            name of record
         rectype : class object
             ParameterRecord or ControlRecord
 
@@ -70,14 +76,16 @@ class ParameterBase(object):
 
     def get_values(self, name):
         """
+        Method to get record values
 
         Parameters
         ----------
-        name
+        name : str
+            name of record
 
         Returns
         -------
-
+            list
         """
         record = io.find_parameter(name, self._records_list)
 
@@ -96,14 +104,14 @@ class ParameterBase(object):
 
     def set_values(self, name, values):
         """
+        Method to set new values to a record
 
         Parameters
         ----------
-        name
-        values
-
-        Returns
-        -------
+        name : str
+            record name
+        values : list
+            list of values
 
         """
 
@@ -125,14 +133,14 @@ class ParameterBase(object):
 
     def _check_before_add(self, name, values):
         """
+        Internal method to check a record before adding to _records_list
 
         Parameters
         ----------
-        name
-        values
-
-        Returns
-        -------
+        name : str
+            record name
+        values : list
+            list of values
 
         """
         if isinstance(name, str):
@@ -157,9 +165,12 @@ class ParameterBase(object):
 
         Parameters
         ----------
-        recobj :
-        where :
-        after :
+        recobj : RecordBase object
+            ParameterRecord or ControlRecord
+        where : int
+            index location to insert record
+        after : int
+            index location - 1 to insert record
 
         """
         if after:
@@ -171,7 +182,7 @@ class ParameterBase(object):
             self._records_list.insert(index + 1, recobj)
             return
 
-        if where:
+        elif where:
             self._record_names.insert(where, recobj.name)
             self._records_list.insert(where, recobj)
         else:
@@ -180,13 +191,12 @@ class ParameterBase(object):
 
     def remove_record(self, name):
         """
+        Method to remove a record
 
         Parameters
         ----------
         name : str
-
-        Returns
-        -------
+            parameter name
 
         """
         if isinstance(name, str):
@@ -206,6 +216,7 @@ class ParameterBase(object):
 
     def get_record_names(self):
         """
+        Method to get record names, Deprecated
 
         Returns
         -------

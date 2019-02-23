@@ -55,11 +55,12 @@ class PrmsModel(object):
     @staticmethod
     def load_from_file(control_file):
         """
-        PrmsModel load method
+        PrmsModel load method from a control file
 
         Parameters
         ----------
         control_file : str
+            control file path and name
 
         Returns
         -------
@@ -80,14 +81,16 @@ class PrmsModel(object):
     @staticmethod
     def _load_parameters(parameter_files):
         """
+        Method to load parameter files
 
         Parameters
         ----------
-        parameter_files
+        parameter_files : list
+            list of parameter files
 
         Returns
         -------
-
+            PrmsParameters object
         """
         try:
             return PrmsParameters.load_from_file(parameter_files)
@@ -99,14 +102,16 @@ class PrmsModel(object):
     @staticmethod
     def _load_data(data_file):
         """
+        Method to load a data file
 
         Parameters
         ----------
-        data_file
+        data_file : str
+            data file name
 
         Returns
         -------
-
+            PrmsData object
         """
         try:
             return PrmsData.load_from_file(data_file)
@@ -116,11 +121,27 @@ class PrmsModel(object):
             return
 
     def get_statVar(self):
+        """
+        Deprecated method to get statvar output
+
+        Returns
+        -------
+            pd.DataFrame of the stat_var file
+
+        """
         err = "get_statVar is Deprecated, use get_StatVar()"
         warnings.warn(err, PendingDeprecationWarning)
         return self.get_StatVar()
 
     def get_StatVar(self):
+        """
+        Method to get statvar output
+
+        Returns
+        -------
+            pd.DataFrame of the stat_var file
+
+        """
         self.stat = StatVar.load_from_control_object(self.control)
         return self.stat.stat_df
 

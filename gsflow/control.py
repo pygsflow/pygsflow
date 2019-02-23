@@ -71,10 +71,11 @@ class ControlFile(ParameterBase):
         Parameters
         ----------
         control_file : str
+            control file path & name
 
         Returns
         -------
-
+            ControlFile object
         """
         if not (os.path.isfile(control_file)):
             raise FileNotFoundError("Invalid file name ....")
@@ -183,14 +184,14 @@ class ControlFile(ParameterBase):
 
     def set_values(self, name, values):
         """
+        Method to set new values to a control record
 
         Parameters
         ----------
-        name
-        values
-
-        Returns
-        -------
+        name : str
+            control record name
+        values : list
+            list of values
 
         """
 
@@ -198,6 +199,20 @@ class ControlFile(ParameterBase):
 
 
     def add_record(self, name=None, values=None, where=None, after=None):
+        """
+        Convience method to add a record to the control file
+
+        Parameters
+        ----------
+        name : str
+            record name
+        values : list
+            list of values
+        where : int
+            index location to insert record
+        after : int
+            index location - 1 to insert record
+        """
 
         add = self._check_before_add(name=name, values=values)
 
@@ -207,20 +222,26 @@ class ControlFile(ParameterBase):
 
     def remove_record(self, name):
         """
+        Convience method to remove a record from a control file
 
         Parameters
         ----------
-        name
-
-        Returns
-        -------
+        name : str
+            control record name
 
         """
         super(ControlFile, self).remove_record(name)
 
     def write(self, name=None):
-        # make sure files are correct
-        #self._make_pths_abs()
+        """
+        Method to write the control file
+
+        Parameters
+        ----------
+        name : str, optional
+            control file name
+
+        """
         if name is None:
             filename = self.control_file
         else:
@@ -248,13 +269,19 @@ class Control_record(object):
 
 class ControlRecord(RecordBase):
     """
+    ControlRecord is the object used for creating and editing
+    control file record objects
 
     Parameters
     ----------
-    name
-    values
-    datatype
-    nvalues
+    name : str
+        record name
+    values : list
+        list of values
+    datatype : int
+        integer datatype flag
+    nvalues : int
+        number of values in record
 
     """
     def __init__(self, name=None, values=None, datatype=None):
@@ -288,6 +315,14 @@ class ControlRecord(RecordBase):
     """
 
     def write(self, fid):
+        """
+        Write method for a control record
+
+        Parameters
+        ----------
+        fid : File object
+
+        """
         fid.write("\n")
         fid.write("####")
         fid.write("\n")
