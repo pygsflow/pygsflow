@@ -98,6 +98,8 @@ class RecordBase(object):
             self.datatype = 1
         elif 'str' in self._values.dtype.name:
             self.datatype = 4
+        elif "unicode" in self._values.dtype.name:
+            self.datatype = 4
         else:
             raise ValueError("Value type is not recognized...{}".format(self._values.dtype))
 
