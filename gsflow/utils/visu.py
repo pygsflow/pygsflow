@@ -4,7 +4,13 @@ Visulization of PRMS and MODFLOW input and output files using vtk file format
 """
 import os
 import warnings
-import pyevtk
+warnings.simplefilter('always', UserWarning)
+
+try:
+    import pyevtk
+except:
+    err = "pyevtk is not installed. Visualization files cannot be generated"
+    warnings.warn(err, UserWarning)
 
 
 def gsflow_to_vtk(control_file = None, only = []):
