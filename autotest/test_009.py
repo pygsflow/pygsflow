@@ -100,6 +100,6 @@ def test_load_write_gsflow():
 
 
 if __name__ == "__main__":
-    test_load_write_model_prms_only()
+    # test_load_write_model_prms_only()
     test_load_write_gsflow_modflow()
     test_load_write_gsflow()

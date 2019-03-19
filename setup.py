@@ -37,7 +37,11 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    description="""Python package to read, edit, write, and visualize GSFLOW models.
+                   This package relies on FloPy for reading modflow input, but adds additional
+                   fuctionality and flexibility through it's interface. It includes additional
+                   support for the new MODFLOW-NWT AG package. The plotting library is also 
+                   compatible with FloPy's PlotMapView and PlotCrossSection.""",
     install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
