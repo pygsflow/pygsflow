@@ -77,7 +77,7 @@ class GsflowModel(object):
         if gsflow_exe is None:
             self.gsflow_exe = os.path.join(os.path.dirname(__file__), r"bin\gsflow.exe")
 
-        # set prms modflow object
+        # set prms object
         if not modflow_only:
             if prms and isinstance(prms, PrmsModel):
                 self.prms = prms
@@ -500,16 +500,17 @@ class GsflowModel(object):
     def _write_all(self):
 
         # write control
+        print("Writing Control file ...")
         self.control.write()
-        print("Control file is written...")
 
         # self write parameters
+        print("Writing Parameters files ...")
         self.prms.parameters.write()
-        print("Parameters files are written...")
 
         # write data
+        print("Writing Data file ...")
         self.prms.data.write()
-        print("Data file is written...")
+
 
         # write mf
         if self.mf is not None:

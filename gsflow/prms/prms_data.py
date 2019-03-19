@@ -144,4 +144,4 @@ class PrmsData(object):
             fid.write("#########################################################################\n")
             pd_to_write = self.data_df.copy()
             pd_to_write = pd_to_write.drop(['Date'], axis=1)
-            pd_to_write.to_csv(fid, index = False, sep =" ", header = False)
+            pd_to_write.to_csv(fid, index = False, sep =" ", line_terminator='\n',  header = False)
