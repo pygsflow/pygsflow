@@ -165,7 +165,7 @@ class GsflowModel(object):
             if 'GSFLOW' in mode[0] or 'MODFLOW' in mode[0]:
                 print("Working on loading MODFLOW files ....")
                 modflow = GsflowModel._load_modflow(control)
-                print("MOSFLOW files are loaded ... ")
+                print("MODFLOW files are loaded ... ")
                 namefile = os.path.basename(control.get_values('modflow_name')[0])
             else:
                 prms_only = True

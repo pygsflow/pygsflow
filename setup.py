@@ -13,7 +13,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = ["pandas",
                 "numpy",
-                "flopy",
+                "flopy >= 3.2.11",
                 "pyshp",
                 "matplotlib"]
 
