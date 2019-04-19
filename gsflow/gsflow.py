@@ -14,6 +14,7 @@ if sys.version_info > (3, 0):
     import queue as Queue
 else:
     import Queue
+
 from datetime import datetime
 import threading
 import warnings
@@ -127,7 +128,7 @@ class GsflowModel(object):
 
     @staticmethod
     def load_from_file(control_file, gsflow_exe="gsflow.exe", modflow_only=False,
-                       prms_only=False):
+                       prms_only=False, mf_load_only = None):
         """
 
         Parameters
@@ -164,7 +165,7 @@ class GsflowModel(object):
             mode = control.get_values('model_mode')
             if 'GSFLOW' in mode[0] or 'MODFLOW' in mode[0]:
                 print("Working on loading MODFLOW files ....")
-                modflow = GsflowModel._load_modflow(control)
+                modflow = GsflowModel._load_modflow(control, mf_load_only)
                 print("MODFLOW files are loaded ... ")
                 namefile = os.path.basename(control.get_values('modflow_name')[0])
             else:
@@ -177,7 +178,7 @@ class GsflowModel(object):
                            gsflow_exe=gsflow_exe)
 
     @staticmethod
-    def _load_modflow(control):
+    def _load_modflow(control, mf_load_only):
         """
         The package files in the .nam file are relative to the execuatble gsflow. So here, we generate a temp.nam
         file that that has the absolute files
@@ -200,7 +201,7 @@ class GsflowModel(object):
         control_file = control.control_file
         name = io.get_file_abs(control_file=control_file, fn=name[0])
         model_dir, name = os.path.split(name)
-        return Modflow.load(name, model_ws=model_dir, control_file=control_file)
+        return Modflow.load(name, model_ws=model_dir, control_file=control_file, load_only=mf_load_only)
 
     # def change_ws(self, ws):
     #
