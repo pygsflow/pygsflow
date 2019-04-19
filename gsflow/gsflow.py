@@ -261,7 +261,7 @@ class GsflowModel(object):
     #     else:
     #         print(" Warning:  the directory exists {}".format(dir_))
 
-    def write_input(self, basename=None, workspace=None):
+    def write_input(self, basename=None, workspace=None, write_only = None):
         """
          Write input files for gsflow. Four cases are possible:
             (1) if basename and workspace are None,then the exisiting files will be overwritten
@@ -275,6 +275,8 @@ class GsflowModel(object):
             project basename
         workspace :  str
             model output directory
+        write_only: a list
+            ['control', 'parameters', 'prms_data', 'mf']
 
         """
         print("Writing the project files .....")
@@ -283,7 +285,7 @@ class GsflowModel(object):
 
         if (basename, workspace) == (None, None):
             print("Warning: input files will be overwritten....")
-            self._write_all()
+            self._write_all(write_only)
 
         # only change the directory
         elif basename is None and workspace is not None:
@@ -321,7 +323,7 @@ class GsflowModel(object):
             self._update_control_fnames(workspace, basename)
             # write
             self.prms.control = self.control
-            self._write_all()
+            self._write_all(write_only)
 
         # only change the basename
         elif basename is not None and workspace is None:
@@ -362,7 +364,7 @@ class GsflowModel(object):
             # update file names in control object
             self._update_control_fnames(workspace, basename)
             self.prms.control = self.control
-            self._write_all()
+            self._write_all(write_only)
 
         # change both directory & basename
         elif basename is not None and workspace is not None:
@@ -406,7 +408,7 @@ class GsflowModel(object):
             # update file names in control object
             self._update_control_fnames(workspace, basename)
             self.prms.control = self.control
-            self._write_all()
+            self._write_all(write_only)
 
         else:
             raise NotImplementedError()
@@ -498,25 +500,42 @@ class GsflowModel(object):
             out_files_list.append(new_outfn)
         self.mf.output_fnames = out_files_list
 
-    def _write_all(self):
+    def _write_all(self, write_only):
+
+        write_only_options = ['control', 'parameters', 'prms_data', 'mf']
+        if not (write_only is None):
+            if not (isinstance(write_only, list)):
+                raise ValueError("write_only agrgument must be a list")
+            for write_option in write_only:
+                if not(write_option in write_only_options):
+                    raise ValueError("The option '{}' is not recognized...".format(write_option))
+        else :
+            write_only = []
+
+
 
         # write control
-        print("Writing Control file ...")
-        self.control.write()
+        if (len(write_only)==0) or ('control' in write_only):
+            print("Writing Control file ...")
+            self.control.write()
 
         # self write parameters
-        print("Writing Parameters files ...")
-        self.prms.parameters.write()
+        if (len(write_only) == 0) or ('parameters' in write_only):
+            print("Writing Parameters files ...")
+            self.prms.parameters.write()
 
         # write data
-        print("Writing Data file ...")
-        self.prms.data.write()
+        if (len(write_only) == 0) or ('prms_data' in write_only):
+            print("Writing Data file ...")
+            self.prms.data.write()
 
 
         # write mf
         if self.mf is not None:
-            self.mf.write_input()
-            print("Modflow files are written...")
+            if (len(write_only) == 0) or ('mf' in write_only):
+                print("Writing Modflow files...")
+                self.mf.write_input()
+
 
     def run_model(self):
         fn = self.control_file
