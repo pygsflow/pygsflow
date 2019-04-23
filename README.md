@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/usgs-pygsflow/pygsflow.svg?branch=master&service=github)](https://travis-ci.com/usgs-pygsflow/pygsflow)
 [![Coverage Status](https://coveralls.io/repos/github/usgs-pygsflow/pygsflow/badge.svg?branch=master)](https://coveralls.io/github/usgs-pygsflow/pygsflow?branch=master)
 # pygsflow
-Python package to Create, Read, Write, Edit, and Visualize GSFLOW models
+pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW models
 
 ## Examples
 Ipython notebook example problems can be found in the examples directory
