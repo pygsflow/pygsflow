@@ -7,3 +7,5 @@ pyproj
 pyshp
 pandas
 wget
+gdal
+rasterio

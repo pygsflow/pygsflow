@@ -8,3 +8,5 @@ pyshp
 enum34
 pandas
 wget
+gdal
+rasterio
