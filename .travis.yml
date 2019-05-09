@@ -44,6 +44,9 @@ env:
   global:
     - NO_NET=1
 
+virtualenv:
+  system_site_packages: true
+  
 # command to install dependencies
 install:
     - if [[ ! -d "$HOME/.local/bin" ]]; then
@@ -72,7 +75,7 @@ install:
     - pip install coveralls
     - pip install pylint
 
-    
+
 # command to run tests
 script:
     - chmod u+x ./bin/gsflow
