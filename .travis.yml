@@ -39,6 +39,7 @@ addons:
       - libnetcdf-dev
       - gdal-bin
       - libgdal-dev
+      - python-gdal
 
 env:
   global:
@@ -57,8 +58,6 @@ install:
     - ln -fs /usr/bin/g++-6 "$HOME/.local/bin/g++" && g++ --version
     - ls -l /usr/bin/g++-6
     - export CXX="g++"
-    - export CPLUS_INCLUDE_PATH="/usr/include/gdal"
-    - export C_INCLUDE_PATH="/usr/include/gdal"
     - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then
       pip install -r requirements27.travis.txt;
       pip install requests;
