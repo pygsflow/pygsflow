@@ -17,8 +17,9 @@ def test_raster_functions():
     try:
         x = Rasters.load(os.path.join(path, name))
     except ImportError:
-        # trap for travis issues with
+        # trap for travis issues with GDAL
         return
+
     x.set_raster_band(1)
 
     # sample the raster using the discretization object
@@ -45,6 +46,7 @@ def test_raster_functions():
     array = x.band_array
     if not isinstance(array, np.ndarray):
         raise AssertionError()
+
 
 if __name__ == "__main__":
     test_raster_functions()
