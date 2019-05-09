@@ -46,7 +46,7 @@ env:
 
 virtualenv:
   system_site_packages: true
-  
+
 # command to install dependencies
 install:
     - if [[ ! -d "$HOME/.local/bin" ]]; then

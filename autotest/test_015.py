@@ -20,6 +20,8 @@ def test_raster_functions():
         # trap for travis issues with
         return
     x.set_raster_band(1)
+
+    # sample the raster using the discretization object
     dem = x.sample_discretization(dis)
 
     if not isinstance(dem, np.ndarray):
