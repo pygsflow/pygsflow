@@ -92,12 +92,15 @@ class PrmsModel(object):
         -------
             PrmsParameters object
         """
-        try:
-            return PrmsParameters.load_from_file(parameter_files)
-        except:
-            err = "PrmsParameters load error, Skipping parameter files"
-            warnings.warn(err, UserWarning)
-            return
+        return PrmsParameters.load_from_file(parameter_files)
+        # try:
+        #     return PrmsParameters.load_from_file(parameter_files)
+        # except:
+        #     err = "PrmsParameters load error, Skipping parameter files"
+        #     raise ValueError("Cannot read one of the parameter files")
+        #     #warnings.warn(err, UserWarning)
+        #
+        #     return
 
     @staticmethod
     def _load_data(data_file):

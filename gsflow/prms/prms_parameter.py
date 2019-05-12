@@ -1,5 +1,6 @@
 from __future__ import (absolute_import, division, print_function)
 import os
+import six
 import numpy as np
 import logging
 import copy
@@ -9,6 +10,13 @@ import warnings
 warnings.simplefilter('always', PendingDeprecationWarning)
 warnings.simplefilter('always', UserWarning)
 
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 class Parameters(object):
     def __new__(cls, parameters_list=None, parameter_files=['temp_parm.parm']):
@@ -76,6 +84,8 @@ class PrmsParameters(ParameterBase):
 
         self.__parameter_files = all_files
         return self.__parameter_files
+   
+    
 
     @staticmethod
     def load_from_file(param_files):
@@ -149,33 +159,30 @@ class PrmsParameters(ParameterBase):
                         if in_dim_section:
                             # Reading Dimensions Section
                             field_name = record.strip()
+                            if is_number(field_name):
+                                raise ValueError("The parameter name is a number. Check the dimensions of {} "
+                                                 "".format(parameters_list[-1].name))
                             value = int(fid.readline().strip())
                             curr_record = ParameterRecord(name=field_name, values=[value],
                                                           file_name=file)
                             parameters_list.append(curr_record)
                             all_dims[field_name] = value
-
-
                         else:
                             # read Parameters section
                             field_name = record.strip().split()[0]
-
-                            try:
-                                ndim = int(fid.readline().strip())
-                            except:
-                                pass
-
+                            if is_number(field_name):
+                                raise ValueError("The parameter name is a number. Check file {}. The dimensions "
+                                                 "of {} might be wrong"
+                                                 "".format(file, parameters_list[-1].name))
+                            ndim = int(fid.readline().strip())
                             dim_nms = []
                             for dim_ in range(ndim):
                                 dim_nms.append(fid.readline().strip())
 
-                            try:
-                                nvalues = int(fid.readline().strip())
-                            except:
-                                pass
-
+                            nvalues = int(fid.readline().strip())
                             datatype = int(fid.readline().strip())
                             value = []
+
                             # read values sequentially
                             val_count = 0
                             while val_count < nvalues:
