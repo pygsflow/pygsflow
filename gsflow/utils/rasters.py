@@ -131,11 +131,11 @@ class Rasters(object):
 
         Parameters
         ----------
-        name
+        name : raster file name
 
         Returns
         -------
-
+            Rasters object
         """
         import rasterio
         raster = rasterio.open(name)

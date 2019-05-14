@@ -38,7 +38,7 @@ def test_load_write_gsflow_modflow():
 
 
 def test_load_write_gsflow():
-    # todo: this must be changed to write relative paths, not absolutes!
+
     ws = "../examples/data/sagehen/gsflow"
     control_file = "saghen_new_cont.control"
 
