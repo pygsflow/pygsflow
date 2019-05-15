@@ -9,3 +9,4 @@ enum34
 pandas
 wget
 rasterio
+pycrs

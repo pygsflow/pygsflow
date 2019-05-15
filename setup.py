@@ -15,6 +15,7 @@ requirements = ["pandas",
                 "numpy",
                 "flopy >= 3.2.11",
                 "pyshp",
+                "pycrs",
                 "matplotlib"]
 
 setup_requirements = []
