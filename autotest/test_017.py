@@ -8,8 +8,8 @@ import shapefile
 def test_modsim():
     ws = "../examples/data/sagehen/gsflow-modsim"
     control_file = "saghen_modsim_cont.control"
-    shp = "./temp/test_modsim.shp"
-    prj = "./temp/test_modsim.prj"
+    shp = "./temp/test_modsim_modsim.shp"
+    prj = "./temp/test_modsim_modsim.prj"
     proj4 = "+proj=utm +zone=10 +ellps=GRS80 +datum=NAD83 +units=m +no_defs "
 
     gsf = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
@@ -26,7 +26,7 @@ def test_modsim():
     crs = pycrs.parse.from_proj4(proj4)
 
     sf = shapefile.Reader(shp)
-    if not sf.numRecords == 15:
+    if not sf.numRecords == 16:
         raise AssertionError
 
     if not sf.shapeType == 3:
@@ -53,7 +53,7 @@ def test_gsflow_modsim_read_write():
     crs = pycrs.parse.from_proj4(proj4)
 
     sf = shapefile.Reader(shp)
-    if not sf.numRecords == 15:
+    if not sf.numRecords == 16:
         raise AssertionError
 
     if not sf.shapeType == 3:
