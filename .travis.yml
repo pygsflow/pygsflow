@@ -62,9 +62,7 @@ install:
       pip install -r requirements27.travis.txt;
       pip install requests;
       echo requests version1; python -c "import requests; print(requests.__version__)";
-      fi
-    - if [[ $TRAVIS_PYTHON_VERSION > 3.4 ]];
-      then pip install -r requirements.travis.txt;
+      else pip install -r requirements.travis.txt;
       fi
     - pip install https://github.com/modflowpy/flopy/zipball/develop
     - pip install --upgrade jupyter
