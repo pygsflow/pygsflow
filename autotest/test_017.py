@@ -6,8 +6,8 @@ import shapefile
 
 
 def test_modsim():
-    ws = "../examples/data/sagehen/gsflow"
-    control_file = "saghen_new_cont.control"
+    ws = "../examples/data/sagehen/gsflow-modsim"
+    control_file = "saghen_modsim_cont.control"
     shp = "./temp/test_modsim.shp"
     prj = "./temp/test_modsim.prj"
     proj4 = "+proj=utm +zone=10 +ellps=GRS80 +datum=NAD83 +units=m +no_defs "
@@ -39,11 +39,11 @@ def test_modsim():
 
 
 def test_gsflow_modsim_read_write():
-    ws = "../examples/data/sagehen/gsflow"
+    ws = "../examples/data/sagehen/gsflow-modsim"
     control_file = "saghen_modsim_cont.control"
     ws2 = "./temp"
-    shp = "./temp/saghen_new_modsim.shp"
-    prj = "./temp/saghen_new_modsim.prj"
+    shp = "./temp/saghen_modsim_modsim.shp"
+    prj = "./temp/saghen_modsim_modsim.prj"
     proj4 = "+proj=utm +zone=10 +ellps=GRS80 +datum=NAD83 +units=m +no_defs "
 
     gsf = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
@@ -66,5 +66,5 @@ def test_gsflow_modsim_read_write():
 
 
 if __name__ == "__main__":
-    test_modsim()
+    # test_modsim()
     test_gsflow_modsim_read_write()

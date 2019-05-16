@@ -184,7 +184,7 @@ MODSIM-GSFLOW
 modflow_name
 1
 4
-saghen_new.nam
+saghen_modsim.nam
 ####
 naniOutVars
 1

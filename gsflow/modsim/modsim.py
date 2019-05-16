@@ -384,10 +384,17 @@ class _SfrTopology(object):
         self._connections = None
         self._polyline = None
         self._attributes = None
+        self._ij = None
 
     @property
     def iseg(self):
         return self._iseg
+
+    @property
+    def ij(self):
+        if self._ij is None:
+            self._set_attributes()
+        return self._ij
 
     @property
     def connections(self):
@@ -430,6 +437,28 @@ class _SfrTopology(object):
                 ijout.append([rec.i, rec.j])
             else:
                 pass
+
+        updist = []
+        for i, j in ijup:
+            a = (i - self.ij[0])**2
+            b = (j - self.ij[1])**2
+            c = np.sqrt(a + b)
+            updist.append(c)
+
+        outdist = []
+        for i, j in ijout:
+            a = (i - self.ij[0])**2
+            b = (j - self.ij[1])**2
+            c = np.sqrt(a + b)
+            outdist.append(c)
+
+        if updist:
+            upidx = updist.index(np.min(updist))
+            ijup = [ijup[upidx]]
+
+        if outdist:
+            outix = outdist.index(np.min(outdist))
+            ijout = [ijout[outix]]
 
         vup = ()
         for i, j in ijup:
@@ -496,6 +525,16 @@ class _SfrTopology(object):
                     outseg.append(rec.outseg)
                     iupseg.append(rec.iupseg)
                     break
+
+        ij = []
+        reach_data = self._sfr.reach_data
+        reach_data.sort(axis=0, order=["iseg", "ireach"])
+        for rec in reach_data:
+            if rec.iseg == self.iseg:
+                ij.append([rec.i, rec.j])
+
+        if ij:
+            self._ij = tuple(ij[-1])
 
         if outseg:
             outseg = list(set(outseg))[0]
