@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import warnings
+
 try:
     import shapefile
 except ImportError:
@@ -185,6 +186,7 @@ class Modsim(object):
 
         if proj4 is None:
             proj4 = self.mf.modelgrid.proj4
+
         epsg = self.mf.modelgrid.epsg
 
         try:
@@ -227,9 +229,10 @@ class _LakTopology(object):
         self._xv = self._mg.xvertices
         self._yv = self._mg.yvertices
         self._lakeno = lakeno
-        self._centriod = None
+        self._centroid = None
         self._connections = None
         self._polyline = None
+        self._ij = None
 
     @property
     def lakeno(self):
@@ -237,9 +240,9 @@ class _LakTopology(object):
 
     @property
     def centroid(self):
-        if self._centriod is None:
+        if self._centroid is None:
             self._set_lake_centroid()
-        return self._centriod
+        return self._centroid
 
     @property
     def connections(self):
@@ -267,26 +270,27 @@ class _LakTopology(object):
 
         """
         # get a 3d array of lak locations
-        lakes = self._lak.lakarr.array[0]
+        lakes = self._lak.lakarr.array
 
         lakeno = self.lakeno
         if lakeno < 0:
             lakeno *= -1
 
         verts = []
-        if len(lakes.shape) == 3:
-            t = np.where(lakes == lakeno)
-            i = list(t[1])
-            j = list(t[2])
-            ij = list(zip(i, j))
-            for i, j in ij:
-                verts += self._mg.get_cell_vertices(i, j)
+        for lake3d in lakes:
+            if len(lake3d.shape) == 3:
+                t = np.where(lake3d == lakeno)
+                i = list(t[1])
+                j = list(t[2])
+                ij = list(zip(i, j))
+                for i, j in ij:
+                    verts += self._mg.get_cell_vertices(i, j)
 
+        if verts:
             verts = np.array(list(set(verts))).T
             xc = np.mean(verts[0])
             yc = np.mean(verts[1])
             self._centroid = (xc, yc)
-
         else:
             self._centroid = None
 
@@ -308,32 +312,41 @@ class _LakTopology(object):
         for per, recarray in self._sfr.segment_data.items():
             for rec in recarray:
                 if rec.iupseg == lakeno:
-                    cseg.append([rec.iupseg, 'upseg'])
+                    cseg.append(rec.nseg)
                 elif rec.outseg == lakeno:
-                    cseg.append([rec.outseg, 'outseg'])
+                    cseg.append(rec.nseg)
 
         cseg = list(set(cseg))
 
         ij = []
         reach_data = self._sfr.reach_data
         reach_data.sort(axis=0, order=["iseg", "ireach"])
-        for seg, conn in cseg:
+        for seg in cseg:
             temp = []
             for rec in reach_data:
                 if rec.iseg == seg:
-                    if conn == 'upseg':
-                        ij.append((rec.i, rec.j))
-                    else:
-                        temp.append([rec.i, rec.j])
+                    temp.append((rec.i, rec.j))
 
-            if temp:
-                ij.append(tuple(temp[-1]))
+            ij.append(temp)
 
+        # now we use the distance equation to connect to
+        # the closest....
         verts = []
-        for i, j in ij:
-            xv = self._mg.xcellcenters[i, j]
-            yv = self._mg.ycellcenters[i, j]
-            verts.append((xv, yv))
+        for conn in ij:
+            tverts = []
+            dist = []
+            for i, j in conn:
+                xv = self._mg.xcellcenters[i, j]
+                yv = self._mg.ycellcenters[i, j]
+                tverts.append((xv, yv))
+                a = (xv - self.centroid[0])**2
+                b = (yv - self.centroid[1])**2
+                c = np.sqrt(a + b)
+                dist.append(c)
+
+            if tverts:
+                vidx = dist.index(np.min(dist))
+                verts.append(tverts[vidx])
 
         if verts:
             self._connections = verts

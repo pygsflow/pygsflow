@@ -204,7 +204,9 @@ class GsflowModel(object):
         control_file = control.control_file
         name = io.get_file_abs(control_file=control_file, fn=name[0])
         model_dir, name = os.path.split(name)
-        return Modflow.load(name, model_ws=model_dir, control_file=control_file, load_only=mf_load_only)
+        return Modflow.load(name, model_ws=model_dir,
+                            control_file=control_file,
+                            load_only=mf_load_only)
 
     def write_input(self, basename=None, workspace=None, write_only=None):
         """
