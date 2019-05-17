@@ -371,7 +371,7 @@ class Topology(object):
     n_segments : int
         number of sfr segments in network
     """
-    def __init__(self, nss):
+    def __init__(self, nss=None):
         self.topology = dict()
         self.nss = nss
 

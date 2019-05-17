@@ -85,7 +85,7 @@ class ParameterBase(object):
 
         Returns
         -------
-            list
+            np.ndarray
         """
         record = io.find_parameter(name, self._records_list)
 

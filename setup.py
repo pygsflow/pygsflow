@@ -53,6 +53,7 @@ setup(
                                     'gsflow.prms',
                                     'gsflow.utils',
                                     'gsflow.modflow',
+                                    'gsflow.modsim',
                                     'gsflow.output']),
     setup_requires=setup_requirements,
     test_suite='autotest',
