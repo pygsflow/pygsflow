@@ -4,7 +4,7 @@
 pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW models
 
 ## Examples
-Ipython notebook example problems can be found in the examples directory
+Ipython notebook example problems can be found in the examples directory.
 
 ## Installation
 The pygsflow repository can be installed using pip after downloading the package
@@ -16,6 +16,9 @@ pygsflow is now installed
 
 ## Authors
 Ayman Alzraiee and Joshua Larsen
+
+## Bugs ...
+The code is in active development and although there is a testing infrastructure set up we cannot catch all the software bugs without the help of users. If you find a bug or have an issue, please report it by opening a new issue. You can open a new issue by clicking the issues tab near the top of the page.
 
 ## Project History
 This project is a continuation of the original pygsflow repository at:
