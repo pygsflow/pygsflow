@@ -37,6 +37,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Topic :: Scientific/Engineering :: Hydrology'
     ],
     description="""Python package to read, edit, write, and visualize GSFLOW models.
                    This package relies on FloPy for reading modflow input, but adds additional
