@@ -63,6 +63,7 @@ install:
       pip install requests;
       echo requests version1; python -c "import requests; print(requests.__version__)";
       else pip install -r requirements.travis.txt;
+      pip install --no-binary netcdf4 netcdf4 rasterio;
       fi
     - pip install https://github.com/modflowpy/flopy/zipball/develop
     - pip install --upgrade jupyter
