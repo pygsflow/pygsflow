@@ -1,6 +1,6 @@
 appdirs
 matplotlib
-netcdf4
+netcdf4<=1.4.2
 fiona
 descartes
 pyproj
