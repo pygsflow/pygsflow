@@ -123,6 +123,31 @@ class GsflowModel(object):
         warnings.warn(err, PendingDeprecationWarning)
         return self.help
 
+    def export_nc(self, f, **kwargs):
+        """
+        Method to export the GSFLOW model as a netcdf
+        file. This method only works if nhru is equivalent
+        to nrow * ncol in modflow.
+
+        Parameters
+        ----------
+        f : str
+            netcdf file name
+        kwargs :
+            keyword arguments for netcdf
+        """
+        if not f.endswith(".nc"):
+            raise AssertionError("f must end with .nc extension")
+        if self.mf is None:
+            err = "Modflow object must be loaded to export netcdf file"
+            raise AssertionError(err)
+
+        f = self.mf.export(f, **kwargs)
+        if self.prms is not None:
+            f = self.prms.export_nc(f, self.mf, **kwargs)
+
+        return f
+
     @staticmethod
     def load_from_file(control_file, gsflow_exe="gsflow.exe", modflow_only=False,
                        prms_only=False, mf_load_only=None):

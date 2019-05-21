@@ -46,6 +46,28 @@ class PrmsModel(object):
             data_file = control.get_values("data_file")
             self.data = PrmsModel._load_data(data_file)
 
+    def export_nc(self, f, modflow, **kwargs):
+        """
+        Method to export input data to a NetCdf file
+
+        Parameters:
+        ----------
+        f : str or fp.export.NetCdf
+            filename to write the parameter to (*.nc)
+        modflow : object
+            fp.modflow.Modflow or gsflow.modflow.Modflow object
+
+        Notes:
+        -----
+        NetCdf export relies on flopy, so at the moment will
+        only work for GSFLOW models where PRMS has the same
+        discretization as the modflow grid
+        """
+        if self.parameters is not None:
+            f = self.parameters.export_nc(f, modflow, **kwargs)
+
+        return f
+
     @property
     def Data(self):
         err = "Data is depreciated, calling data"

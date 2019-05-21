@@ -18,6 +18,7 @@ def is_number(s):
     except ValueError:
         return False
 
+
 class Parameters(object):
     def __new__(cls, parameters_list=None, parameter_files=['temp_parm.parm']):
         err = "Parameters class has been Deprecated; Calling" \
@@ -84,8 +85,6 @@ class PrmsParameters(ParameterBase):
 
         self.__parameter_files = all_files
         return self.__parameter_files
-   
-    
 
     @staticmethod
     def load_from_file(param_files):
@@ -139,7 +138,7 @@ class PrmsParameters(ParameterBase):
                                 headers.append([record, file])
                                 continue
 
-                        ## read records information Not comments
+                        # read records information Not comments
 
                         if '** Parameters **' in record:
                             in_dim_section = False
@@ -206,6 +205,29 @@ class PrmsParameters(ParameterBase):
                             parameters_list.append(curr_record)
 
         return PrmsParameters(parameters_list=parameters_list, header=headers)
+
+    def export_nc(self, f, modflow, **kwargs):
+        """
+        Method to export a PrmsParameters object
+        to netcdf (.nc) file
+
+        Parameters:
+        ----------
+        f : str or fp.export.NetCdf
+            filename to write the parameter to (*.nc)
+        modflow : object
+            fp.modflow.Modflow or gsflow.modflow.Modflow object
+
+        Notes:
+        -----
+        NetCdf export relies on flopy, so at the moment will
+        only work for GSFLOW models where PRMS has the same
+        discretization as the modflow grid
+        """
+        for parameter in self.parameters_list:
+            f = parameter.export_nc(f, modflow, **kwargs)
+
+        return f
 
     def get_record(self, name):
         """
@@ -410,7 +432,6 @@ class ParameterRecord(RecordBase):
             if self.ndim < 1:
                 raise ValueError("No dimension names are specified")
 
-            # Todo: infer data dimension from data
             if self._values.ndim > 1:
                 pass
             else:
@@ -439,6 +460,30 @@ class ParameterRecord(RecordBase):
 
         # change data type
         self._check_dtype()
+
+    def export_nc(self, f, modflow, **kwargs):
+        """
+        Method to export netcdf
+
+        Parameters
+        ----------
+        f : str or fp.export.NetCdf
+            filename to write the parameter to (*.nc)
+        modflow : object
+            fp.modflow.Modflow or gsflow.modflow.Modflow object
+
+        kwargs : **
+            keyword arguments
+
+        Notes:
+        -----
+        NetCdf export relies on flopy, so at the moment will
+        only work for GSFLOW models where PRMS has the same
+        discretization as the modflow grid
+        """
+        from ..utils.netcdf import param2netcdf
+        f = param2netcdf(f, modflow, self, **kwargs)
+        return f
 
     def _write_dimension(self, fid):
         """
@@ -512,51 +557,30 @@ class ParameterRecord(RecordBase):
         except:
             return "Parameter Record"
 
-    """
-   @ comment JL
-
-   these write methods can be cleaned up by using
-   a list and then .join()
-   """
     def __str__(self):
         if self._dimensions is None:  # print record for dimension
-            print_str = ""
-            print_str = print_str + "\n"
-            print_str = print_str + "####"
-            print_str = print_str + "\n"
-            print_str = print_str + self.name
-            print_str = print_str + "\n"
-            print_str = print_str + str(self.values[0])
-            print_str = print_str + "\n"
-            print_str = print_str + "####"
-            return print_str
+            s = ['\n', "####", "\n", self.name, "\n",
+                 str(self.values[0]), "\n", "####"]
+            s = "".join(s)
+            return s
         else:  # print regular param.
-            print_str = ""
-            print_str = print_str + "\n"
-            print_str = print_str + "####"
-            print_str = print_str + "\n"
-            print_str = print_str + self.name + " " + str(self.width)
-            print_str = print_str + "\n"
-            print_str = print_str + str(self.ndim)
-            print_str = print_str + "\n"
+            s = ["\n", "####", "\n", self.name, " ", str(self.width),
+                 "\n", str(self.ndim), "\n"]
             for dim_nam in self.dimensions_names:
-                print_str = print_str + dim_nam
-                print_str = print_str + "\n"
-            print_str = print_str + str(self.nvalues)
-            print_str = print_str + "\n"
-            print_str = print_str + str(self.datatype)
+                s += [dim_nam, "\n"]
+
+            s += [str(self.nvalues), "\n", str(self.datatype)]
 
             # write values
             for i, val in enumerate(self.values):
                 if i > 3:
-                    print_str = print_str + ".\n.\n."
+                    s.append(".\n.\n.")
                     break
-                print_str = print_str + "\n"
-                print_str = print_str + str(val)
+                s += ["\n", str(val)]
 
-            print_str = print_str + "\n"
-            print_str = print_str + "####"
-            return print_str
+            s += ["\n", "####"]
+            s = "".join(s)
+            return s
 
     def from_dict(self):
         pass

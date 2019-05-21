@@ -118,6 +118,9 @@ class RecordBase(object):
         else:
             raise ValueError("Error : Cannot recognize data type")
 
+    def export_nc(self, f, modflow, **kwargs):
+        pass
+
     def from_dict(self):
         pass
 

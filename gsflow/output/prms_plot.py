@@ -305,7 +305,6 @@ class PrmsPlot(object):
         # todo: if it's really necessary considering pandas
         return
 
-
     def plot_model_discretization(self, ax=None, **kwargs):
         """
         Plots the model grid
