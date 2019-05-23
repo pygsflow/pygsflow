@@ -297,12 +297,12 @@ class ModflowAg(Package):
                         for rec in recarray:
                             num = rec['numcell']
                             if self.trigger:
-                                foo.write(fmt5.format(rec['segid'] + 1,
+                                foo.write(fmt5.format(rec['segid'],
                                                       rec['numcell'],
                                                       rec['period'],
                                                       rec['triggerfact']))
                             else:
-                                foo.write(fmt5.format(rec['segid'] + 1,
+                                foo.write(fmt5.format(rec['segid'],
                                                       rec['numcell']))
 
                             for i in range(num):
@@ -390,12 +390,12 @@ class ModflowAg(Package):
 
                             for i in range(num):
                                 if rec["fracsupmax{}".format(i)] != -1e+10:
-                                    foo.write("{:d}   {:f}   {:f}\n".format(rec['segid{}'.format(i)] + 1,
+                                    foo.write("{:d}   {:f}   {:f}\n".format(rec['segid{}'.format(i)],
                                                                             rec['fracsup{}'.format(i)],
                                                                             rec['fracsupmax{}'.format(i)]))
 
                                 else:
-                                    foo.write("{:d}   {:f}\n".format(rec['segid{}'.format(i)] + 1,
+                                    foo.write("{:d}   {:f}\n".format(rec['segid{}'.format(i)],
                                                                      rec['fracsup{}'.format(i)]))
 
                     else:
@@ -750,7 +750,11 @@ def _read_block_6_10_or_14(fobj, nrec, recarray, block):
     for _ in range(nrec):
         t1 = []
         ll = multi_line_strip(fobj).split()
-        ll[0] = int(ll[0]) - 1
+        if block in (6, ):
+            # do not zero adjust segid
+            ll[0] = int(ll[0])
+        else:
+            ll[0] = int(ll[0]) - 1
 
         if block in (6, 10):
             # correct list length if not using trigger factor
@@ -774,7 +778,10 @@ def _read_block_6_10_or_14(fobj, nrec, recarray, block):
 
             if hrus or block == 14:
                 tmp = multi_line_strip(fobj).split()[:3]
-                tmp[0] = int(tmp[0]) - 1
+                if block == 14:
+                    tmp[0] = int(tmp[0])
+                else:
+                    tmp[0] = int(tmp[0]) - 1
             else:
                 tmp = multi_line_strip(fobj).split()[:4]
                 tmp[0:2] = [int(tmp[0]) - 1, int(tmp[1]) - 1]
