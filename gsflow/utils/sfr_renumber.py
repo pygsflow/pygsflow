@@ -24,7 +24,7 @@ class SfrRenumber(object):
         optional and not needed if model is provided
     lak : <flopy.modflow.ModflowLak> object
         optional and not needed if model is provided
-    ag : <gsflow.modflow.ModflowAg> object
+    ag : <gsflow.modflow.ModflowAwu> object
         optional and not needed if <gsflow.modflow.Modflow>
         model is provided
 
@@ -113,7 +113,7 @@ class SfrRenumber(object):
 
             # check to see if the user provided a gsflow.modflow.Modflow object
             if isinstance(model, Modflow):
-                self.ag = model.get_package("AG")
+                self.ag = model.get_package("AWU")
 
         if self.sfr is None:
             raise AssertionError("SFR package not found, check model inputs")

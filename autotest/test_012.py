@@ -1,6 +1,6 @@
-# test ModflowAg package
+# test ModflowAwu package
 import os
-from gsflow.modflow import Modflow, ModflowAg
+from gsflow.modflow import Modflow, ModflowAwu
 import numpy as np
 
 
@@ -11,18 +11,18 @@ def test_ModflowAg_load_write():
 
     ml = Modflow("agtest", model_ws=ws)
 
-    ag = ModflowAg.load(os.path.join(ws, agfile), ml,
-                        nper=nper, ext_unit_dict={})
+    ag = ModflowAwu.load(os.path.join(ws, agfile), ml,
+                         nper=nper, ext_unit_dict={})
 
 
     ws2 = "./temp"
     ml.change_model_ws(ws2)
     ag.write_file()
 
-    agfile2 = "agtest.ag"
+    agfile2 = "agtest.awu"
     ml2 = Modflow("agtest2", model_ws=ws2)
-    ag2 = ModflowAg.load(os.path.join(ws2, agfile2), ml2,
-                         nper=nper, ext_unit_dict={})
+    ag2 = ModflowAwu.load(os.path.join(ws2, agfile2), ml2,
+                          nper=nper, ext_unit_dict={})
 
     assert repr(ag.options) == repr(ag2.options)
 
@@ -50,7 +50,7 @@ def test_ModflowAg_load_write():
             assert rec['segid0'] == rec2['segid0']
 
     assert not ag.plotable
-    assert ModflowAg.ftype() == "AG"
+    assert ModflowAwu.ftype() == "AWU"
 
 
 if __name__ == "__main__":

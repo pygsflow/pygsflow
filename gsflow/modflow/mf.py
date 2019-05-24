@@ -132,7 +132,7 @@ class Modflow(fpModflow):
             "hob": flopy.modflow.ModflowHob,
             "vdf": flopy.seawat.SeawatVdf,
             "vsc": flopy.seawat.SeawatVsc,
-            "ag": gsflow.modflow.ModflowAg
+            "awu": gsflow.modflow.ModflowAwu
         }
 
     @property

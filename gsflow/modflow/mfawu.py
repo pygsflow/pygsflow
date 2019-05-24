@@ -9,9 +9,9 @@ from flopy.utils.optionblock import OptionBlock
 from collections import OrderedDict
 
 
-class ModflowAg(Package):
+class ModflowAwu(Package):
     """
-    The ModflowAg class is used to build read, write, and edit data
+    The ModflowAwu class is used to build read, write, and edit data
     from the MODFLOW-NWT AG package.
 
     Parameters
@@ -25,7 +25,7 @@ class ModflowAg(Package):
     unitnumber : list, optional
         fortran unit number for modflow, default 69
     filenames : list, optional
-        file name for ModflowAg package to write input
+        file name for ModflowAwu package to write input
 
     """
     _options = OrderedDict([('noprint', OptionBlock.simple_flag),
@@ -103,34 +103,34 @@ class ModflowAg(Package):
 
     def __init__(self, model, options=None, time_series=None, well_list=None,
                  irrdiversion=None, irrwell=None, supwell=None,
-                 extension="ag", unitnumber=None, filenames=None,
+                 extension="awu", unitnumber=None, filenames=None,
                  nper=0):
 
         # setup the package parent class
         if unitnumber is None:
-            unitnumber = ModflowAg.defaultunit()
+            unitnumber = ModflowAwu.defaultunit()
 
         if filenames is None:
             filenames = [None]
         elif isinstance(filenames, str):
             filenames = [filenames]
 
-        name = [ModflowAg.ftype()]
+        name = [ModflowAwu.ftype()]
         units = [unitnumber]
         extra = [""]
 
         # set package name
         fname = [filenames[0]]
 
-        super(ModflowAg, self).__init__(model, extension=extension,
-                                        name=name, unit_number=units,
-                                        extra=extra, filenames=fname)
+        super(ModflowAwu, self).__init__(model, extension=extension,
+                                         name=name, unit_number=units,
+                                         extra=extra, filenames=fname)
 
         # set up class
         self.heading = "# {} package for {}, generated " \
                        "by pygsflow\n".format(self.name[0],
                                               model.version_types[model.version])
-        self.url = "ag.htm"
+        self.url = "awu.htm"
 
         # options
         self.noprint = None
@@ -170,7 +170,7 @@ class ModflowAg(Package):
             self.options = options
             self._update_attrs_from_option_block(options)
         else:
-            self.options = OptionBlock("", ModflowAg)
+            self.options = OptionBlock("", ModflowAwu)
 
         self.time_series = time_series
         self.well_list = well_list
@@ -206,7 +206,7 @@ class ModflowAg(Package):
 
     def write_file(self, check=False):
         """
-        Write method for ModflowAg
+        Write method for ModflowAwu
 
         Parameters
         ----------
@@ -430,7 +430,7 @@ class ModflowAg(Package):
             np.recarray
 
         """
-        dtype = ModflowAg.get_default_dtype(maxells=maxells, block=block)
+        dtype = ModflowAwu.get_default_dtype(maxells=maxells, block=block)
         return create_empty_recarray(numrecords, dtype, default_value=-1.0E+10)
 
     @staticmethod
@@ -539,7 +539,7 @@ class ModflowAg(Package):
 
         Returns
         -------
-            ModflowAg object
+            ModflowAwu object
         """
         with open(f) as mfag:
 
@@ -550,7 +550,7 @@ class ModflowAg(Package):
                     break
 
             # read the options block
-            options = OptionBlock.load_options(mfag, ModflowAg)
+            options = OptionBlock.load_options(mfag, ModflowAwu)
 
             line = multi_line_strip(mfag)
 
@@ -569,7 +569,7 @@ class ModflowAg(Package):
 
                 if len(t) > 0:
                     nrec = len(t)
-                    time_series = ModflowAg.get_empty(nrec, block="time series")
+                    time_series = ModflowAwu.get_empty(nrec, block="time series")
 
                     for ix, rec in enumerate(t):
                         if rec[0] in ('welletall', 'wellall'):
@@ -597,10 +597,10 @@ class ModflowAg(Package):
                     # check if this is block 2a
                     if isinstance(options.tabfiles, np.recarray):
                         tf = True
-                        well = ModflowAg.get_empty(nrec, block='tabfile_well')
+                        well = ModflowAwu.get_empty(nrec, block='tabfile_well')
                     else:
                         tf = False
-                        well = ModflowAg.get_empty(nrec, block="well")
+                        well = ModflowAwu.get_empty(nrec, block="well")
 
                     for ix, rec in enumerate(t):
                         if not tf:
@@ -645,11 +645,11 @@ class ModflowAg(Package):
                             # model.version2 will need to be changed
                             # for pure flopy compatibility if migrated
                             if model.version2 == "gsflow":
-                                irr = ModflowAg.get_empty(nrec, maxells=maxcellsdiversion,
-                                                          block="irrdiversion_gsflow")
+                                irr = ModflowAwu.get_empty(nrec, maxells=maxcellsdiversion,
+                                                           block="irrdiversion_gsflow")
                             else:
-                                irr = ModflowAg.get_empty(nrec, maxells=maxcellsdiversion,
-                                                          block="irrdiversion_modflow")
+                                irr = ModflowAwu.get_empty(nrec, maxells=maxcellsdiversion,
+                                                           block="irrdiversion_modflow")
 
                             # read blocks 5 & 6
                             irr = _read_block_6_10_or_14(mfag, nrec, irr, 6)
@@ -666,11 +666,11 @@ class ModflowAg(Package):
                             # model.version2 will need to be changed
                             # for pure flopy compatibility if migrated
                             if model.version2 == "gsflow":
-                                irr = ModflowAg.get_empty(nrec, maxells=maxcellswell,
-                                                          block="irrwell_gsflow")
+                                irr = ModflowAwu.get_empty(nrec, maxells=maxcellswell,
+                                                           block="irrwell_gsflow")
                             else:
-                                irr = ModflowAg.get_empty(nrec, maxells=maxcellswell,
-                                                          block="irrwell_modflow")
+                                irr = ModflowAwu.get_empty(nrec, maxells=maxcellswell,
+                                                           block="irrwell_modflow")
 
                             # read blocks 9 & 10
                             irr = _read_block_6_10_or_14(mfag, nrec, irr, 10)
@@ -686,8 +686,8 @@ class ModflowAg(Package):
                             sup = np.copy(sup_well[per - 1])
 
                         else:
-                            sup = ModflowAg.get_empty(nrec, maxells=maxdiversions,
-                                                      block="supwell")
+                            sup = ModflowAwu.get_empty(nrec, maxells=maxdiversions,
+                                                       block="supwell")
                             # read blocks 13 & 14
                             sup = _read_block_6_10_or_14(mfag, nrec, sup, 14)
 
@@ -705,9 +705,9 @@ class ModflowAg(Package):
                     else:
                         raise ValueError("Something went wrong at: {}".format(line))
 
-        return ModflowAg(model, options=options, time_series=time_series,
-                         well_list=well, irrwell=irr_well, irrdiversion=irr_diversion,
-                         supwell=sup_well, nper=nper)
+        return ModflowAwu(model, options=options, time_series=time_series,
+                          well_list=well, irrwell=irr_well, irrdiversion=irr_diversion,
+                          supwell=sup_well, nper=nper)
 
     @staticmethod
     def defaultunit():
@@ -715,7 +715,7 @@ class ModflowAg(Package):
 
     @staticmethod
     def ftype():
-        return "AG"
+        return "AWU"
 
     @property
     def plotable(self):
