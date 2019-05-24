@@ -541,6 +541,9 @@ class ModflowAwu(Package):
         -------
             ModflowAwu object
         """
+        if nper == 0:
+            nper = model.nper
+
         with open(f) as mfag:
 
             # strip the file header if it exists
