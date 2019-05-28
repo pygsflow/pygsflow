@@ -7,21 +7,25 @@ pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW 
 Ipython notebook example problems can be found in the examples directory.
 
 ## Installation
-The pygsflow repository can be installed using pip after downloading the package
-Open a command prompt or anaconda prompt terminal and change directory to the trunk and run the command
+The pygsflow repository can be installed using pip.
+Open a command prompt or anaconda prompt terminal and type:
 
-`pip install .`
+`pip install https://github.com/usgs-pygsflow/pygsflow/zipball/master`
 
 pygsflow is now installed
+
+Alternatively the user can download a copy of the repository, open a command prompt or anaconda promt terminal, cd into the trunk directory and type:
+
+`pip install . `
 
 ## Authors
 Ayman Alzraiee and Joshua Larsen
 
-## Bugs ...
+## Bugs
 The code is in active development and although there is a testing infrastructure set up we cannot catch all the software bugs without the help of users. If you find a bug or have an issue, please report it by opening a new issue. You can open a new issue by clicking the issues tab near the top of the page.
 
 ## Project History
-This project is a continuation of the original pygsflow repository at:
+This project is a refinement and continuation of the original pygsflow repository at:
 
 https://github.com/aymanalz/pygsflow
 
