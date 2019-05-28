@@ -168,8 +168,10 @@ class Modsim(object):
             w.record(attributes['iseg'],
                      attributes['iupseg'],
                      attributes['outseg'])
-
-        w.close()
+        try:
+            w.close()
+        except AttributeError:
+            pass
 
         if pycrs is None:
             warn = "PyCRS must be installed to add a projection" \
@@ -204,6 +206,7 @@ class Modsim(object):
             warn = "Please provide a valid proj4 or epsg code to " \
                    "flopy's model grid: Skipping writing {}".format(prj)
             warnings.warn(warn)
+            return
 
         with open(prj, "w") as foo:
             foo.write(crs.to_esri_wkt())
