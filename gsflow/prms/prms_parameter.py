@@ -111,6 +111,9 @@ class PrmsParameters(ParameterBase):
         headers = []
         parameters_list = []
         for ifile, file in enumerate(param_files):
+            print("------------------------------------")
+            print("Reading parameter file : {}".format(file))
+            print("------------------------------------")
             if not (os.path.isfile(file)):
                 raise FileNotFoundError("Invalid file name {}".format(file))
 
