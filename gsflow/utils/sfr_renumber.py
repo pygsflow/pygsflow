@@ -183,8 +183,18 @@ class SfrRenumber(object):
             # sort by topology, preferred method
             segments = self.sfr.all_segments
             topo = Topology(nss)
+
+            chk = []
             for rec in segments:
                 topo.add_connection(rec.nseg, rec.outseg)
+                chk.append(rec.outseg)
+                if rec.iupseg < 0:
+                    topo.add_connection(rec.iupseg, rec.nseg)
+
+            # check for dead end lake diversions
+            for seg in chk:
+                if seg not in topo.topology:
+                    topo.add_connection(seg, 0)
 
             stack = topo.sort()
             stack = [[iseg] for iseg in stack if iseg != 0]
@@ -407,6 +417,7 @@ class Topology(object):
             ioutseg = 0
         else:
             ioutseg = self.topology[seg]
+
         if not visited[ioutseg]:
             self._sort_util(ioutseg, visited, stack)
 
