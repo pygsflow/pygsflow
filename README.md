@@ -10,7 +10,7 @@ Ipython notebook example problems can be found in the examples directory.
 The pygsflow repository can be installed using pip.
 Open a command prompt or anaconda prompt terminal and type:
 
-`pip install https://github.com/usgs-pygsflow/pygsflow/zipball/master`
+`pip install https://github.com/pygsflow/pygsflow/zipball/master`
 
 pygsflow is now installed
 
