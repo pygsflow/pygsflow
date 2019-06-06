@@ -53,6 +53,19 @@ class GsflowModel(object):
         boolean flag to indicate that modsim is active
         this creates a gsflow.modsim.Modsim object
 
+    Examples
+    --------
+
+    load from control file
+
+    >>> import gsflow
+    >>> gsf = gsflow.GsflowModel.load_from_file("gsflow.control")
+
+    create new, empty gsflow object
+
+    >>> control = gsflow.ControlFile(records_list=[])
+    >>> gsf = gsflow.GsflowModel(control=control)
+
     """
     def __init__(self, control=None, prms=None, mf=None, modflow_only=False,
                  prms_only=False, gsflow_exe=None, modsim=False):
@@ -99,10 +112,20 @@ class GsflowModel(object):
 
     @property
     def modflow_only(self):
+        """
+        Returns
+        -------
+            bool
+        """
         return self._modflow_only
 
     @property
     def prms_only(self):
+        """
+        Returns
+        -------
+            bool
+        """
         return self._prms_only
 
     @property
@@ -135,6 +158,7 @@ class GsflowModel(object):
             netcdf file name
         kwargs :
             keyword arguments for netcdf
+
         """
         if not f.endswith(".nc"):
             raise AssertionError("f must end with .nc extension")
@@ -152,6 +176,7 @@ class GsflowModel(object):
     def load_from_file(control_file, gsflow_exe="gsflow.exe", modflow_only=False,
                        prms_only=False, mf_load_only=None):
         """
+        Method to load a gsflow model from it's control file
 
         Parameters
         ----------
@@ -169,6 +194,12 @@ class GsflowModel(object):
         Returns
         -------
             GsflowModel object
+
+        Examples
+        --------
+
+        >>> import gsflow
+        >>> gsf = gsflow.GsflowModel.load_from_file("gsflow.control")
 
         """
         prms = None
@@ -224,6 +255,7 @@ class GsflowModel(object):
         Returns
         -------
             Modflow object
+
         """
         name = control.get_values('modflow_name')
         control_file = control.control_file
@@ -249,6 +281,12 @@ class GsflowModel(object):
             model output directory
         write_only: a list
             ['control', 'parameters', 'prms_data', 'mf', 'modsim']
+
+        Examples
+        --------
+
+        >>> gsf = gsflow.GsflowModel.load_from_file('gsflow.control')
+        >>> gsf.write_input(basename="new", workspace="../new_model")
 
         """
         print("Writing the project files .....")
@@ -526,9 +564,16 @@ class GsflowModel(object):
         """
         Method to run a gsflow model
 
-        Returns:
+        Returns
         -------
             None or (success, buffer)
+
+        Examples
+        --------
+
+        >>> gsf = gsflow.GsflowModel.load_from_file("gsflow.control")
+        >>> gsf.run_model()
+
         """
         fn = self.control_file
         if not os.path.isfile(self.gsflow_exe):

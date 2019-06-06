@@ -23,6 +23,7 @@ class ParameterBase(object):
         parameter file directory
     header : str, optional
         header for the parameter file
+
     """
     def __init__(self, records_list, name=None, model_dir=None, header=None):
         self._record_names = []
@@ -63,6 +64,7 @@ class ParameterBase(object):
 
         Returns
         -------
+            RecordBase object
 
         """
         record = io.find_parameter(name, self._records_list)
@@ -86,6 +88,7 @@ class ParameterBase(object):
         Returns
         -------
             np.ndarray
+
         """
         record = io.find_parameter(name, self._records_list)
 

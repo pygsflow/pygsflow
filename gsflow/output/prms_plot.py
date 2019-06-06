@@ -16,6 +16,17 @@ class PrmsPlot(object):
         extent : tuple of floats, optional
             plot extent, if None PrmsPlot will get extent from PrmsDiscretization
 
+    Examples
+    --------
+
+    create a plot object and plot an array
+
+    >>> dis = gsflow.output.PrmsDiscretization.load_from_shapefile("myshp.shp")
+    >>> plot = gsflow.output.PrmsPlot(prms_dis=dis)
+    >>> array = np.random((dis.nhru,))
+    >>> ax = plot.plot_array(array)
+    >>> plt.show()
+
     """
     def __init__(self, prms_dis=None, extent=None):
 
@@ -289,6 +300,7 @@ class PrmsPlot(object):
 
     def plot_data_timeseries(self, data, names, ax=None, **kwargs):
         """
+        Not implemented yet
 
         Parameters
         ----------
@@ -301,9 +313,7 @@ class PrmsPlot(object):
         -------
 
         """
-        # todo: not sure what the best approach for this is or
-        # todo: if it's really necessary considering pandas
-        return
+        raise NotImplementedError("plot_data_timeseries is not yet implemented")
 
     def plot_model_discretization(self, ax=None, **kwargs):
         """
@@ -335,6 +345,7 @@ class PrmsPlot(object):
         Returns
         -------
             matplotlib.pyplot.axes
+
         """
         # if "color" not in kwargs:
         #    kwargs["facecolor"] = "None"

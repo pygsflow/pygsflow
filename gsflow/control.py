@@ -46,6 +46,18 @@ class ControlFile(ParameterBase):
     header : list
         file header
 
+    Examples
+    --------
+
+    load from file
+
+    >>> control = gsflow.ControlFile.load_from_file("gsflow.control")
+
+
+    build a new empty object
+
+    >>> control = gsflow.ControlFile(records_list=[])
+
     """
 
     def __init__(self, records_list, name="Control", model_dir="", header=None):
@@ -60,6 +72,11 @@ class ControlFile(ParameterBase):
 
     @property
     def records_list(self):
+        """
+        Returns
+        -------
+            a list of ControlRecord objects
+        """
         return self._records_list
 
     @staticmethod
@@ -76,6 +93,7 @@ class ControlFile(ParameterBase):
         Returns
         -------
             ControlFile object
+
         """
         if not (os.path.isfile(control_file)):
             raise FileNotFoundError("Invalid file name ....")
@@ -165,6 +183,7 @@ class ControlFile(ParameterBase):
         Returns
         -------
             ControlRecord object
+
         """
         return super(ControlFile, self).get_record(name, ControlRecord)
 
@@ -179,6 +198,7 @@ class ControlFile(ParameterBase):
         Returns
         -------
             np.ndarray or list
+
         """
         return super(ControlFile, self).get_values(name)
 
@@ -212,6 +232,7 @@ class ControlFile(ParameterBase):
             index location to insert record
         after : int
             index location - 1 to insert record
+
         """
 
         add = self._check_before_add(name=name, values=values)
@@ -222,7 +243,7 @@ class ControlFile(ParameterBase):
 
     def remove_record(self, name):
         """
-        Convience method to remove a record from a control file
+        Convenience method to remove a record from a control file
 
         Parameters
         ----------
@@ -261,6 +282,10 @@ class ControlFile(ParameterBase):
 
 
 class Control_record(object):
+    """
+    Deprecated class
+
+    """
     def __new__(cls, name=None, values=None, datatype=None, nvalues=None):
         err = "Control_record has been deprecated; Calling ControlRecord()"
         return ControlRecord(name=name, values=values,
@@ -282,6 +307,12 @@ class ControlRecord(RecordBase):
         integer datatype flag
     nvalues : int
         number of values in record
+
+    Examples
+
+    create a modflow_nam ControlRecord
+
+    >>> rec = ControlRecord("modflow_nam", "gsflow_test.nam")
 
     """
     def __init__(self, name=None, values=None, datatype=None):

@@ -9,6 +9,10 @@ warnings.simplefilter('always', PendingDeprecationWarning)
 
 
 class Statistics(object):
+    """
+    Deprecated class. Please use StatVar object
+
+    """
     def __new__(cls, control=None):
         err = "Statistics is Deprecated; Calling StatVar.load_from_control_object()"
         warnings.warn(err, PendingDeprecationWarning)
@@ -30,6 +34,18 @@ class StatVar(object):
         statvar_names will be determined from file if None
     statvar_elements : list, optional
         statvar_elements will be determined from file if None
+
+    Examples
+    --------
+
+    load from control file
+
+    >>> control = gsflow.ControlFile.load_from_file("gsflow.gsflow")
+    >>> stats = StatVar.load_from_control_object(control)
+
+    load from statistics file
+
+    >>> stats = StatVar("mystatvar.txt")
 
     """
     def __init__(self, statvar_file, statvar_names=None, statvar_elements=None):
@@ -53,6 +69,7 @@ class StatVar(object):
         Returns
         -------
             Statistics object
+
         """
         statvar_file = control.get_values("stat_var_file")[0]
         ws, fil = os.path.split(statvar_file)
@@ -127,6 +144,11 @@ class StatVar(object):
     suited to accomplish this... 
     """
     def plot(self):
+        """
+        Built in plotting method for the statvar object. Uses
+        pandas built ins.
+
+        """
         for i, name in enumerate(self.statvar_names):
             nm = name + "_" + self.statvar_elements[i]
             self.stat_df.plot(x = 'Date', y = nm)

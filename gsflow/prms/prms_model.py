@@ -31,6 +31,18 @@ class PrmsModel(object):
     parameters : PrmsParameters object
     data : PrmsData object
 
+    Examples
+    --------
+
+    load from file
+
+    >>> prms = gsflow.prms.PrmsModel.load_from_file("gsflow.control")
+
+    create new object
+
+    >>> control = gsflow.ControlFile.load_from_file("gsflow.control")
+    >>> prms = gsflow.prms.PrmsModel(control, parmaters=None, data=None)
+
     """
     def __init__(self, control, parameters=None, data=None):
         self.control = control
@@ -50,18 +62,19 @@ class PrmsModel(object):
         """
         Method to export input data to a NetCdf file
 
-        Parameters:
+        Parameters
         ----------
         f : str or fp.export.NetCdf
             filename to write the parameter to (*.nc)
         modflow : object
             fp.modflow.Modflow or gsflow.modflow.Modflow object
 
-        Notes:
+        Notes
         -----
         NetCdf export relies on flopy, so at the moment will
         only work for GSFLOW models where PRMS has the same
         discretization as the modflow grid
+
         """
         if self.parameters is not None:
             f = self.parameters.export_nc(f, modflow, **kwargs)
@@ -113,16 +126,9 @@ class PrmsModel(object):
         Returns
         -------
             PrmsParameters object
+
         """
         return PrmsParameters.load_from_file(parameter_files)
-        # try:
-        #     return PrmsParameters.load_from_file(parameter_files)
-        # except:
-        #     err = "PrmsParameters load error, Skipping parameter files"
-        #     raise ValueError("Cannot read one of the parameter files")
-        #     #warnings.warn(err, UserWarning)
-        #
-        #     return
 
     @staticmethod
     def _load_data(data_file):
@@ -137,6 +143,7 @@ class PrmsModel(object):
         Returns
         -------
             PrmsData object
+
         """
         try:
             return PrmsData.load_from_file(data_file)
@@ -172,6 +179,11 @@ class PrmsModel(object):
 
     @property
     def control_file(self):
+        """
+        Returns
+        -------
+            control file path
+        """
         return self._control_file
 
     @control_file.setter

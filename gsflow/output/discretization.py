@@ -20,6 +20,19 @@ class PrmsDiscretization(object):
         list of hru [(x1, y1)....(xn, yn)] points
         3 dimensional
 
+    Examples
+    --------
+
+    load from shapefile
+
+    >>> dis = gsflow.output.PrmsDiscretization.load_from_shapefile("myshape.shp")
+
+    load from flopy grid
+
+    >>> gsf = gsflow.GsflowModel.load_from_file("mycontrol.control")
+    >>> ml = gsflow.mf
+    >>> dis = gsflow.output.PrmsDiscretization.load_from_flopy(model=ml)
+
     """
     def __init__(self, xypts):
         self._xypts = xypts
@@ -50,6 +63,12 @@ class PrmsDiscretization(object):
 
     @property
     def x_hru_centers(self):
+        """
+        Returns
+        -------
+            np.ndarray of x-centers for each hru
+
+        """
         if self._xcenters is None:
             self._get_centers()
 
@@ -57,6 +76,12 @@ class PrmsDiscretization(object):
 
     @property
     def y_hru_centers(self):
+        """
+        Returns
+        -------
+            np.ndarray of y-centers for each hru
+
+        """
         if self._ycenters is None:
             self._get_centers()
 
@@ -64,23 +89,39 @@ class PrmsDiscretization(object):
 
     @property
     def nhru(self):
+        """
+        Returns
+        -------
+            number of hrus
+
+        """
         return self._nhru
 
     @property
     def xypts(self):
+        """
+        Returns
+        -------
+            np.ndarray of xy-points for each hru
+
+        """
         return self._xypts
 
     @property
     def extent(self):
+        """
+        Returns
+        -------
+            tuple (xmin, xmax, ymin, ymax)
+        """
         return self._extent
-
-    # todo: add a method to flag hru_noflow
 
     def _get_centers(self):
         """
         Method to get the mean center of the grid cell.
         This method is limited and will eventually need to
         be updated for complex shapes.
+
         """
         xc = []
         yc = []
@@ -103,7 +144,8 @@ class PrmsDiscretization(object):
 
         Returns
         -------
-            list
+            list of x, y coordinate points
+
         """
         return self._xypts[hru - 1]
 
@@ -125,6 +167,7 @@ class PrmsDiscretization(object):
         Returns
         -------
             PrmsDiscretization object
+
         """
         import flopy
         from gsflow.modflow import Modflow
@@ -193,7 +236,7 @@ class PrmsDiscretization(object):
             err = "A hru_id field must be present in the shapefile; hru_id must be " \
                   "from 1 to n_hru"
             raise AssertionError(err)
-        
+
 
         shapes = sf.shapes()
 

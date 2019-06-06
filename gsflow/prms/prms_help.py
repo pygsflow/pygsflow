@@ -7,6 +7,7 @@ class Helper(object):
     The function has two goals:
     1) allow the user to get help on a parameter or a variable
     2) allow pyGSFLOW to run error checkers on parameters values and sizes
+
     """
 
     def __init__(self):
@@ -160,8 +161,3 @@ class Helper(object):
             All_variables[Field_name] = curr_record
 
             self.__prms_output_variables = All_variables
-
-
-if __name__ == '__main__':
-    h = Helper()
-

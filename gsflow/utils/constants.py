@@ -1,5 +1,8 @@
 
 class GsConstant(object):
+    """
+    Class object that holds global constants
+    """
     COLUMN_HEADER = ['Year', 'Month', 'Day', 'Hour', 'Minute', 'Second']
     PRMS_DATA_TYPES = {1: 'integer', 2: 'real', 3: 'double', 4: 'string', '4': 'string'}
     PRMS_SECTIONS = ('Dimensions', 'Parameters')

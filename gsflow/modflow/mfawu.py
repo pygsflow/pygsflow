@@ -27,6 +27,14 @@ class ModflowAwu(Package):
     filenames : list, optional
         file name for ModflowAwu package to write input
 
+    Examples
+    --------
+
+    load a ModflowAwu file
+
+    >>> ml = gsflow.modflow.Modflow('awutest')
+    >>> awu = gsflow.modflow.ModflowAwu.load('test.awu', ml, nper=2, method="gsflow")
+
     """
     _options = OrderedDict([('noprint', OptionBlock.simple_flag),
                             ('irrigation_diversion', {OptionBlock.dtype: np.bool_,

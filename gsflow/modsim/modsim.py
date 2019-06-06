@@ -21,9 +21,16 @@ class Modsim(object):
     for the MODSIM-GSFLOW coupled modeling option
     in GSFLOW.
 
-    Parameters:
+    Parameters
     ----------
-        model : gsflow.GsFlowModel instance
+        model : gsflow.GsflowModel instance
+
+    Examples
+    --------
+
+    >>> gsf = gsflow.GsflowModel.load_from_file("gsflow.control")
+    >>> modsim = gsflow.modsim.Modsim(gsf)
+    >>> modsim.write_modsim_shapefile("myshp.shp")
 
     """
     def __init__(self, model):
@@ -47,6 +54,7 @@ class Modsim(object):
         Returns
         -------
             list of sfr segments
+
         """
         if not self._ready:
             return ()
@@ -67,6 +75,7 @@ class Modsim(object):
         Returns
         -------
             list of all lakes in the sfr network
+
         """
         if not self._ready:
             return ()
@@ -94,6 +103,7 @@ class Modsim(object):
         -------
             list of _SfrTopology objects for writing
             to shapefile
+
         """
         sfr_topo = []
         for seg in self.sfr_segs:
@@ -110,6 +120,7 @@ class Modsim(object):
         -------
             list of _LakTopology objects for writing
             to shapefile
+
         """
         lake_topo = []
         for lake in self.lake_segs:
@@ -218,6 +229,8 @@ class _LakTopology(object):
     defines the topology/connectivity of
     the LAK file to the SFR object
 
+    Parameters
+    ----------
     lak : flopy.modflow.ModflowLak object
     model : flopy.modflow.Modflow or gsflow.modflow.Modflow
     lakeno : int

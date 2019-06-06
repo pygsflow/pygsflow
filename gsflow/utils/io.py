@@ -5,6 +5,7 @@ warnings.simplefilter('always', UserWarning)
 
 def get_file_abs(control_file=None, fn=None):
     """
+    Utility method to create file's absolute path
 
     Parameters
     ----------
@@ -30,7 +31,7 @@ def get_file_abs(control_file=None, fn=None):
 
 def _get_relative_path(control, fn):
     """
-    If relative files are used, they should be relative to the control file
+    If relative paths are used, they should be relative to the control file
 
     Parameters
     ----------
@@ -42,6 +43,7 @@ def _get_relative_path(control, fn):
     Returns
     -------
         str : relative path
+
     """
     control_file_abs = os.path.abspath(control)
     fn_abs = os.path.abspath(fn)
@@ -65,7 +67,8 @@ def find_parameter(name, parameters_list):
 
     Returns
     -------
-        rec : object
+    rec : record object
+
     """
 
     if len(parameters_list) > 0:
@@ -93,6 +96,7 @@ def line_strip(line):
     Returns
     -------
         str : line with comments removed and commas replaced
+
     """
     for comment_flag in [';', '#', '!!']:
         line = line.split(comment_flag)[0]
@@ -113,6 +117,7 @@ def multi_line_strip(fobj):
     Returns
     -------
         str : line with comments removed and commas replaced
+
     """
     while True:
         line = line_strip(fobj.readline())

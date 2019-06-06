@@ -13,7 +13,8 @@ from ..utils import mfreadnam
 
 class Modflow(fpModflow):
     """
-    GSFLOW overridden MODFLOW Model Class.
+    GSFLOW overridden MODFLOW Model Class. This class is a child of
+    the FloPy flopy.modflow.Modflow class
 
     Parameters
     ----------
@@ -215,7 +216,8 @@ class Modflow(fpModflow):
 
     def write_name_file(self):
         """
-        Write the model name file.
+        Write the model name file
+
         """
         self._set_relative_paths()
         super(Modflow, self).write_name_file()

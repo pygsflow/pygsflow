@@ -165,9 +165,10 @@ def get_longname(name):
     name : str
         parameter name
 
-    Returns:
+    Returns
     -------
         s : str
+
     """
     from ..prms import Helper
     help = Helper()
@@ -191,9 +192,10 @@ def get_units(name):
     unit_base : str
         base unit (ex. ft, m, etc...)
 
-    Returns:
+    Returns
     -------
         s : str
+
     """
     from ..prms import Helper
     help = Helper()

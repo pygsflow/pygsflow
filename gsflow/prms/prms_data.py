@@ -8,6 +8,11 @@ warnings.simplefilter('always', PendingDeprecationWarning)
 
 
 class Prms_data(object):
+    """
+    Deprecated Data file loading method. Please use
+    PRMSData
+
+    """
     def __new__(cls, data_file=None, data_df=None):
 
         if (data_df is None) and (not(data_file is None)):
@@ -41,6 +46,11 @@ class PrmsData(object):
         header : str
             prms data header
 
+    Examples
+    --------
+
+    >>> data = gsflow.prms.PrmsData.load_from_file("mydatafile")
+
     """
     data_names = ['tmax', 'tmin', 'precip', 'runoff', 'pan_evap', 'solrad', 'from_data', 'rain_day']
 
@@ -52,6 +62,11 @@ class PrmsData(object):
 
     @property
     def file_name(self):
+        """
+        Returns
+        -------
+            the data file path
+        """
         return os.path.join(self.model_dir, self.name)
 
     @staticmethod

@@ -19,7 +19,7 @@ if sys.version_info < (3, 6):
 
 class NamData(fpNamData):
     """
-    MODFLOW Namefile Class.
+    Child class of the MODFLOW Namefile Class.
 
     Parameters
     ----------
@@ -118,6 +118,7 @@ def parsenamefile(namfilename, packages, control_file=None, verbose=True):
         If namfilename does not exist in the directory.
     ValueError:
         For lines that cannot be parsed.
+
     """
     # initiate the ext_unit_dict ordered dictionary
     ext_unit_dict = dict()

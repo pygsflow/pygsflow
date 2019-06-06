@@ -11,7 +11,7 @@ class Rasters(object):
     Raster object which allows the user
     to snap a raster to a grid.
 
-    Parameters:
+    Parameters
     ----------
         raster : osgeo.gdal.Dataset object
 
@@ -32,6 +32,7 @@ class Rasters(object):
         Returns
         -------
             (xmin, xmax, ymin, ymax)
+
         """
         return self.raster.bounds.left, self.raster.bounds.right, \
                self.raster.bounds.bottom, self.raster.bounds.top
@@ -42,6 +43,7 @@ class Rasters(object):
         Returns
         -------
             Cell centered x points for raster values
+
         """
         if self._band_data is not None:
             if self._xpoints is None:
@@ -58,6 +60,7 @@ class Rasters(object):
         Returns
         -------
             Cell centered y points for raster values
+
         """
         if self._band_data is not None:
             if self._ypoints is None:
@@ -70,6 +73,12 @@ class Rasters(object):
 
     @property
     def xypoints(self):
+        """
+        Returns
+        -------
+            np.ndarray cell centered x, y points for raster values
+
+        """
         if self._xypoints is None:
             if self.xpoints is None or self.ypoints is None:
                 return
@@ -81,11 +90,10 @@ class Rasters(object):
     @property
     def band_array(self):
         """
-        Return a numpy array of the raster band
-
         Returns
         -------
-            np.ndarray
+            np.ndarray of the raster band
+
         """
         if self._band_data is not None:
             nodata = self.raster.nodata
@@ -104,6 +112,7 @@ class Rasters(object):
         Returns
         -------
             np.ndarray
+
         """
 
         xy = list(zip(prms_discretizaiton.x_hru_centers,
@@ -136,6 +145,7 @@ class Rasters(object):
         Returns
         -------
             Rasters object
+
         """
         import rasterio
         raster = rasterio.open(name)

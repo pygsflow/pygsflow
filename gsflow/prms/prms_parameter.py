@@ -20,6 +20,10 @@ def is_number(s):
 
 
 class Parameters(object):
+    """
+    Deprecated Parameters object. Please use PrmsParameters
+
+    """
     def __new__(cls, parameters_list=None, parameter_files=['temp_parm.parm']):
         err = "Parameters class has been Deprecated; Calling" \
               " PrmsParameters class"
@@ -47,6 +51,17 @@ class PrmsParameters(ParameterBase):
     headers : str, optional
         file header
 
+    Examples
+    --------
+
+    load from file
+
+    >>> params = gsflow.prms.PrmsParameters.load_from_file(["myparams1.txt", "myparams2.txt"])
+
+    create new object
+
+    >>> params = gsflow.prms.PrmsParameters([parameter_record1, parameter_record2,])
+
     """
 
     def __init__(self, parameters_list, header=None):
@@ -61,6 +76,12 @@ class PrmsParameters(ParameterBase):
 
     @property
     def parameters_list(self):
+        """
+        Returns
+        -------
+            list of parameter records
+
+        """
         return self._records_list
 
     @property
@@ -70,6 +91,7 @@ class PrmsParameters(ParameterBase):
         Returns
         -------
             list of parameter file names
+
         """
         all_files = []
 
@@ -99,6 +121,7 @@ class PrmsParameters(ParameterBase):
         Returns
         -------
             PrmsParameters
+
         """
         if isinstance(param_files, str):
             param_files = [param_files]
@@ -214,18 +237,19 @@ class PrmsParameters(ParameterBase):
         Method to export a PrmsParameters object
         to netcdf (.nc) file
 
-        Parameters:
+        Parameters
         ----------
         f : str or fp.export.NetCdf
             filename to write the parameter to (*.nc)
         modflow : object
             fp.modflow.Modflow or gsflow.modflow.Modflow object
 
-        Notes:
+        Notes
         -----
         NetCdf export relies on flopy, so at the moment will
         only work for GSFLOW models where PRMS has the same
         discretization as the modflow grid
+
         """
         for parameter in self.parameters_list:
             f = parameter.export_nc(f, modflow, **kwargs)
@@ -244,6 +268,7 @@ class PrmsParameters(ParameterBase):
         Returns
         -------
             ParameterRecord object
+
         """
         return super(PrmsParameters, self).get_record(name, ParameterRecord)
 
@@ -293,7 +318,6 @@ class PrmsParameters(ParameterBase):
         datatype : int
             datatype flag
         width : int, optional
-
         file_name : str
             filename parameter will be written to
         where : int, optional
@@ -451,6 +475,11 @@ class ParameterRecord(RecordBase):
 
     @property
     def values(self):
+        """
+        Returns
+        -------
+            np.ndarray of record values
+        """
         return self._values
 
     @values.setter
@@ -478,11 +507,12 @@ class ParameterRecord(RecordBase):
         kwargs : **
             keyword arguments
 
-        Notes:
+        Notes
         -----
         NetCdf export relies on flopy, so at the moment will
         only work for GSFLOW models where PRMS has the same
         discretization as the modflow grid
+
         """
         from ..utils.netcdf import param2netcdf
         f = param2netcdf(f, modflow, self, **kwargs)
