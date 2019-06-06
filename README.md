@@ -3,6 +3,11 @@
 # pygsflow
 pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW models
 
+## API Documentation
+pyGSFLOW API documentation can be found @
+
+https://pygsflow.github.io/pygsflowdocs/
+
 ## Examples
 Ipython notebook example problems can be found in the examples directory.
 
