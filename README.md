@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/pygsflow/pygsflow/master/examples/figures/motto2.PNG" alt="pyGSFLOW logo"/>
+</p>
+
 [![Build Status](https://travis-ci.com/pygsflow/pygsflow.svg?branch=master)](https://travis-ci.com/pygsflow/pygsflow)
 [![Coverage Status](https://coveralls.io/repos/github/usgs-pygsflow/pygsflow/badge.svg?branch=master)](https://coveralls.io/github/usgs-pygsflow/pygsflow?branch=master)
 # pygsflow
