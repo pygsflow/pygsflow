@@ -17,9 +17,6 @@ class Rasters(object):
 
     """
     def __init__(self, raster):
-        import rasterio
-
-        self.__rio = rasterio
         self.raster = raster
         self._band_data = None
         self._xpoints = None
