@@ -3,10 +3,8 @@ from __future__ import print_function, division
 import os
 import sys
 import numpy as np
-sys.path.insert(0, r"/home/ayman/codes/flopy")
 import flopy
 from flopy.discretization import StructuredGrid
-sys.path.append(r"/home/ayman/codes/pygsflow")
 import gsflow
 
 
