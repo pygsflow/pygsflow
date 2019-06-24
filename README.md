@@ -13,7 +13,8 @@ pyGSFLOW API documentation can be found @
 https://pygsflow.github.io/pygsflowdocs/
 
 ## Examples
-Ipython notebook example problems can be found in the examples directory.
+Ipython notebook example problems can be found in the examples directory.  
+https://github.com/pygsflow/pygsflow/tree/master/examples
 
 ## Installation
 The pygsflow repository can be installed using pip.
