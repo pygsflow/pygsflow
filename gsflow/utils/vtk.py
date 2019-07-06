@@ -254,7 +254,12 @@ class Gsflowvtk():
     def gsflow_to_vtk(vtkname="gs_", control_file=None, mf_pkg=[], mfall=True, out_folder=None,
                       shared_vertex=True, ibound_filter=True):
 
-        gs = gsflow.GsflowModel.load_from_file(control_file)
+        if len(mf_pkg) == 0:
+            load_only = None
+        else:
+            load_only = mf_pkg
+
+        gs = gsflow.GsflowModel.load_from_file(control_file,mf_load_only= load_only )
 
         gsfv = Gsflowvtk(gs=gs, vtkname=vtkname, mf_pkg=mf_pkg, mfall=mfall,
                  out_folder=out_folder, shared_vertex=shared_vertex,
@@ -290,8 +295,10 @@ class Gsflowvtk():
 
         dis2 = flopy.modflow.ModflowDis(mf2, nlay=1, nrow=nrow, ncol=ncol,
                                         nper=1, delr=delr, delc=delc, top=top, botm=botm)
+        hru_type = gs.prms.parameters.get_record('hru_type')
         #TODO:change ibound to hru type
-        bas = flopy.modflow.ModflowBas(mf2, ibound=gs.mf.bas6.ibound[0, :, :], strt=1)
+
+        bas = flopy.modflow.ModflowBas(mf2, ibound=hru_type.values.reshape(nrow, ncol), strt=1)
         nm = self.vtkname + "_prms.vtu"
         vtkfile = Vtk(nm, mf2)
 
