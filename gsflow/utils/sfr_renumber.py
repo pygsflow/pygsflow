@@ -122,6 +122,8 @@ class SfrRenumber(object):
         if self.sfr is None:
             raise AssertionError("SFR package not found, check model inputs")
 
+        self._all_sfr_segments = None
+
         self.__scheme = scheme.lower()
         self.__renumber = None
         if scheme.lower() == "user":
@@ -134,6 +136,40 @@ class SfrRenumber(object):
                     user_scheme[0] = 0
 
                 self.__renumber = user_scheme
+
+    @property
+    def all_sfr_segments(self):
+        """
+        Method to get a recarray of all SFR segments within a simulation,
+        since all segments do not have to be active in a given stress
+        period
+
+        Returns
+        -------
+        ra : (np.recarray)
+            recarray contains a single entry of segment data for each stream
+            segment
+
+        """
+        if self._all_sfr_segments is None:
+            ra = self.sfr.get_empty_segment_data(self.sfr.nss)
+            i = 0
+            for _, recarray in sorted(self.sfr.segment_data.items()):
+                if i == self.sfr.nss:
+                    break
+                else:
+                    for rec in recarray:
+                        if rec.nseg in ra.nseg:
+                            pass
+                        else:
+                            ra[i] = rec
+                            i += 1
+
+                        if i == self.sfr.nss:
+                            break
+            self._all_sfr_segments = ra
+
+        return self._all_sfr_segments
 
     @property
     def renumbering(self):
@@ -185,7 +221,7 @@ class SfrRenumber(object):
 
         else:
             # sort by topology, preferred method
-            segments = self.sfr.all_segments
+            segments = self.all_sfr_segments
             topo = Topology(nss)
 
             chk = []
