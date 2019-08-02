@@ -26,7 +26,7 @@ def test_modsim():
     crs = pycrs.parse.from_proj4(proj4)
 
     sf = shapefile.Reader(shp)
-    if not sf.numRecords == 16:
+    if not sf.numRecords == 17:
         raise AssertionError
 
     if not sf.shapeType == 3:
@@ -53,7 +53,7 @@ def test_gsflow_modsim_read_write():
     crs = pycrs.parse.from_proj4(proj4)
 
     sf = shapefile.Reader(shp)
-    if not sf.numRecords == 16:
+    if not sf.numRecords == 17:
         raise AssertionError
 
     if not sf.shapeType == 3:

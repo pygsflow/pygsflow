@@ -169,16 +169,16 @@ class Modsim(object):
         for sfr in self.sfr_topology:
             w.line(sfr.polyline)
             attributes = sfr.attributes
-            w.record(attributes['iseg'],
-                     attributes['iupseg'],
-                     attributes['outseg'])
+            w.record(attributes.iseg,
+                     attributes.iupseg,
+                     attributes.outseg)
 
         for lake in self.lake_topology:
-            w.line(lake.polyline)
-            attributes = lake.attributes
-            w.record(attributes['iseg'],
-                     attributes['iupseg'],
-                     attributes['outseg'])
+            for ix, attributes in enumerate(lake.attributes):
+                w.line([lake.polyline[ix]])
+                w.record(attributes.iseg,
+                         attributes.iupseg,
+                         attributes.outseg)
         try:
             w.close()
         except AttributeError:
@@ -248,6 +248,7 @@ class _LakTopology(object):
         self._centroid = None
         self._connections = None
         self._polyline = None
+        self._attributes = None
         self._ij = None
 
     @property
@@ -274,10 +275,9 @@ class _LakTopology(object):
 
     @property
     def attributes(self):
-        lakeno = self.lakeno
-        if lakeno > 0:
-            lakeno *= -1
-        return {"iseg": lakeno, "iupseg": 0, "outseg": 0}
+        if self._attributes is None:
+            self._set_lake_connectivity()
+        return self._attributes
 
     def _set_lake_centroid(self):
         """
@@ -325,12 +325,18 @@ class _LakTopology(object):
             lakeno *= -1
 
         cseg = []
+        attrs = []
         for per, recarray in self._sfr.segment_data.items():
             for rec in recarray:
-                if rec.iupseg == lakeno:
-                    cseg.append(rec.nseg)
-                elif rec.outseg == lakeno:
-                    cseg.append(rec.nseg)
+                if rec.nseg in cseg:
+                    continue
+                else:
+                    if rec.iupseg == lakeno:
+                        cseg.append(rec.nseg)
+                        attrs.append(_Attributes(lakeno, outseg=rec.nseg))
+                    elif rec.outseg == lakeno:
+                        cseg.append(rec.nseg)
+                        attrs.append(_Attributes(lakeno, iupseg=rec.nseg))
 
         cseg = list(set(cseg))
 
@@ -366,9 +372,11 @@ class _LakTopology(object):
 
         if verts:
             self._connections = verts
+            self._attributes = attrs
 
         else:
             self._connections = None
+            self._attributes = None
 
     def _set_polyline(self):
         """
@@ -382,8 +390,12 @@ class _LakTopology(object):
             return
 
         polyline = []
-        for conn in self.connections:
-            part = [list(self.centroid), list(conn)]
+        for ix, conn in enumerate(self.connections):
+            if self.attributes[ix].iupseg == 0:
+                part = [list(self.centroid), list(conn)]
+            else:
+                part = [list(conn), list(self.centroid)]
+
             polyline.append(part)
 
         self._polyline = polyline
@@ -454,8 +466,8 @@ class _SfrTopology(object):
         if self._sfr is None:
             return
 
-        outseg = self.attributes['outseg']
-        iupseg = self.attributes['iupseg']
+        outseg = self.attributes.outseg
+        iupseg = self.attributes.iupseg
 
         ijup = []
         ijout = []
@@ -575,6 +587,24 @@ class _SfrTopology(object):
         else:
             iupseg = 0
 
-        self._attributes = {"iseg": self.iseg,
-                            "iupseg": iupseg ,
-                            "outseg": outseg}
+        self._attributes = _Attributes(self.iseg, iupseg, outseg)
+
+
+class _Attributes(object):
+    """
+    Object oriented storage method to standardize
+    the topology function calls
+
+    Parameters
+    ----------
+    iseg : int
+        segment number
+    iupseg : int
+        upstream segment number
+    outseg : int
+        output segment number
+    """
+    def __init__(self, iseg, iupseg=0, outseg=0):
+        self.iseg = iseg
+        self.iupseg = iupseg
+        self.outseg = outseg
