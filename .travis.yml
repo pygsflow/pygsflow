@@ -64,7 +64,7 @@ install:
       echo requests version1; python -c "import requests; print(requests.__version__)";
       else pip install -r requirements.travis.txt;
       pip install --no-binary rasterio rasterio;
-      pip install -U numpy
+      pip install -U numpy;
       fi
     - pip install https://github.com/modflowpy/flopy/zipball/develop
     - pip install --upgrade jupyter
