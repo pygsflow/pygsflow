@@ -58,7 +58,7 @@ class ModflowAwu(Package):
                                                        [("numsupwells", OptionBlock.simple_int),
                                                         ("maxdiversions", OptionBlock.simple_int)]
                                                    )}),
-                            ('maxwell', {OptionBlock.dtype: np.bool_,
+                            ('maxwells', {OptionBlock.dtype: np.bool_,
                                          OptionBlock.nested: True,
                                          OptionBlock.n_nested: 1,
                                          OptionBlock.vars: OrderedDict(
@@ -150,7 +150,7 @@ class ModflowAwu(Package):
         self.supplemental_well = False
         self.numsupwells = 0
         self.maxdiversions = 0
-        self.maxwell = False
+        self.maxwells = False
         self.nummaxwell = 0
         self.tabfiles = False
         self.numtab = 0
