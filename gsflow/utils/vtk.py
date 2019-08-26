@@ -4,7 +4,7 @@ import os
 import sys
 import numpy as np
 import flopy
-from flopy.discretization import StructuredGrid
+#from flopy.discretization import StructuredGrid
 import gsflow
 
 
@@ -438,7 +438,7 @@ class Vtk(object):
 
         s = '<DataArray type="Float64" NumberOfComponents="3">'
         indent_level = start_tag(f, s, indent_level)
-        assert (isinstance(self.modelgrid, StructuredGrid))
+        #assert (isinstance(self.modelgrid, StructuredGrid))
         z = np.vstack([self.modelgrid.top.reshape(1, self.modelgrid.nrow,
                                                   self.modelgrid.ncol),
                        self.modelgrid.botm])
