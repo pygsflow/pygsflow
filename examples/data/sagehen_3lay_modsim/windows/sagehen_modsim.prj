@@ -1,1 +1,0 @@
-PROJCS["Unknown", GEOGCS["Unknown", DATUM["D_North_American_1983", SPHEROID["GRS_1980", 6378137.0, 298.257222101]], PRIMEM["Greenwich", 0], UNIT["Degree", 0.017453292519943295], AXIS["Lon", EAST], AXIS["Lat", NORTH]], PROJECTION["Transverse_Mercator"], , UNIT["Meter", 1.0], AXIS["X", EAST], AXIS["Y", NORTH]]
