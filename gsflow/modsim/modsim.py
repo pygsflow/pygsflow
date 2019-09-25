@@ -338,7 +338,12 @@ class _LakTopology(object):
                         cseg.append(rec.nseg)
                         attrs.append(_Attributes(lakeno, iupseg=rec.nseg))
 
-        cseg = list(set(cseg))
+        temp = []
+        for seg in cseg:
+            if seg not in temp:
+                temp.append(seg)
+
+        cseg = temp
 
         ij = []
         reach_data = self._sfr.reach_data
