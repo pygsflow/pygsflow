@@ -65,6 +65,47 @@ def test_gsflow_modsim_read_write():
         raise AssertionError
 
 
+def test_modsim_flag_spillway():
+    ws = "../examples/data/sagehen_3lay_modsim/windows"
+    ws2 = "./temp"
+    control_file = "sagehen_modsim_3lay.control"
+    proj4 = "+proj=utm +zone=10 +ellps=GRS80 +datum=NAD83 +units=m +no_defs "
+
+    shp_iseg = "modsim_flg_iseg.shp"
+    shp_elev = "modsim_flg_elev.shp"
+    shp_flow = "modsim_flg_flow.shp"
+
+    gsf = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    gsf.mf.modelgrid.set_coord_info(proj4=proj4)
+    gsf.modsim.write_modsim_shapefile(shp=os.path.join(ws2, shp_iseg),
+                                      flag_spillway=[24,])
+
+    gsf.modsim.write_modsim_shapefile(shp=os.path.join(ws2, shp_flow),
+                                      flag_spillway='flow')
+
+    gsf.modsim.write_modsim_shapefile(shp=os.path.join(ws2, shp_elev),
+                                      flag_spillway='elev')
+
+    sf = shapefile.Reader(os.path.join(ws2, shp_iseg))
+    for record in sf.records():
+        if record[0] == 24:
+            if record[-1] != 1:
+                raise AssertionError()
+
+    sf = shapefile.Reader(os.path.join(ws2, shp_flow))
+    for record in sf.records():
+        if record[0] == 24:
+            if record[-1] != 1:
+                raise AssertionError()
+
+    sf = shapefile.Reader(os.path.join(ws2, shp_elev))
+    for record in sf.records():
+        if record[0] == 24:
+            if record[-1] != 1:
+                raise AssertionError()
+
+
 if __name__ == "__main__":
-    test_modsim()
-    test_gsflow_modsim_read_write()
+    # test_modsim()
+    # test_gsflow_modsim_read_write()
+    test_modsim_flag_spillway()

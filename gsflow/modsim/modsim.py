@@ -128,7 +128,75 @@ class Modsim(object):
 
         return lake_topo
 
-    def write_modsim_shapefile(self, shp=None, proj4=None):
+    def __set_spillway_flag(self, flag, sfr_topology):
+        """
+        Flips the sfr topology flag based on user supplied
+        flag.
+
+        Parameters
+        ----------
+        flag : str or list
+            "elev" for elevation rules
+            "flow" for flow rules
+            list of segments to flip certain segments
+        sfr_topology : list
+            list of _SfrTopology instances
+
+        Returns
+        -------
+        sfr_topology : list
+            list of _SfrTopology instances
+
+        """
+        temp = []
+        if isinstance(flag, list):
+            for sfr in sfr_topology:
+                if sfr.attributes.iseg in flag:
+                    sfr.attributes.spill_flg = 1
+                else:
+                    pass
+                temp.append(sfr)
+
+        else:
+            res_connect = []
+            for ix, sfr in enumerate(sfr_topology):
+                if sfr.attributes.iupseg < 0:
+                    res_connect.append(ix)
+
+
+            t = []
+            for i in res_connect:
+                sfr = sfr_topology[i]
+
+                for j in res_connect:
+                    sfr2 = sfr_topology[j]
+                    if sfr.attributes.iseg == sfr2.attributes.iseg:
+                        continue
+                    elif sfr.attributes.iupseg == sfr2.attributes.iupseg:
+                        if sfr.attributes.outseg == sfr2.attributes.outseg:
+                            if flag.lower() == "elev":
+                                if sfr.attributes.elev > sfr2.attributes.elev:
+                                    sfr.attributes.spill_flg = 1
+                                else:
+                                    pass
+                            if flag.lower() == "flow":
+                                if sfr.attributes.flow == 0:
+                                    sfr.attributes.spill_flg = 1
+                                else:
+                                    pass
+
+                t.append(sfr)
+
+            for ix, sfr in enumerate(sfr_topology):
+                if ix in res_connect:
+                    temp.append(t.pop(0))
+                else:
+                    temp.append(sfr)
+
+        return temp
+
+    def write_modsim_shapefile(self, shp=None, proj4=None,
+                               flag_spillway=False):
         """
         Method to create a modsim compatible
         shapefile from GSFLOW model inputs (SFR, LAK)
@@ -143,6 +211,17 @@ class Modsim(object):
         proj4 : str
             proj4 projection string, if none will try to
             grab proj4 or epsg from flopy modelgrid
+        flag_spillway : bool, str, list
+            if flag_spillway is indicated then MODSIM will change
+            the spill_flg attribute to one. This can be accomplished
+            by one of three methods.
+
+            1.) flag_spillway="elev", the code will search for spillways
+            from reservoirs based on elevation rules
+            2.) flag_spillway="flow", the code will search for spillways
+            from reservoirs based on flow rules
+            3.) flag_spillway=[3, 4, 5, ...] a user supplied list of SFR
+            segments can be supplied to flag spillways
 
         """
         if not self._ready:
@@ -160,25 +239,35 @@ class Modsim(object):
             name = t + "_modsim.shp"
             shp = os.path.join(ws, name)
 
+        sfr_topology = self.sfr_topology
+        lake_topology = self.lake_topology
+
+        if flag_spillway:
+            sfr_topology = self.__set_spillway_flag(flag_spillway,
+                                                    sfr_topology)
+
         w = shapefile.Writer(shp)
         w.shapeType = 3
         w.field("ISEG", "N")
         w.field("IUPSEG", "N")
         w.field("OUTSEG", "N")
+        w.field("SPILL_FLG", "N")
 
-        for sfr in self.sfr_topology:
+        for sfr in sfr_topology:
             w.line(sfr.polyline)
             attributes = sfr.attributes
             w.record(attributes.iseg,
                      attributes.iupseg,
-                     attributes.outseg)
+                     attributes.outseg,
+                     attributes.spill_flg)
 
-        for lake in self.lake_topology:
+        for lake in lake_topology:
             for ix, attributes in enumerate(lake.attributes):
                 w.line([lake.polyline[ix]])
                 w.record(attributes.iseg,
                          attributes.iupseg,
-                         attributes.outseg)
+                         attributes.outseg,
+                         attributes.spill_flg)
         try:
             w.close()
         except AttributeError:
@@ -565,19 +654,23 @@ class _SfrTopology(object):
 
         outseg = []
         iupseg = []
+        flow = []
         for per, recarray in self._sfr.segment_data.items():
             for rec in recarray:
                 if rec.nseg == self.iseg:
                     outseg.append(rec.outseg)
                     iupseg.append(rec.iupseg)
+                    flow.append(rec.flow)
                     break
 
         ij = []
+        strtop = []
         reach_data = self._sfr.reach_data
         reach_data.sort(axis=0, order=["iseg", "ireach"])
         for rec in reach_data:
             if rec.iseg == self.iseg:
                 ij.append([rec.i, rec.j])
+                strtop.append(rec.strtop)
 
         if ij:
             self._ij = tuple(ij[-1])
@@ -592,7 +685,10 @@ class _SfrTopology(object):
         else:
             iupseg = 0
 
-        self._attributes = _Attributes(self.iseg, iupseg, outseg)
+        strtop = min(strtop)
+        flow = max(flow)
+
+        self._attributes = _Attributes(self.iseg, iupseg, outseg, flow, strtop)
 
 
 class _Attributes(object):
@@ -608,8 +704,16 @@ class _Attributes(object):
         upstream segment number
     outseg : int
         output segment number
+    flow : float
+        maximum specified flow rate
+    strtop : float
+        minimum strtop elevation
+
     """
-    def __init__(self, iseg, iupseg=0, outseg=0):
+    def __init__(self, iseg, iupseg=0, outseg=0, flow=0, strtop=0):
         self.iseg = iseg
         self.iupseg = iupseg
         self.outseg = outseg
+        self.flow = flow
+        self.elev = strtop
+        self.spill_flg = 0
