@@ -10,3 +10,4 @@ pandas
 wget
 rasterio
 pycrs
+shapely

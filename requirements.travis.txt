@@ -8,3 +8,4 @@ pyshp
 pandas
 wget
 pycrs
+shapely
