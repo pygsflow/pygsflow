@@ -94,10 +94,9 @@ class PrmsData(object):
             line = fid.readline()
             if line.strip() == '' or line.strip()[0:2] == '//':
                 continue
+
             if "####" in line:
                 break
-
-
 
             if any(item in line for item in PrmsData.data_names):
                 val_nm = line.strip().split()
