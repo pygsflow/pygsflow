@@ -148,7 +148,7 @@ class PrmsModel(object):
         try:
             return PrmsData.load_from_file(data_file)
         except:
-            err = "PrmsData load error, Skipping parameter files"
+            err = "PrmsData load error, Skipping data files"
             warnings.warn(err, UserWarning)
             return
 
