@@ -46,6 +46,8 @@ class Modsim(object):
         if self._sfr is None:
             self._ready = False
 
+        self._nearest = True
+
     @property
     def sfr_segs(self):
         """
@@ -124,7 +126,8 @@ class Modsim(object):
         """
         lake_topo = []
         for lake in self.lake_segs:
-            lake_topo.append(_LakTopology(self._lak, self.mf, lake))
+            lake_topo.append(_LakTopology(self._lak, self.mf,
+                                          lake, self._nearest))
 
         return lake_topo
 
@@ -196,7 +199,7 @@ class Modsim(object):
         return temp
 
     def write_modsim_shapefile(self, shp=None, proj4=None,
-                               flag_spillway=False):
+                               flag_spillway=False, nearest=True):
         """
         Method to create a modsim compatible
         shapefile from GSFLOW model inputs (SFR, LAK)
@@ -222,6 +225,11 @@ class Modsim(object):
             from reservoirs based on flow rules
             3.) flag_spillway=[3, 4, 5, ...] a user supplied list of SFR
             segments can be supplied to flag spillways
+        nearest : bool
+            if nearest is True, lak topology will connect to the nearest
+            SFR reaches based on the segment they are connected to. If False
+            lak topology will connect to the start or end of the Segment based
+            on iupseg and outseg
 
         """
         if not self._ready:
@@ -238,6 +246,8 @@ class Modsim(object):
             t = ".".join(t[:-1])
             name = t + "_modsim.shp"
             shp = os.path.join(ws, name)
+
+        self._nearest = nearest
 
         sfr_topology = self.sfr_topology
         lake_topology = self.lake_topology
@@ -324,9 +334,11 @@ class _LakTopology(object):
     model : flopy.modflow.Modflow or gsflow.modflow.Modflow
     lakeno : int
         lake number
-
+    nearest : bool
+        defaults to True, creates a connection to nearest node
+        if False creates connection to the last reach
     """
-    def __init__(self, lak, model, lakeno):
+    def __init__(self, lak, model, lakeno, nearest=True):
         self._parent = model
         self._lak = lak
         self._sfr = self._parent.get_package("SFR")
@@ -339,6 +351,7 @@ class _LakTopology(object):
         self._polyline = None
         self._attributes = None
         self._ij = None
+        self._nearest = nearest
 
     @property
     def lakeno(self):
@@ -447,22 +460,33 @@ class _LakTopology(object):
 
         # now we use the distance equation to connect to
         # the closest....
-        verts = []
-        for conn in ij:
-            tverts = []
-            dist = []
-            for i, j in conn:
+        if self._nearest:
+            verts = []
+            for conn in ij:
+                tverts = []
+                dist = []
+                for i, j in conn:
+                    xv = self._mg.xcellcenters[i, j]
+                    yv = self._mg.ycellcenters[i, j]
+                    tverts.append((xv, yv))
+                    a = (xv - self.centroid[0])**2
+                    b = (yv - self.centroid[1])**2
+                    c = np.sqrt(a + b)
+                    dist.append(c)
+
+                if tverts:
+                    vidx = dist.index(np.min(dist))
+                    verts.append(tverts[vidx])
+        else:
+            verts = []
+            for ix, conn in enumerate(ij):
+                if attrs[ix].outseg == 0:
+                    i, j = conn[-1]
+                else:
+                    i, j = conn[0]
                 xv = self._mg.xcellcenters[i, j]
                 yv = self._mg.ycellcenters[i, j]
-                tverts.append((xv, yv))
-                a = (xv - self.centroid[0])**2
-                b = (yv - self.centroid[1])**2
-                c = np.sqrt(a + b)
-                dist.append(c)
-
-            if tverts:
-                vidx = dist.index(np.min(dist))
-                verts.append(tverts[vidx])
+                verts.append((xv, yv))
 
         if verts:
             self._connections = verts

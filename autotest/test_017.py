@@ -78,13 +78,13 @@ def test_modsim_flag_spillway():
     gsf = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
     gsf.mf.modelgrid.set_coord_info(proj4=proj4)
     gsf.modsim.write_modsim_shapefile(shp=os.path.join(ws2, shp_iseg),
-                                      flag_spillway=[24,])
+                                      flag_spillway=[24,], nearest=False)
 
     gsf.modsim.write_modsim_shapefile(shp=os.path.join(ws2, shp_flow),
                                       flag_spillway='flow')
 
     gsf.modsim.write_modsim_shapefile(shp=os.path.join(ws2, shp_elev),
-                                      flag_spillway='elev')
+                                      flag_spillway='elev', nearest=False)
 
     sf = shapefile.Reader(os.path.join(ws2, shp_iseg))
     for record in sf.records():
