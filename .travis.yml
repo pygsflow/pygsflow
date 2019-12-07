@@ -65,8 +65,8 @@ install:
       else pip install -r requirements.travis.txt;
       pip install --no-binary rasterio rasterio;
       pip install -U numpy;
+      pip install https://github.com/modflowpy/flopy/zipball/develop;
       fi
-    - pip install https://github.com/modflowpy/flopy/zipball/develop
     - pip install --upgrade jupyter
     - pip install nbconvert
     - pip install nose-timer
