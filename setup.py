@@ -4,6 +4,7 @@
 """The setup script. """
 
 from setuptools import setup, find_packages
+import sys
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
@@ -11,12 +12,20 @@ with open('README.md') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ["pandas",
-                "numpy",
-                "flopy >= 3.2.11",
-                "pyshp",
-                "pycrs",
-                "matplotlib"]
+if sys.version_info >= (3, 0):
+    requirements = ["pandas",
+                    "numpy",
+                    "flopy >= 3.2.11",
+                    "pyshp",
+                    "pycrs",
+                    "matplotlib"]
+else:
+    requirements = ["pandas",
+                    "numpy",
+                    "flopy == 3.2.13",
+                    "pyshp",
+                    "pycrs",
+                    "matplotlib"]
 
 setup_requirements = []
 
