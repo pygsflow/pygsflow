@@ -21,6 +21,11 @@ diversion 25 104
 diversionet 24 105
 diversionet 25 106
 end
+# AWU segment list
+segment list
+24
+25
+end
 # AWU well list    
 well list
 2 39 54  -500.   #TABUNIT1 TABVAL1 WELLAY1 WELROW1 WELCOL1

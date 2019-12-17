@@ -65,13 +65,8 @@ class ModflowAwu(Package):
                                              [('nummaxwell', OptionBlock.simple_int)]
                                          )}),
                             ('tabfiles', OptionBlock.simple_tabfile),
-                            ('phiramp', OptionBlock.simple_float),
-                            ('etdemand', {OptionBlock.dtype: np.bool_,
-                                          OptionBlock.nested: True,
-                                          OptionBlock.n_nested: 1,
-                                          OptionBlock.vars: OrderedDict(
-                                              [('accel', OptionBlock.simple_float)]
-                                          )}),
+                            ('phiramp', OptionBlock.simple_flag),
+                            ('etdemand', OptionBlock.simple_flag),
                             ('trigger', OptionBlock.simple_flag),
                             ('timeseries_diversion', OptionBlock.simple_flag),
                             ('timeseries_well', OptionBlock.simple_flag),
@@ -110,9 +105,9 @@ class ModflowAwu(Package):
                             ])
 
     def __init__(self, model, options=None, time_series=None, well_list=None,
-                 irrdiversion=None, irrwell=None, supwell=None,
-                 extension="awu", unitnumber=None, filenames=None,
-                 nper=0):
+                 segment_list=None, irrdiversion=None, irrwell=None,
+                 supwell=None, extension="awu", unitnumber=None,
+                 filenames=None, nper=0):
 
         # setup the package parent class
         if unitnumber is None:
@@ -155,9 +150,8 @@ class ModflowAwu(Package):
         self.tabfiles = False
         self.numtab = 0
         self.maxval = 0
-        self.phiramp = None
+        self.phiramp = False
         self.etdemand = False
-        self.accel = None
         self.trigger = False
         self.timeseries_diversion = False
         self.timeseries_well = False
@@ -181,6 +175,7 @@ class ModflowAwu(Package):
             self.options = OptionBlock("", ModflowAwu)
 
         self.time_series = time_series
+        self.segment_list = segment_list
         self.well_list = well_list
         self.irrdiversion = irrdiversion
         self.irrwell = irrwell
@@ -244,31 +239,40 @@ class ModflowAwu(Package):
 
                 foo.write("END \n")
 
-            # check if item 1 exists and write item 1 and 2
+            # check if item 12 exists and write item 12 - 14
+            if self.segment_list is not None:
+                foo.write('# segment list for irriagation diversions\n')
+                foo.write("SEGMENT LIST\n")
+                for iseg in self.segment_list:
+                    foo.write("{:d}\n".format(iseg))
+
+                foo.write("END \n")
+
+            # check if item 15 exists and write item 15 through 17
             if self.well_list is not None:
                 foo.write("# ag well list\n")
                 foo.write("WELL LIST \n")
                 if self.tabfiles:
-                    # item 2a
-                    fmt2a = True
-                    fmt2 = "{:d}   {:d}   {:d}   {:d}   {:d}\n"
+                    # item 16a
+                    fmt16a = True
+                    fmt16 = "{:d}   {:d}   {:d}   {:d}   {:d}\n"
                 else:
-                    # item 2b
-                    fmt2a = False
-                    fmt2 = "{:d}   {:d}   {:d}   {:f}\n"
+                    # item 16b
+                    fmt16a = False
+                    fmt16 = "{:d}   {:d}   {:d}   {:f}\n"
 
                 for record in self.well_list:
-                    if fmt2a:
-                        foo.write(fmt2.format(record["unit"],
-                                              record["tabval"],
-                                              record["k"] + 1,
-                                              record["i"] + 1,
-                                              record["j"] + 1))
+                    if fmt16a:
+                        foo.write(fmt16.format(record["unit"],
+                                               record["tabval"],
+                                               record["k"] + 1,
+                                               record["i"] + 1,
+                                               record["j"] + 1))
                     else:
-                        foo.write(fmt2.format(record["k"] + 1,
-                                              record["i"] + 1,
-                                              record["j"] + 1,
-                                              record["flux"]))
+                        foo.write(fmt16.format(record["k"] + 1,
+                                               record["i"] + 1,
+                                               record["j"] + 1,
+                                               record["flux"]))
 
                 foo.write("END \n")
 
@@ -276,124 +280,124 @@ class ModflowAwu(Package):
             for per in range(self._nper):
                 foo.write("STRESS PERIOD {}\n".format(per + 1))
 
-                # check for item 3 and write item 3, 4, 5
+                # check for item 18 and write items 18 - 21
                 if self.irrdiversion is not None:
                     foo.write("IRRDIVERSION \n")
 
                     if self.trigger:
-                        # item 5
-                        fmt5 = "{:d}   {:d}   {:f}   {:f}\n"
+                        # item 20
+                        fmt20 = "{:d}   {:d}   {:f}   {:f}\n"
                     else:
-                        # item 5
-                        fmt5 = "{:d}   {:d}\n"
+                        # item 20
+                        fmt20 = "{:d}   {:d}\n"
 
                     if per in self.irrdiversion:
                         recarray = self.irrdiversion[per]
 
-                        # write item 4
+                        # write item 19
                         foo.write("{:d} \n".format(len(recarray)))
 
                         if "i0" in recarray.dtype.names:
-                            # item 6a
-                            fmt6a = True
-                            fmt6 = "{:d}   {:d}   {:f}   {:f}\n"
+                            # item 21a
+                            fmt21a = True
+                            fmt21 = "{:d}   {:d}   {:f}   {:f}\n"
                         else:
-                            # item 6b
-                            fmt6a = False
-                            fmt6 = "{:d}   {:f}   {:f}\n"
+                            # item 21b
+                            fmt21a = False
+                            fmt21 = "{:d}   {:f}   {:f}\n"
 
                         for rec in recarray:
                             num = rec['numcell']
                             if self.trigger:
-                                foo.write(fmt5.format(rec['segid'],
-                                                      rec['numcell'],
-                                                      rec['period'],
-                                                      rec['triggerfact']))
+                                foo.write(fmt20.format(rec['segid'],
+                                                       rec['numcell'],
+                                                       rec['period'],
+                                                       rec['triggerfact']))
                             else:
-                                foo.write(fmt5.format(rec['segid'],
-                                                      rec['numcell']))
+                                foo.write(fmt20.format(rec['segid'],
+                                                       rec['numcell']))
 
                             for i in range(num):
-                                if fmt6a:
-                                    foo.write(fmt6.format(rec['i{}'.format(i)] + 1,
-                                                          rec["j{}".format(i)] + 1,
-                                                          rec["eff_fact{}".format(i)],
-                                                          rec['field_fact{}'].format(i)))
+                                if fmt21a:
+                                    foo.write(fmt21.format(rec['i{}'.format(i)] + 1,
+                                                           rec["j{}".format(i)] + 1,
+                                                           rec["eff_fact{}".format(i)],
+                                                           rec['field_fact{}'].format(i)))
                                 else:
-                                    foo.write(fmt6.format(rec['hru_id{}'.format(i)] + 1,
-                                                          rec["eff_fact{}".format(i)],
-                                                          rec['field_fact{}'.format(i)]))
+                                    foo.write(fmt21.format(rec['hru_id{}'.format(i)] + 1,
+                                                           rec["eff_fact{}".format(i)],
+                                                           rec['field_fact{}'.format(i)]))
 
                     else:
-                        # write item 4
+                        # write item 19
                         foo.write("0  \n")
 
-                # check for item 7 and write 7, 8, 9, 10
+                # check for item 22 and write 22 - 25
                 if self.irrwell is not None:
                     foo.write("IRRWELL \n")
 
                     if self.trigger:
-                        # item 9
-                        fmt9 = "{:d}   {:d}   {:f}   {:f}\n"
+                        # item 24
+                        fmt24 = "{:d}   {:d}   {:f}   {:f}\n"
                     else:
-                        # item 9
-                        fmt9 = "{:d}   {:d}\n"
+                        # item 24
+                        fmt24 = "{:d}   {:d}\n"
 
                     if per in self.irrwell:
                         recarray = self.irrwell[per]
 
-                        # write item 4
+                        # write item 23
                         foo.write("{:d} \n".format(len(recarray)))
 
                         if "i0" in recarray.dtype.names:
-                            fmt10a = False
+                            fmt25a = False
                         else:
-                            fmt10a = True
+                            fmt25a = True
 
-                        fmt10 = "{:d}   {:d}   {:f}   {:f}\n"
+                        fmt25 = "{:d}   {:d}   {:f}   {:f}\n"
 
                         for rec in recarray:
                             num = rec['numcell']
                             if self.trigger:
-                                foo.write(fmt9.format(rec['wellid'] + 1,
-                                                      rec['numcell'],
-                                                      rec['period'],
-                                                      rec['triggerfact']))
+                                foo.write(fmt24.format(rec['wellid'] + 1,
+                                                       rec['numcell'],
+                                                       rec['period'],
+                                                       rec['triggerfact']))
                             else:
-                                foo.write(fmt9.format(rec['wellid'] + 1,
-                                                      rec['numcell']))
+                                foo.write(fmt24.format(rec['wellid'] + 1,
+                                                       rec['numcell']))
 
                             for i in range(num):
-                                if fmt10a:
-                                    foo.write(fmt10.format(rec['hru_id{}'.format(i)] + 1,
+                                if fmt25a:
+                                    foo.write(fmt25.format(rec['hru_id{}'.format(i)] + 1,
                                                            rec['dum{}'.format(i)] + 1,
                                                            rec["eff_fact{}".format(i)],
                                                            rec['field_fact{}'.format(i)]))
                                 else:
-                                    foo.write(fmt10.format(rec['i{}'.format(i)] + 1,
+                                    foo.write(fmt25.format(rec['i{}'.format(i)] + 1,
                                                            rec["j{}".format(i)] + 1,
                                                            rec["eff_fact{}".format(i)],
                                                            rec['field_fact{}'].format(i)))
                     else:
-                        # write item 4
+                        # write item 23
                         foo.write("0  \n")
 
-                # check if item 11 and write items 11, 12, 13 , 14
+                # check if item 26 and write items 26 - 29
                 if self.supwell is not None:
                     foo.write("SUPWELL \n")
 
-                    fmt13 = "{:d}   {:d}\n"
+                    fmt28 = "{:d}   {:d}\n"
 
                     if per in self.supwell:
                         recarray = self.supwell[per]
 
-                        # write item 9
+                        # write item 27
                         foo.write("{:d} \n".format(len(recarray)))
 
                         for rec in recarray:
                             num = rec['numcell']
 
-                            foo.write(fmt13.format(rec["wellid"] + 1,
+                            foo.write(fmt28.format(rec["wellid"] + 1,
                                                    rec["numcell"]))
 
                             for i in range(num):
@@ -407,6 +411,7 @@ class ModflowAwu(Package):
                                                                      rec['fracsup{}'.format(i)]))
 
                     else:
+                        # write item 27
                         foo.write("0 \n")
 
                 foo.write("END \n")
@@ -588,10 +593,29 @@ class ModflowAwu(Package):
                         else:
                             time_series[ix] = tuple(rec[:3])
 
-            # read item 1-2 well_list
+            # read item 12-14
+            segments = None
+            if "segment list" in line:
+                # read item 13
+                t = []
+                while True:
+                    line = multi_line_strip(mfag)
+                    if line == "end":
+                        line = multi_line_strip(mfag)
+                        break
+                    else:
+                        t.append(line.split())
+
+                if len(t) > 0:
+                    segments = []
+                    for rec in t:
+                        iseg = int(rec[0])
+                        segments.append(iseg)
+
+            # read item 15-17 well_list
             well = None
             if "well list" in line:
-                # read item 2
+                # read item 16
                 t = []
                 while True:
                     line = multi_line_strip(mfag)
@@ -605,7 +629,7 @@ class ModflowAwu(Package):
                 if len(t) > 0:
                     nrec = len(t)
 
-                    # check if this is block 2a
+                    # check if this is block 16a
                     if isinstance(options.tabfiles, np.recarray):
                         tf = True
                         well = ModflowAwu.get_empty(nrec, block='tabfile_well')
@@ -640,15 +664,15 @@ class ModflowAwu(Package):
             irr_diversion = {}
             irr_well = {}
             sup_well = {}
-            # get the stress period data from blocks 3 - 14
+            # get the stress period data from blocks 18 - 29
             for per in range(nper):
                 while True:
                     if 'stress period' in line:
                         line = multi_line_strip(mfag)
 
-                    # block 3
+                    # block 18
                     elif 'irrdiversion' in line:
-                        # read block 4
+                        # read block 19
                         nrec = int(multi_line_strip(mfag).split()[0])
                         if nrec == -1:
                             irr = np.copy(irr_diversion[per - 1])
@@ -662,14 +686,14 @@ class ModflowAwu(Package):
                                 irr = ModflowAwu.get_empty(nrec, maxells=maxcellsdiversion,
                                                            block="irrdiversion_modflow")
 
-                            # read blocks 5 & 6
-                            irr = _read_block_6_10_or_14(mfag, nrec, irr, 6)
+                            # read blocks 20 & 21
+                            irr = _read_block_21_25_or_29(mfag, nrec, irr, 21)
                         irr_diversion[per] = irr
                         line = multi_line_strip(mfag)
 
-                    # block 7
+                    # block 22
                     elif 'irrwell' in line:
-                        # read block 8
+                        # read block 23
                         nrec = int(multi_line_strip(mfag).split()[0])
                         if nrec == -1:
                             irr = np.copy(irr_well[per - 1])
@@ -683,15 +707,15 @@ class ModflowAwu(Package):
                                 irr = ModflowAwu.get_empty(nrec, maxells=maxcellswell,
                                                            block="irrwell_modflow")
 
-                            # read blocks 9 & 10
-                            irr = _read_block_6_10_or_14(mfag, nrec, irr, 10)
+                            # read blocks 24 & 25
+                            irr = _read_block_21_25_or_29(mfag, nrec, irr, 25)
 
                         irr_well[per] = irr
                         line = multi_line_strip(mfag)
 
-                    # block 11
+                    # block 26
                     elif 'supwel' in line:
-                        # read block 12
+                        # read block 27
                         nrec = int(multi_line_strip(mfag).split()[0])
                         if nrec == -1:
                             sup = np.copy(sup_well[per - 1])
@@ -699,13 +723,13 @@ class ModflowAwu(Package):
                         else:
                             sup = ModflowAwu.get_empty(nrec, maxells=maxdiversions,
                                                        block="supwell")
-                            # read blocks 13 & 14
-                            sup = _read_block_6_10_or_14(mfag, nrec, sup, 14)
+                            # read blocks 28 & 29
+                            sup = _read_block_21_25_or_29(mfag, nrec, sup, 29)
 
                         sup_well[per] = sup
                         line = multi_line_strip(mfag)
 
-                    # block 15?
+                    # block 30?
                     elif "end" in line:
                         if per == nper - 1:
                             break
@@ -717,7 +741,8 @@ class ModflowAwu(Package):
                         raise ValueError("Something went wrong at: {}".format(line))
 
         return ModflowAwu(model, options=options, time_series=time_series,
-                          well_list=well, irrwell=irr_well, irrdiversion=irr_diversion,
+                          segment_list=segments,well_list=well,
+                          irrwell=irr_well, irrdiversion=irr_diversion,
                           supwell=sup_well, nper=nper)
 
     @staticmethod
@@ -733,9 +758,9 @@ class ModflowAwu(Package):
         return False
 
 
-def _read_block_6_10_or_14(fobj, nrec, recarray, block):
+def _read_block_21_25_or_29(fobj, nrec, recarray, block):
     """
-    Method to read blocks 6, 10, and 14 from the AG package
+    Method to read blocks 21, 25, and 29 from the AG package
 
     Parameters
     ----------
@@ -761,13 +786,13 @@ def _read_block_6_10_or_14(fobj, nrec, recarray, block):
     for _ in range(nrec):
         t1 = []
         ll = multi_line_strip(fobj).split()
-        if block in (6, ):
+        if block in (21, ):
             # do not zero adjust segid
             ll[0] = int(ll[0])
         else:
             ll[0] = int(ll[0]) - 1
 
-        if block in (6, 10):
+        if block in (21, 25):
             # correct list length if not using trigger factor
             if len(ll) == 2:
                 ll += [-1e+10, 1e+10]
@@ -776,20 +801,20 @@ def _read_block_6_10_or_14(fobj, nrec, recarray, block):
 
             t1 += ll[:4]
 
-        elif block == 14:
+        elif block == 29:
             t1 += ll[:2]
 
         else:
             raise AssertionError("block number must be 6, 10, or 14")
 
         for numcell in range(int(ll[1])):
-            if block == 14:
+            if block == 29:
                 if len(ll) == 2:
                     ll += [1e-10]
 
-            if hrus or block == 14:
+            if hrus or block == 29:
                 tmp = multi_line_strip(fobj).split()[:3]
-                if block == 14:
+                if block == 29:
                     tmp[0] = int(tmp[0])
                 else:
                     tmp[0] = int(tmp[0]) - 1
