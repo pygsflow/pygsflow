@@ -105,9 +105,8 @@ class ModflowAwu(Package):
                             ])
 
     def __init__(self, model, options=None, time_series=None, well_list=None,
-                 segment_list=None, irrdiversion=None, irrwell=None,
-                 supwell=None, extension="awu", unitnumber=None,
-                 filenames=None, nper=0):
+                 irrdiversion=None, irrwell=None, supwell=None,
+                 extension="awu", unitnumber=None, filenames=None, nper=0):
 
         # setup the package parent class
         if unitnumber is None:
@@ -175,7 +174,6 @@ class ModflowAwu(Package):
             self.options = OptionBlock("", ModflowAwu)
 
         self.time_series = time_series
-        self.segment_list = segment_list
         self.well_list = well_list
         self.irrdiversion = irrdiversion
         self.irrwell = irrwell
@@ -186,6 +184,26 @@ class ModflowAwu(Package):
             self._nper = nper
 
         self.parent.add_package(self)
+
+    @property
+    def segment_list(self):
+        """
+        Method to get a unique list of segments from irrdiversion
+
+        Returns
+        -------
+
+        """
+        segments = []
+        if self.irrdiversion is not None:
+            for kper, recarray in self.irrdiversion.items():
+                t = np.unique(recarray["segid"])
+                for seg in t:
+                    segments.append(seg)
+
+            segments = list(set(segments))
+
+        return segments
 
     def _update_attrs_from_option_block(self, options):
         """
@@ -741,8 +759,8 @@ class ModflowAwu(Package):
                         raise ValueError("Something went wrong at: {}".format(line))
 
         return ModflowAwu(model, options=options, time_series=time_series,
-                          segment_list=segments,well_list=well,
-                          irrwell=irr_well, irrdiversion=irr_diversion,
+                          well_list=well, irrwell=irr_well,
+                          irrdiversion=irr_diversion,
                           supwell=sup_well, nper=nper)
 
     @staticmethod
