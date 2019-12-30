@@ -706,7 +706,7 @@ class ModflowAwu(Package):
                         # read block 19
                         nrec = int(multi_line_strip(mfag).split()[0])
                         if nrec == -1:
-                            irr = np.copy(irr_diversion[per - 1])
+                            irr = np.copy(irr_diversion[per - 1]) # todo: (Ayman) I think we need to use -1
                         else:
                             # model.version2 will need to be changed
                             # for pure flopy compatibility if migrated
