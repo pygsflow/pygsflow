@@ -197,6 +197,9 @@ class ModflowAwu(Package):
         segments = []
         if self.irrdiversion is not None:
             for kper, recarray in self.irrdiversion.items():
+                if np.isscalar(recarray):
+                    # if recarray is scalar, it means there is no divs or use previouse info
+                    continue
                 t = np.unique(recarray["segid"])
                 for seg in t:
                     segments.append(seg)
@@ -306,45 +309,49 @@ class ModflowAwu(Package):
                         # item 20
                         fmt20 = "{:d}   {:d}   {:f}   {:f}\n"
                     else:
-                        # item 20
-                        fmt20 = "{:d}   {:d}\n"
+                        # item 20, if trigger option is false we need 0's for period and trigger fac.
+                        fmt20 = "{:d}   {:d}   0   0\n"
 
                     if per in self.irrdiversion:
-                        recarray = self.irrdiversion[per]
-
-                        # write item 19
-                        foo.write("{:d} \n".format(len(recarray)))
-
-                        if "i0" in recarray.dtype.names:
-                            # item 21a
-                            fmt21a = True
-                            fmt21 = "{:d}   {:d}   {:f}   {:f}\n"
+                        if np.isscalar(self.irrdiversion[per]):
+                            # write item 19
+                            foo.write("-1  \n")
                         else:
-                            # item 21b
-                            fmt21a = False
-                            fmt21 = "{:d}   {:f}   {:f}\n"
+                            recarray = self.irrdiversion[per]
 
-                        for rec in recarray:
-                            num = rec['numcell']
-                            if self.trigger:
-                                foo.write(fmt20.format(rec['segid'],
-                                                       rec['numcell'],
-                                                       rec['period'],
-                                                       rec['triggerfact']))
+                            # write item 19
+                            foo.write("{:d} \n".format(len(recarray)))
+
+                            if "i0" in recarray.dtype.names:
+                                # item 21a
+                                fmt21a = True
+                                fmt21 = "{:d}   {:d}   {:f}   {:f}\n"
                             else:
-                                foo.write(fmt20.format(rec['segid'],
-                                                       rec['numcell']))
+                                # item 21b
+                                fmt21a = False
+                                fmt21 = "{:d}   {:f}   {:f}\n"
 
-                            for i in range(num):
-                                if fmt21a:
-                                    foo.write(fmt21.format(rec['i{}'.format(i)] + 1,
-                                                           rec["j{}".format(i)] + 1,
-                                                           rec["eff_fact{}".format(i)],
-                                                           rec['field_fact{}'].format(i)))
+                            for rec in recarray:
+                                num = rec['numcell']
+                                if self.trigger:
+                                    foo.write(fmt20.format(rec['segid'],
+                                                           rec['numcell'],
+                                                           rec['period'],
+                                                           rec['triggerfact']))
                                 else:
-                                    foo.write(fmt21.format(rec['hru_id{}'.format(i)] + 1,
-                                                           rec["eff_fact{}".format(i)],
-                                                           rec['field_fact{}'.format(i)]))
+                                    foo.write(fmt20.format(rec['segid'],
+                                                           rec['numcell']))
+
+                                for i in range(num):
+                                    if fmt21a:
+                                        foo.write(fmt21.format(rec['i{}'.format(i)] + 1,
+                                                               rec["j{}".format(i)] + 1,
+                                                               rec["eff_fact{}".format(i)],
+                                                               rec['field_fact{}'].format(i)))
+                                    else:
+                                        foo.write(fmt21.format(rec['hru_id{}'.format(i)] + 1,
+                                                               rec["eff_fact{}".format(i)],
+                                                               rec['field_fact{}'.format(i)]))
 
                     else:
                         # write item 19
@@ -359,43 +366,46 @@ class ModflowAwu(Package):
                         fmt24 = "{:d}   {:d}   {:f}   {:f}\n"
                     else:
                         # item 24
-                        fmt24 = "{:d}   {:d}\n"
+                        fmt24 = "{:d}   {:d}   0   0\n"
 
                     if per in self.irrwell:
-                        recarray = self.irrwell[per]
-
-                        # write item 23
-                        foo.write("{:d} \n".format(len(recarray)))
-
-                        if "i0" in recarray.dtype.names:
-                            fmt25a = False
+                        if np.isscalar(self.irrwell[per]):
+                            foo.write("-1  \n")
                         else:
-                            fmt25a = True
+                            recarray = self.irrwell[per]
 
-                        fmt25 = "{:d}   {:d}   {:f}   {:f}\n"
+                            # write item 23
+                            foo.write("{:d} \n".format(len(recarray)))
 
-                        for rec in recarray:
-                            num = rec['numcell']
-                            if self.trigger:
-                                foo.write(fmt24.format(rec['wellid'] + 1,
-                                                       rec['numcell'],
-                                                       rec['period'],
-                                                       rec['triggerfact']))
+                            if "i0" in recarray.dtype.names:
+                                fmt25a = False
                             else:
-                                foo.write(fmt24.format(rec['wellid'] + 1,
-                                                       rec['numcell']))
+                                fmt25a = True
 
-                            for i in range(num):
-                                if fmt25a:
-                                    foo.write(fmt25.format(rec['hru_id{}'.format(i)] + 1,
-                                                           rec['dum{}'.format(i)] + 1,
-                                                           rec["eff_fact{}".format(i)],
-                                                           rec['field_fact{}'.format(i)]))
+                            fmt25 = "{:d}   {:d}   {:f}   {:f}\n"
+
+                            for rec in recarray:
+                                num = rec['numcell']
+                                if self.trigger:
+                                    foo.write(fmt24.format(rec['wellid'] + 1,
+                                                           rec['numcell'],
+                                                           rec['period'],
+                                                           rec['triggerfact']))
                                 else:
-                                    foo.write(fmt25.format(rec['i{}'.format(i)] + 1,
-                                                           rec["j{}".format(i)] + 1,
-                                                           rec["eff_fact{}".format(i)],
-                                                           rec['field_fact{}'].format(i)))
+                                    foo.write(fmt24.format(rec['wellid'] + 1,
+                                                           rec['numcell']))
+
+                                for i in range(num):
+                                    if fmt25a:
+                                        foo.write(fmt25.format(rec['hru_id{}'.format(i)] + 1,
+                                                               rec['dum{}'.format(i)] + 1,
+                                                               rec["eff_fact{}".format(i)],
+                                                               rec['field_fact{}'.format(i)]))
+                                    else:
+                                        foo.write(fmt25.format(rec['i{}'.format(i)] + 1,
+                                                               rec["j{}".format(i)] + 1,
+                                                               rec["eff_fact{}".format(i)],
+                                                               rec['field_fact{}'].format(i)))
                     else:
                         # write item 23
                         foo.write("0  \n")
@@ -407,26 +417,29 @@ class ModflowAwu(Package):
                     fmt28 = "{:d}   {:d}\n"
 
                     if per in self.supwell:
-                        recarray = self.supwell[per]
-
-                        # write item 27
-                        foo.write("{:d} \n".format(len(recarray)))
-
-                        for rec in recarray:
-                            num = rec['numcell']
-
-                            foo.write(fmt28.format(rec["wellid"] + 1,
-                                                   rec["numcell"]))
-
-                            for i in range(num):
-                                if rec["fracsupmax{}".format(i)] != -1e+10:
-                                    foo.write("{:d}   {:f}   {:f}\n".format(rec['segid{}'.format(i)],
-                                                                            rec['fracsup{}'.format(i)],
-                                                                            rec['fracsupmax{}'.format(i)]))
-
-                                else:
-                                    foo.write("{:d}   {:f}\n".format(rec['segid{}'.format(i)],
-                                                                     rec['fracsup{}'.format(i)]))
+                        if np.isscalar(self.supwell[per]):
+                            foo.write("-1  \n")
+                        else:
+                            recarray = self.supwell[per]
+    
+                            # write item 27
+                            foo.write("{:d} \n".format(len(recarray)))
+    
+                            for rec in recarray:
+                                num = rec['numcell']
+    
+                                foo.write(fmt28.format(rec["wellid"] + 1,
+                                                       rec["numcell"]))
+    
+                                for i in range(num):
+                                    if rec["fracsupmax{}".format(i)] != -1e+10:
+                                        foo.write("{:d}   {:f}   {:f}\n".format(rec['segid{}'.format(i)],
+                                                                                rec['fracsup{}'.format(i)],
+                                                                                rec['fracsupmax{}'.format(i)]))
+    
+                                    else:
+                                        foo.write("{:d}   {:f}\n".format(rec['segid{}'.format(i)],
+                                                                         rec['fracsup{}'.format(i)]))
 
                     else:
                         # write item 27
