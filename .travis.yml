@@ -58,10 +58,11 @@ install:
     - ln -fs /usr/bin/g++-6 "$HOME/.local/bin/g++" && g++ --version
     - ls -l /usr/bin/g++-6
     - export CXX="g++"
-    - pip install -r requirements.travis.txt;
-    - pip install --no-binary rasterio rasterio;
-    - pip install -U numpy;
-    - pip install https://github.com/modflowpy/flopy/zipball/develop;
+    - pip install -r requirements.travis.txt
+    - pip install --no-binary rasterio rasterio
+    - pip install -U numpy
+    - pip install -U https://github.com/jlarsen-usgs/flopy/zipball/AgPack
+    - pip install https://github.com/modflowpy/flopy/zipball/develop
     - pip install --upgrade jupyter
     - pip install nbconvert
     - pip install nose-timer

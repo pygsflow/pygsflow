@@ -1,34 +1,47 @@
 import os
 import numpy as np
-from flopy.modflow.mfag import ModflowAg, _read_block_21_25_or_29
+import flopy
+from flopy.modflow.mfag import _read_block_21_25_or_29
 from flopy.utils.recarray_utils import create_empty_recarray
 from gsflow.utils.io import multi_line_strip
 from flopy.utils.optionblock import OptionBlock
 from collections import OrderedDict
 
 
-class ModflowAg(ModflowAg):
+class ModflowAg(flopy.modflow.ModflowAg):
     """
-    The ModflowAwu class is used to build read, write, and edit data
+    The ModflowAg class is used to build read, write, and edit data
     from the MODFLOW-NWT AG package.
 
     Parameters
     ----------
     model : gsflow.modflow.Modflow object
         model object
+    options : flopy.utils.OptionBlock object
+        option block object
+    time_series : np.recarray
+        numpy recarray for the time series block
+    well_list : np.recarray
+        recarray of the well_list block
+    irrdiversion : dict {per: np.recarray}
+        dictionary of the irrdiversion block
+    irrwell : dict {per: np.recarray}
+        dictionary of the irrwell block
+    supwell : dict {per: np.recarray}
+        dictionary of the supwell block
     extension : str, optional
         default is .ag
-    options : flopy.utils.OptionBlock object
-        option block utility from flopy
     unitnumber : list, optional
         fortran unit number for modflow, default 69
     filenames : list, optional
         file name for ModflowAwu package to write input
+    nper : int
+        number of stress periods in the model
 
     Examples
     --------
 
-    load a ModflowAwu file
+    load a ModflowAg file
 
     >>> import gsflow
     >>> ml = gsflow.modflow.Modflow('awutest')

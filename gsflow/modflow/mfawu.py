@@ -5,21 +5,33 @@ warnings.simplefilter('always', PendingDeprecationWarning)
 
 class ModflowAwu(ModflowAg):
     """
-    The ModflowAwu class is a deprecated method to read the MODFLOW-NWT AG
-     package. Please use the ModflowAg package instead...
+    The ModflowAwu class is used to build read, write, and edit data
+    from the MODFLOW-NWT AG package.
 
     Parameters
     ----------
     model : gsflow.modflow.Modflow object
         model object
+    options : flopy.utils.OptionBlock object
+        option block object
+    time_series : np.recarray
+        numpy recarray for the time series block
+    well_list : np.recarray
+        recarray of the well_list block
+    irrdiversion : dict {per: np.recarray}
+        dictionary of the irrdiversion block
+    irrwell : dict {per: np.recarray}
+        dictionary of the irrwell block
+    supwell : dict {per: np.recarray}
+        dictionary of the supwell block
     extension : str, optional
         default is .ag
-    options : flopy.utils.OptionBlock object
-        option block utility from flopy
     unitnumber : list, optional
         fortran unit number for modflow, default 69
     filenames : list, optional
         file name for ModflowAwu package to write input
+    nper : int
+        number of stress periods in the model
 
     Examples
     --------
