@@ -14,21 +14,6 @@ warnings.simplefilter('always', PendingDeprecationWarning)
 warnings.simplefilter('always', UserWarning)
 
 
-def load(control_file):
-    gs = Gsflow(control_file=control_file)
-    gs.load()
-    return gs
-
-
-class Gsflow(object):
-    def __new__(cls, control_file=None, prms=None, mf=None, mf_load_only=None,
-                prms_load_only=None, gsflow_exe=None):
-        err = "Gsflow has been deprecated, calling GsflowModel.load_from_file()"
-        warnings.warn(err, PendingDeprecationWarning)
-        return GsflowModel.load_from_file(control_file=control_file, gsflow_exe=gsflow_exe,
-                                          modflow_only=mf_load_only, prms_only=prms_load_only)
-
-
 class GsflowModel(object):
     """
     GsflowModel is the GSFLOW model object. This class can be used

@@ -7,31 +7,6 @@ import warnings
 warnings.simplefilter('always', PendingDeprecationWarning)
 
 
-class Prms_data(object):
-    """
-    Deprecated Data file loading method. Please use
-    PRMSData
-
-    """
-    def __new__(cls, data_file=None, data_df=None):
-
-        if (data_df is None) and (not(data_file is None)):
-            err_msg = "Prms_data will be replaced by " \
-                      "PrmsData(); Calling PrmsData.load_from_file()"
-            warnings.warn(err_msg, PendingDeprecationWarning)
-            return PrmsData.load_from_file(data_file)
-
-        elif isinstance(data_df, pd.DataFrame):
-            err_msg = "Prms_data will be replaced by " \
-                      "PrmsData(); Calling PrmsData()"
-            warnings.warn(err_msg, PendingDeprecationWarning)
-            return PrmsData(data_df=data_df)
-
-        if (data_df is None) and data_file is None :
-            print(" Warning: This is empty data object")
-            return None
-
-
 class PrmsData(object):
     """
     PrmsData is a class to load/edit/write PrmsData files

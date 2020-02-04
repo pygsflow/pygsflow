@@ -8,19 +8,6 @@ warnings.simplefilter('always', PendingDeprecationWarning)
 warnings.simplefilter('always', UserWarning)
 
 
-class Prms(object):
-    def __new__(cls, control=None, parameters=None, control_file=None):
-        err = "Prms is deprecated; calling PrmsModel()"
-        warnings.warn(err, PendingDeprecationWarning)
-
-        if isinstance(control, ControlFile):
-            if isinstance(parameters, PrmsParameters):
-                return PrmsModel(control, parameters=parameters)
-            return PrmsModel(control)
-        else:
-            return PrmsModel.load_from_file(control)
-
-
 class PrmsModel(object):
     """
     PrmsModel loading class
