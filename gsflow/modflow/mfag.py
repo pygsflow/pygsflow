@@ -154,223 +154,207 @@ class ModflowAg(flopy.modflow.ModflowAg):
         check: bool
             not implemented currently
         """
-        ws = self.parent.model_ws
-        name = self.file_name[0]
-        with open(os.path.join(ws, name), "w") as foo:
-            foo.write(self.heading)
+        if self.parent.version2 != "gsflow":
+            super(ModflowAg, self).write_file(check=check)
 
-            # update options
-            self.options.update_from_package(self)
-            self.options.write_options(foo)
+        else:
+            ws = self.parent.model_ws
+            name = self.file_name[0]
+            with open(os.path.join(ws, name), "w") as foo:
+                foo.write(self.heading)
 
-            # check if there is a timeseries block and write output
-            if self.time_series is not None:
-                foo.write("# ag time series\n")
-                fmt = "{}   {:d}   {:d}\n"
-                foo.write("TIME SERIES \n")
-                for record in self.time_series:
-                    if record["keyword"] in ('welletall', 'wellall'):
-                        foo.write("{}   {:d}\n".format(record['keyword'],
-                                                       record['unit']).upper())
-                    else:
-                        foo.write(fmt.format(*record).upper())
+                # update options
+                self.options.update_from_package(self)
+                self.options.write_options(foo)
 
-                foo.write("END \n")
-
-            # check if item 12 exists and write item 12 - 14
-            if self.segment_list is not None:
-                foo.write('# segment list for irriagation diversions\n')
-                foo.write("SEGMENT LIST\n")
-                for iseg in self.segment_list:
-                    foo.write("{:d}\n".format(iseg))
-
-                foo.write("END \n")
-
-            # check if item 15 exists and write item 15 through 17
-            if self.well_list is not None:
-                foo.write("# ag well list\n")
-                foo.write("WELL LIST \n")
-                if self.tabfiles:
-                    # item 16a
-                    fmt16a = True
-                    fmt16 = "{:d}   {:d}   {:d}   {:d}   {:d}\n"
-                else:
-                    # item 16b
-                    fmt16a = False
-                    fmt16 = "{:d}   {:d}   {:d}   {:f}\n"
-
-                for record in self.well_list:
-                    if fmt16a:
-                        foo.write(fmt16.format(record["unit"],
-                                               record["tabval"],
-                                               record["k"] + 1,
-                                               record["i"] + 1,
-                                               record["j"] + 1))
-                    else:
-                        foo.write(fmt16.format(record["k"] + 1,
-                                               record["i"] + 1,
-                                               record["j"] + 1,
-                                               record["flux"]))
-
-                foo.write("END \n")
-
-            foo.write("# ag stress period data\n")
-            for per in range(self._nper):
-                foo.write("STRESS PERIOD {}\n".format(per + 1))
-
-                # check for item 18 and write items 18 - 21
-                if self.irrdiversion is not None:
-                    foo.write("IRRDIVERSION \n")
-
-                    if self.trigger:
-                        # item 20
-                        fmt20 = "{:d}   {:d}   {:f}   {:f}\n"
-                    else:
-                        # item 20, if trigger option is false we need 0's
-                        # for period and trigger fac.
-                        fmt20 = "{:d}   {:d}   0   0\n"
-
-                    if per in self.irrdiversion:
-                        if np.isscalar(self.irrdiversion[per]):
-                            # write item 19
-                            foo.write("-1  \n")
+                # check if there is a timeseries block and write output
+                if self.time_series is not None:
+                    foo.write("# ag time series\n")
+                    fmt = "{}   {:d}   {:d}\n"
+                    foo.write("TIME SERIES \n")
+                    for record in self.time_series:
+                        if record["keyword"] in ('welletall', 'wellall'):
+                            foo.write("{}   {:d}\n".format(
+                                record['keyword'],
+                                record['unit']).upper())
                         else:
-                            recarray = self.irrdiversion[per]
+                            foo.write(fmt.format(*record).upper())
 
-                            # write item 19
-                            foo.write("{:d} \n".format(len(recarray)))
+                    foo.write("END \n")
 
-                            if "i0" in recarray.dtype.names:
-                                # item 21a
-                                fmt21a = True
-                                fmt21 = "{:d}   {:d}   {:f}   {:f}\n"
+                # check if item 12 exists and write item 12 - 14
+                if self.segment_list is not None:
+                    foo.write('# segment list for irriagation diversions\n')
+                    foo.write("SEGMENT LIST\n")
+                    for iseg in self.segment_list:
+                        foo.write("{:d}\n".format(iseg))
+
+                    foo.write("END \n")
+
+                # check if item 15 exists and write item 15 through 17
+                if self.well_list is not None:
+                    foo.write("# ag well list\n")
+                    foo.write("WELL LIST \n")
+                    if self.tabfiles:
+                        # item 16a
+                        fmt16a = True
+                        fmt16 = "{:d}   {:d}   {:d}   {:d}   {:d}\n"
+                    else:
+                        # item 16b
+                        fmt16a = False
+                        fmt16 = "{:d}   {:d}   {:d}   {:f}\n"
+
+                    for record in self.well_list:
+                        if fmt16a:
+                            foo.write(fmt16.format(record["unit"],
+                                                   record["tabval"],
+                                                   record["k"] + 1,
+                                                   record["i"] + 1,
+                                                   record["j"] + 1))
+                        else:
+                            foo.write(fmt16.format(record["k"] + 1,
+                                                   record["i"] + 1,
+                                                   record["j"] + 1,
+                                                   record["flux"]))
+
+                    foo.write("END \n")
+
+                foo.write("# ag stress period data\n")
+                for per in range(self._nper):
+                    foo.write("STRESS PERIOD {}\n".format(per + 1))
+
+                    # check for item 18 and write items 18 - 21
+                    if self.irrdiversion is not None:
+                        foo.write("IRRDIVERSION \n")
+
+                        if self.trigger:
+                            # item 20
+                            fmt20 = "{:d}   {:d}   {:f}   {:f}\n"
+                        else:
+                            # item 20, if trigger option is false we need 0's
+                            # for period and trigger fac.
+                            fmt20 = "{:d}   {:d}   0   0\n"
+
+                        if per in self.irrdiversion:
+                            if np.isscalar(self.irrdiversion[per]):
+                                # write item 19
+                                foo.write("-1  \n")
                             else:
+                                recarray = self.irrdiversion[per]
+
+                                # write item 19
+                                foo.write("{:d} \n".format(len(recarray)))
+
                                 # item 21b
-                                fmt21a = False
                                 fmt21 = "{:d}   {:f}   {:f}\n"
 
-                            for rec in recarray:
-                                num = rec['numcell']
-                                if self.trigger:
-                                    foo.write(fmt20.format(rec['segid'],
-                                                           rec['numcell'],
-                                                           rec['period'],
-                                                           rec['triggerfact']))
-                                else:
-                                    foo.write(fmt20.format(rec['segid'],
-                                                           rec['numcell']))
-
-                                for i in range(num):
-                                    if fmt21a:
-                                        foo.write(fmt21.format(
-                                            rec['i{}'.format(i)] + 1,
-                                            rec["j{}".format(i)] + 1,
-                                            rec["eff_fact{}".format(i)],
-                                            rec['field_fact{}'.format(i)]))
+                                for rec in recarray:
+                                    num = rec['numcell']
+                                    if self.trigger:
+                                        foo.write(fmt20.format(
+                                            rec['segid'],
+                                            rec['numcell'],
+                                            rec['period'],
+                                            rec['triggerfact']))
                                     else:
+                                        foo.write(fmt20.format(rec['segid'],
+                                                               rec['numcell']))
+
+                                    for i in range(num):
                                         foo.write(fmt21.format(
                                             rec['hru_id{}'.format(i)] + 1,
                                             rec["eff_fact{}".format(i)],
                                             rec['field_fact{}'.format(i)]))
 
-                    else:
-                        # write item 19
-                        foo.write("0  \n")
-
-                # check for item 22 and write 22 - 25
-                if self.irrwell is not None:
-                    foo.write("IRRWELL \n")
-
-                    if self.trigger:
-                        # item 24
-                        fmt24 = "{:d}   {:d}   {:f}   {:f}\n"
-                    else:
-                        # item 24
-                        fmt24 = "{:d}   {:d}   0   0\n"
-
-                    if per in self.irrwell:
-                        if np.isscalar(self.irrwell[per]):
-                            foo.write("-1  \n")
                         else:
-                            recarray = self.irrwell[per]
+                            # write item 19
+                            foo.write("0  \n")
 
-                            # write item 23
-                            foo.write("{:d} \n".format(len(recarray)))
+                    # check for item 22 and write 22 - 25
+                    if self.irrwell is not None:
+                        foo.write("IRRWELL \n")
 
-                            if "i0" in recarray.dtype.names:
-                                fmt25a = False
+                        if self.trigger:
+                            # item 24
+                            fmt24 = "{:d}   {:d}   {:f}   {:f}\n"
+                        else:
+                            # item 24
+                            fmt24 = "{:d}   {:d}   0   0\n"
+
+                        if per in self.irrwell:
+                            if np.isscalar(self.irrwell[per]):
+                                foo.write("-1  \n")
                             else:
-                                fmt25a = True
+                                recarray = self.irrwell[per]
 
-                            fmt25 = "{:d}   {:d}   {:f}   {:f}\n"
+                                # write item 23
+                                foo.write("{:d} \n".format(len(recarray)))
 
-                            for rec in recarray:
-                                num = rec['numcell']
-                                if self.trigger:
-                                    foo.write(fmt24.format(rec['wellid'] + 1,
-                                                           rec['numcell'],
-                                                           rec['period'],
-                                                           rec['triggerfact']))
-                                else:
-                                    foo.write(fmt24.format(rec['wellid'] + 1,
-                                                           rec['numcell']))
+                                fmt25 = "{:d}   {:d}   {:f}   {:f}\n"
 
-                                for i in range(num):
-                                    if fmt25a:
+                                for rec in recarray:
+                                    num = rec['numcell']
+                                    if self.trigger:
+                                        foo.write(fmt24.format(
+                                            rec['wellid'] + 1,
+                                            rec['numcell'],
+                                            rec['period'],
+                                            rec['triggerfact']))
+                                    else:
+                                        foo.write(fmt24.format(
+                                            rec['wellid'] + 1,
+                                            rec['numcell']))
+
+                                    for i in range(num):
                                         foo.write(fmt25.format(
                                             rec['hru_id{}'.format(i)] + 1,
                                             rec['dum{}'.format(i)] + 1,
                                             rec["eff_fact{}".format(i)],
                                             rec['field_fact{}'.format(i)]))
-                                    else:
-                                        foo.write(fmt25.format(
-                                            rec['i{}'.format(i)] + 1,
-                                            rec["j{}".format(i)] + 1,
-                                            rec["eff_fact{}".format(i)],
-                                            rec['field_fact{}'.format(i)]))
-                    else:
-                        # write item 23
-                        foo.write("0  \n")
 
-                # check if item 26 and write items 26 - 29
-                if self.supwell is not None:
-                    foo.write("SUPWELL \n")
-
-                    fmt28 = "{:d}   {:d}\n"
-
-                    if per in self.supwell:
-                        if np.isscalar(self.supwell[per]):
-                            foo.write("-1  \n")
                         else:
-                            recarray = self.supwell[per]
+                            # write item 23
+                            foo.write("0  \n")
 
-                            # write item 27
-                            foo.write("{:d} \n".format(len(recarray)))
+                    # check if item 26 and write items 26 - 29
+                    if self.supwell is not None:
+                        foo.write("SUPWELL \n")
 
-                            for rec in recarray:
-                                num = rec['numcell']
+                        fmt28 = "{:d}   {:d}\n"
 
-                                foo.write(fmt28.format(rec["wellid"] + 1,
-                                                       rec["numcell"]))
+                        if per in self.supwell:
+                            if np.isscalar(self.supwell[per]):
+                                foo.write("-1  \n")
+                            else:
+                                recarray = self.supwell[per]
 
-                                for i in range(num):
-                                    if rec["fracsupmax{}".format(i)] != -1e+10:
-                                        foo.write(
-                                            "{:d}   {:f}   {:f}\n".format(
+                                # write item 27
+                                foo.write("{:d} \n".format(len(recarray)))
+
+                                for rec in recarray:
+                                    num = rec['numcell']
+
+                                    foo.write(fmt28.format(rec["wellid"] + 1,
+                                                           rec["numcell"]))
+
+                                    for i in range(num):
+                                        if rec["fracsupmax{}".format(i)] != -1e+10:
+                                            foo.write(
+                                                "{:d}   {:f}   {:f}\n".format(
+                                                    rec['segid{}'.format(i)],
+                                                    rec['fracsup{}'.format(i)],
+                                                    rec['fracsupmax{}'.format(i)]))
+
+                                        else:
+                                            foo.write("{:d}   {:f}\n".format(
                                                 rec['segid{}'.format(i)],
-                                                rec['fracsup{}'.format(i)],
-                                                rec['fracsupmax{}'.format(i)]))
+                                                rec['fracsup{}'.format(i)]))
 
-                                    else:
-                                        foo.write("{:d}   {:f}\n".format(
-                                            rec['segid{}'.format(i)],
-                                            rec['fracsup{}'.format(i)]))
+                        else:
+                            # write item 27
+                            foo.write("0 \n")
 
-                    else:
-                        # write item 27
-                        foo.write("0 \n")
-
-                foo.write("END \n")
+                    foo.write("END \n")
 
     @staticmethod
     def get_empty(numrecords, maxells=0, block="well"):
@@ -389,10 +373,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
             "well" ,
             "tabfile_well" ,
             "timeseries" ,
-            "irrdiversion_modflow" ,
-            "irrdiversion_gsflow" ,
-            "irrwell_modflow" ,
-            "irrwell_gsflow" ,
+            "irrdiversion" ,
+            "irrwell" ,
             "supwell"
 
         Returns:
@@ -415,10 +397,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
             "well" ,
             "tabfile_well" ,
             "timeseries" ,
-            "irrdiversion_modflow" ,
-            "irrdiversion_gsflow" ,
-            "irrwell_modflow" ,
-            "irrwell_gsflow" ,
+            "irrdiversion" ,
+            "irrwell" ,
             "supwell"
 
         Returns
@@ -437,17 +417,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
             dtype = [('keyword', np.object), ('id', np.int),
                      ('unit', np.int)]
 
-        elif block == "irrdiversion_modflow":
-            dtype = [("segid", np.int), ("numcell", np.int),
-                     ("period", np.float), ("triggerfact", np.float)]
-
-            for i in range(maxells):
-                dtype += [("i{}".format(i), np.int),
-                          ("j{}".format(i), np.int),
-                          ("eff_fact{}".format(i), np.float),
-                          ("field_fact{}".format(i), np.float)]
-
-        elif block == "irrdiversion_gsflow":
+        elif block == "irrdiversion":
             dtype = [("segid", np.int), ("numcell", np.int),
                      ("period", np.float), ("triggerfact", np.float)]
 
@@ -456,17 +426,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                           ("eff_fact{}".format(i), np.float),
                           ("field_fact{}".format(i), np.float)]
 
-        elif block == "irrwell_modflow":
-            dtype = [("wellid", np.int), ("numcell", np.int),
-                     ("period", np.float), ("triggerfact", np.float)]
-
-            for i in range(maxells):
-                dtype += [("i{}".format(i), np.int),
-                          ("j{}".format(i), np.int),
-                          ("eff_fact{}".format(i), np.float),
-                          ("field_fact{}".format(i), np.float)]
-
-        elif block == "irrwell_gsflow":
+        elif block == "irrwell":
             dtype = [("wellid", np.int), ("numcell", np.int),
                      ("period", np.float), ("triggerfact", np.float)]
 
@@ -635,18 +595,16 @@ class ModflowAg(flopy.modflow.ModflowAg):
                         if nrec == -1:
                             irr = np.copy(irr_diversion[per - 1])
                         else:
-                            # model.version2 will need to be changed
-                            # for pure flopy compatibility if migrated
                             if model.version2 == "gsflow":
                                 irr = ModflowAg.get_empty(
                                     nrec,
                                     maxells=maxcellsdiversion,
-                                    block="irrdiversion_gsflow")
+                                    block="irrdiversion")
                             else:
-                                irr = ModflowAg.get_empty(
+                                irr = flopy.modflow.ModflowAg.get_empty(
                                     nrec,
                                     maxells=maxcellsdiversion,
-                                    block="irrdiversion_modflow")
+                                    block="irrdiversion")
 
                             # read blocks 20 & 21
                             irr = _read_block_21_25_or_29(mfag, nrec, irr, 21)
@@ -660,18 +618,16 @@ class ModflowAg(flopy.modflow.ModflowAg):
                         if nrec == -1:
                             irr = np.copy(irr_well[per - 1])
                         else:
-                            # model.version2 will need to be changed
-                            # for pure flopy compatibility if migrated
                             if model.version2 == "gsflow":
                                 irr = ModflowAg.get_empty(
                                     nrec,
                                     maxells=maxcellswell,
-                                    block="irrwell_gsflow")
+                                    block="irrwell")
                             else:
-                                irr = ModflowAg.get_empty(
+                                irr = flopy.modflow.ModflowAg.get_empty(
                                     nrec,
                                     maxells=maxcellswell,
-                                    block="irrwell_modflow")
+                                    block="irrwell")
 
                             # read blocks 24 & 25
                             irr = _read_block_21_25_or_29(mfag, nrec, irr, 25)
@@ -713,82 +669,3 @@ class ModflowAg(flopy.modflow.ModflowAg):
                          well_list=well, irrwell=irr_well,
                          irrdiversion=irr_diversion,
                          supwell=sup_well, nper=nper)
-
-
-'''
-def _read_block_21_25_or_29(fobj, nrec, recarray, block):
-    """
-    Method to read blocks 21, 25, and 29 from the AG package
-
-    Parameters
-    ----------
-    fobj : File object
-    nrec : int
-        number of records
-    recarray : np.recarray
-        recarray to add data to
-    block : int
-        valid options are 6, 10, or 14
-
-    Returns
-    -------
-        recarray : np.recarray
-    """
-    t = []
-
-    hrus = False
-    if "hru_id0" in recarray.dtype.names and \
-            "segid" in recarray.dtype.names:
-        hrus = True
-
-    for _ in range(nrec):
-        t1 = []
-        ll = multi_line_strip(fobj).split()
-        if block in (21,):
-            # do not zero adjust segid
-            ll[0] = int(ll[0])
-        else:
-            ll[0] = int(ll[0]) - 1
-
-        if block in (21, 25):
-            # correct list length if not using trigger factor
-            if len(ll) == 2:
-                ll += [-1e+10, 1e+10]
-            elif len(ll) == 3:
-                ll += [1e-10]
-
-            t1 += ll[:4]
-
-        elif block == 29:
-            t1 += ll[:2]
-
-        else:
-            raise AssertionError("block number must be 6, 10, or 14")
-
-        for numcell in range(int(ll[1])):
-            if block == 29:
-                if len(ll) == 2:
-                    ll += [1e-10]
-
-            if hrus or block == 29:
-                tmp = multi_line_strip(fobj).split()[:3]
-                if block == 29:
-                    tmp[0] = int(tmp[0])
-                else:
-                    tmp[0] = int(tmp[0]) - 1
-            else:
-                tmp = multi_line_strip(fobj).split()[:4]
-                tmp[0:2] = [int(tmp[0]) - 1, int(tmp[1]) - 1]
-
-            t1 += tmp
-
-        t.append(t1)
-
-    if len(t) > 0:
-        for ix, rec in enumerate(t):
-            for ix2, name in enumerate(recarray.dtype.names):
-                if ix2 >= len(rec):
-                    pass
-                else:
-                    recarray[name][ix] = rec[ix2]
-    return recarray'''
