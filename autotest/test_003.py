@@ -14,6 +14,7 @@ def test_empty_control_record():
     assert isinstance(cr, ControlRecord)
     assert isinstance(cr, RecordBase)
 
+
 def test_build_parameter_record():
     name = "ssr2gw_rate 0"
     values = np.random.randn(128)
@@ -25,6 +26,7 @@ def test_build_parameter_record():
     assert pr.name == name
     assert np.allclose(values, pr.values)
     assert pr.datatype == datatype
+
 
 def test_build_control_record():
     name = "model_mode"

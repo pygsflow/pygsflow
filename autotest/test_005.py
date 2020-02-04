@@ -20,6 +20,7 @@ def test_build_prms_data():
     assert data.header == header
     assert isinstance(data.data_df, pd.DataFrame)
 
+
 if __name__ == "__main__":
     test_empty_prms_data()
     test_build_prms_data()

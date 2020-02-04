@@ -9,15 +9,15 @@ services:
 
 matrix:
   include:
-    - python: 2.7
     - python: 3.5
     - python: 3.6
     - python: 3.7
-    - python: "3.7-dev"
+    - python: 3.8
+    - python: "3.8-dev"
     - python: "nightly"
 
   allow_failures:
-    - python: "3.7-dev"
+    - python: "3.8-dev"
     - python: "nightly"
 
 cache:
@@ -58,16 +58,10 @@ install:
     - ln -fs /usr/bin/g++-6 "$HOME/.local/bin/g++" && g++ --version
     - ls -l /usr/bin/g++-6
     - export CXX="g++"
-    - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then
-      pip install -r requirements27.travis.txt;
-      pip install flopy==3.2.13;
-      pip install requests;
-      echo requests version1; python -c "import requests; print(requests.__version__)";
-      else pip install -r requirements.travis.txt;
-      pip install --no-binary rasterio rasterio;
-      pip install -U numpy;
-      pip install https://github.com/modflowpy/flopy/zipball/develop;
-      fi
+    - pip install -r requirements.travis.txt;
+    - pip install --no-binary rasterio rasterio;
+    - pip install -U numpy;
+    - pip install https://github.com/modflowpy/flopy/zipball/develop;
     - pip install --upgrade jupyter
     - pip install nbconvert
     - pip install nose-timer
