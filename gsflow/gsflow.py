@@ -113,24 +113,6 @@ class GsflowModel(object):
         """
         return self._prms_only
 
-    @property
-    def mf_load_only(self):
-        err = "mf_load_only is deprecated, calling modflow_only"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.modflow_only
-
-    @property
-    def prms_load_only(self):
-        err = "prms_load only is deprecated, calling prms_only"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.prms_only
-
-    @property
-    def Help(self):
-        err = "Help is deprecated, calling help"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.help
-
     def export_nc(self, f, **kwargs):
         """
         Method to export the GSFLOW model as a netcdf

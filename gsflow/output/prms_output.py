@@ -8,20 +8,6 @@ import warnings
 warnings.simplefilter('always', PendingDeprecationWarning)
 
 
-class Statistics(object):
-    """
-    Deprecated class. Please use StatVar object
-
-    """
-    def __new__(cls, control=None):
-        err = "Statistics is Deprecated; Calling StatVar.load_from_control_object()"
-        warnings.warn(err, PendingDeprecationWarning)
-        if control is None:
-            raise IOError("Control file is not loaded...")
-
-        return StatVar.load_from_control_object(control)
-
-
 class StatVar(object):
     """
     Class to read in the statvar file into a pandas Dataframe

@@ -10,27 +10,6 @@ import warnings
 warnings.simplefilter('always', PendingDeprecationWarning)
 
 
-class Control(object):
-    def __new__(cls, records_list=None, control_file="temp_cont.control"):
-        if records_list is not None:
-            err = "Control has been deprecated; Calling ControlFile()"
-            warnings.warn(err, PendingDeprecationWarning)
-            model_dir, name = os.path.split(control_file)
-            return ControlFile(records_list, name=name, model_dir=model_dir)
-
-        elif os.path.isfile(control_file):
-            err = "Control has been deprecated; Calling ControlFile.load_from_file()"
-            warnings.warn(err, PendingDeprecationWarning)
-            ControlFile.load_from_file(control_file)
-
-        else:
-            err = "Control has been deprecated; Calling ControlFile()"
-            warnings.warn(err, PendingDeprecationWarning)
-            records_list = []
-            model_dir, name = os.path.split(control_file)
-            return ControlFile(records_list, name=name, model_dir=model_dir)
-
-
 class ControlFile(ParameterBase):
     """
     Class to hold information about control file, also it reads and writes data.
@@ -217,7 +196,6 @@ class ControlFile(ParameterBase):
 
         super(ControlFile, self).set_values(name, values)
 
-
     def add_record(self, name=None, values=None, where=None, after=None):
         """
         Convience method to add a record to the control file
@@ -279,17 +257,6 @@ class ControlFile(ParameterBase):
             for record in self.records_list:
                 record.write(fid)
             fid.write("\n")
-
-
-class Control_record(object):
-    """
-    Deprecated class
-
-    """
-    def __new__(cls, name=None, values=None, datatype=None, nvalues=None):
-        err = "Control_record has been deprecated; Calling ControlRecord()"
-        return ControlRecord(name=name, values=values,
-                             datatype=datatype)
 
 
 class ControlRecord(RecordBase):

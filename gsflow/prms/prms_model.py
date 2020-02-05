@@ -68,12 +68,6 @@ class PrmsModel(object):
 
         return f
 
-    @property
-    def Data(self):
-        err = "Data is depreciated, calling data"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.data
-
     @staticmethod
     def load_from_file(control_file):
         """
@@ -138,19 +132,6 @@ class PrmsModel(object):
             err = "PrmsData load error, Skipping data files"
             warnings.warn(err, UserWarning)
             return
-
-    def get_statVar(self):
-        """
-        Deprecated method to get statvar output
-
-        Returns
-        -------
-            pd.DataFrame of the stat_var file
-
-        """
-        err = "get_statVar is Deprecated, use get_StatVar()"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.get_StatVar()
 
     def get_StatVar(self):
         """

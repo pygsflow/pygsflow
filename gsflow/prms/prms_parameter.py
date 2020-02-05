@@ -375,21 +375,6 @@ class PrmsParameters(ParameterBase):
                 fid.write("\n")
 
 
-class Parm_record(object):
-    """
-    Deprecated ParameterRecord method
-    """
-    def __new__(cls, name=None, values=None, dimensions=None,
-                datatype=None, width=10, file_name=None):
-        err_msg = "Parm_record will be replaced by " \
-                  "ParameterRecord(); Calling ParameterRecord()"
-        warnings.warn(err_msg, PendingDeprecationWarning)
-        return ParameterRecord(name=name, values=values,
-                               dimensions=dimensions,
-                               datatype=datatype, width=width,
-                               file_name=file_name)
-
-
 class ParameterRecord(RecordBase):
     """
     ParameterRecord is a class for storing parameters
