@@ -569,9 +569,14 @@ class GsflowModel(object):
                 print("Writing MODSIM shapefile")
                 self.modsim.write_modsim_shapefile()
 
-    def run_model(self):
+    def run_model(self, forgive=False):
         """
         Method to run a gsflow model
+
+        Parameters
+        ----------
+        forgive : bool
+            forgives convergence issues
 
         Returns
         -------
@@ -589,7 +594,13 @@ class GsflowModel(object):
             print("Warning : The executable of the model is not specified. Use .gsflow_exe "
                   "to define its path... ")
             return None
-        return self.__run(exe_name=self.gsflow_exe, namefile=fn)
+
+        normal_msg = ['normal termination']
+        if forgive:
+            normal_msg.append('failed to meet solver convergence criteria')
+
+        return self.__run(exe_name=self.gsflow_exe, namefile=fn,
+                          normal_msg=normal_msg)
 
     def _generate_batch_file(self):
         fn = os.path.dirname(self.control_file)

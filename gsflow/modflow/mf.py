@@ -239,7 +239,7 @@ class Modflow(fpModflow):
 
     @staticmethod
     def load(f, version='mfnwt', exe_name='mfnwt.exe', verbose=False,
-             model_ws='.', load_only=None, forgive=True, check=True,
+             model_ws='.', load_only=None, forgive=False, check=True,
              control_file=None):
         """
         Load an existing MODFLOW model.
