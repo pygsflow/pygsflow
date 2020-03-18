@@ -211,6 +211,16 @@ class GsflowModel(object):
         control = ControlFile.load_from_file(control_file)
         print("Control file is loaded")
 
+        mode = control.get_values('model_mode')[0].upper()
+        if mode == 'MODFLOW':
+            modflow_only = True
+        elif mode == 'PRMS':
+            prms_only = True
+        elif "MODSIM" in mode:
+            modsim = True
+        else:
+            pass
+
         # load prms
         if not modflow_only:
             print("Working on loading PRMS model ...")
@@ -218,14 +228,10 @@ class GsflowModel(object):
 
         if not prms_only:
             # get model mode
-            mode = control.get_values('model_mode')
-            if 'GSFLOW' in mode[0].upper() or 'MODFLOW' in mode[0].upper():
+            if 'GSFLOW' in mode.upper() or 'MODFLOW' in mode.upper():
                 print("Working on loading MODFLOW files ....")
                 modflow = GsflowModel._load_modflow(control, mf_load_only)
                 print("MODFLOW files are loaded ... ")
-
-                if "MODSIM" in mode[0].upper():
-                    modsim = True
 
             else:
                 prms_only = True
@@ -305,23 +311,24 @@ class GsflowModel(object):
             self.control.model_dir = workspace
             self.control.control_file = os.path.join(workspace, fnn)
             self.control_file = os.path.join(workspace, fnn)
-            self.prms.control_file = self.control_file
+            if self.prms is not None:
+                self.prms.control_file = self.control_file
 
-            # change parameters
-            new_param_file_list = []
-            for par_record in self.prms.parameters.parameters_list:
-                curr_file = os.path.basename(par_record.file_name)
-                curr_file = os.path.join(workspace, curr_file)
-                par_record.file_name = curr_file
-                if not (curr_file in new_param_file_list):
-                    new_param_file_list.append(curr_file)
-            self.control.set_values('param_file', new_param_file_list)
+                # change parameters
+                new_param_file_list = []
+                for par_record in self.prms.parameters.parameters_list:
+                    curr_file = os.path.basename(par_record.file_name)
+                    curr_file = os.path.join(workspace, curr_file)
+                    par_record.file_name = curr_file
+                    if not (curr_file in new_param_file_list):
+                        new_param_file_list.append(curr_file)
+                self.control.set_values('param_file', new_param_file_list)
 
-            # change datafile
-            curr_file = os.path.relpath(os.path.join(workspace, self.prms.data.name),
-                                        self.control.model_dir)
-            self.prms.data.model_dir = workspace
-            self.control.set_values('data_file', [curr_file])
+                # change datafile
+                curr_file = os.path.relpath(os.path.join(workspace, self.prms.data.name),
+                                            self.control.model_dir)
+                self.prms.data.model_dir = workspace
+                self.control.set_values('data_file', [curr_file])
 
             # change mf
             if self.mf is not None:
@@ -332,7 +339,8 @@ class GsflowModel(object):
             # update file names in control object
             self._update_control_fnames(workspace, basename)
             # write
-            self.prms.control = self.control
+            if self.prms is not None:
+                self.prms.control = self.control
             self._write_all(write_only)
 
         # only change the basename
@@ -539,15 +547,16 @@ class GsflowModel(object):
             print("Writing Control file ...")
             self.control.write()
 
-        # self write parameters
-        if len(write_only) == 0 or 'parameters' in write_only:
-            print("Writing Parameters files ...")
-            self.prms.parameters.write()
+        if self.prms is not None:
+            # self write parameters
+            if len(write_only) == 0 or 'parameters' in write_only:
+                print("Writing Parameters files ...")
+                self.prms.parameters.write()
 
-        # write data
-        if len(write_only) == 0 or 'prms_data' in write_only:
-            print("Writing Data file ...")
-            self.prms.data.write()
+            # write data
+            if len(write_only) == 0 or 'prms_data' in write_only:
+                print("Writing Data file ...")
+                self.prms.data.write()
 
         # write mf
         if self.mf is not None:
