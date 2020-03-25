@@ -218,8 +218,12 @@ class PrmsParameters(ParameterBase):
                                     val_count = val_count + int(comp_val[0])
 
                                 else:
-                                    value.append(val_)
-                                    val_count = val_count + 1
+                                    for va_ in val_.split():
+                                        if datatype != 4:
+                                            if not (is_number(va_)):
+                                                break
+                                        value.append(va_)
+                                        val_count = val_count + 1
 
                             par_dim = []
                             for dn in dim_nms:
