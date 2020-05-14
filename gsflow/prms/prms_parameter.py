@@ -489,7 +489,7 @@ class ParameterRecord(RecordBase):
     @values.setter
     def values(self, new_values):
         self._check_values(new_values)
-        if np.prod(np.array(self.dims)) != self.nvalues:
+        if (np.prod(np.array(self.dims)) != self.nvalues) and self.section != 'Dimensions':
             err = " The number of values is not " \
                   "compatible with the dimensions"
             raise ValueError(err)
