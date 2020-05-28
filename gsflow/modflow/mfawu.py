@@ -82,7 +82,7 @@ class ModflowAwu(Package):
                                           OptionBlock.nested: True,
                                           OptionBlock.n_nested: 1,
                                           OptionBlock.vars: OrderedDict(
-                                              [('unit_diversionlist', OptionBlock.simple_int)]
+                                              [('unit_welllist', OptionBlock.simple_int)]
                                           )}),
                             ('wellirrlist', {OptionBlock.dtype: np.bool_,
                                              OptionBlock.nested: True,
