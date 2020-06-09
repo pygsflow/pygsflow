@@ -104,7 +104,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                                           OptionBlock.nested: True,
                                           OptionBlock.n_nested: 1,
                                           OptionBlock.vars: OrderedDict(
-                                              [('unit_diversionlist',
+                                              [('unit_welllist',
                                                 OptionBlock.simple_int)]
                                           )}),
                             ('wellirrlist', {OptionBlock.dtype: np.bool_,
