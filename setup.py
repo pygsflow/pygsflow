@@ -15,7 +15,7 @@ with open('HISTORY.rst') as history_file:
 if sys.version_info >= (3, 0):
     requirements = ["pandas",
                     "numpy",
-                    "flopy >= 3.2.11",
+                    "flopy >= 3.3.1",
                     "pyshp",
                     "pycrs",
                     "matplotlib"]
@@ -39,7 +39,6 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
