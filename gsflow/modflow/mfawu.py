@@ -79,4 +79,4 @@ class ModflowAwu(ModflowAg):
         err = "ModflowAwu is deprecated and will be removed, calling ModflowAg"
         warnings.warn(err, PendingDeprecationWarning)
 
-        return ModflowAg.load(f, model, nper, method, ext_unit_dict)
+        return ModflowAg.load(f, model, nper, ext_unit_dict)

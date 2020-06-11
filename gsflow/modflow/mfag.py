@@ -45,7 +45,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
 
     >>> import gsflow
     >>> ml = gsflow.modflow.Modflow('awutest')
-    >>> ag = gsflow.modflow.ModflowAg.load('test.awu', ml, nper=2, method="gsflow")
+    >>> ag = gsflow.modflow.ModflowAg.load('test.awu', ml, nper=2)
 
     """
     _options = OrderedDict([('noprint', OptionBlock.simple_flag),
@@ -451,7 +451,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
         return np.dtype(dtype)
 
     @staticmethod
-    def load(f, model, nper=0, method="gsflow", ext_unit_dict=None):
+    def load(f, model, nper=0, ext_unit_dict=None):
         """
         Method to load the AG package from file
 
@@ -463,8 +463,6 @@ class ModflowAg(flopy.modflow.ModflowAg):
             model to attach the ag pacakge to
         nper : int
             number of stress periods in model
-        method : str
-            "gsflow" or "modflow"
         ext_unit_dict : dict, optional
 
         Returns
