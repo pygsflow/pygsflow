@@ -14,21 +14,6 @@ warnings.simplefilter('always', PendingDeprecationWarning)
 warnings.simplefilter('always', UserWarning)
 
 
-def load(control_file):
-    gs = Gsflow(control_file=control_file)
-    gs.load()
-    return gs
-
-
-class Gsflow(object):
-    def __new__(cls, control_file=None, prms=None, mf=None, mf_load_only=None,
-                prms_load_only=None, gsflow_exe=None):
-        err = "Gsflow has been deprecated, calling GsflowModel.load_from_file()"
-        warnings.warn(err, PendingDeprecationWarning)
-        return GsflowModel.load_from_file(control_file=control_file, gsflow_exe=gsflow_exe,
-                                          modflow_only=mf_load_only, prms_only=prms_load_only)
-
-
 class GsflowModel(object):
     """
     GsflowModel is the GSFLOW model object. This class can be used
@@ -127,24 +112,6 @@ class GsflowModel(object):
             bool
         """
         return self._prms_only
-
-    @property
-    def mf_load_only(self):
-        err = "mf_load_only is deprecated, calling modflow_only"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.modflow_only
-
-    @property
-    def prms_load_only(self):
-        err = "prms_load only is deprecated, calling prms_only"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.prms_only
-
-    @property
-    def Help(self):
-        err = "Help is deprecated, calling help"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.help
 
     def export_nc(self, f, **kwargs):
         """

@@ -19,26 +19,6 @@ def is_number(s):
         return False
 
 
-class Parameters(object):
-    """
-    Deprecated Parameters object. Please use PrmsParameters
-
-    """
-    def __new__(cls, parameters_list=None, parameter_files=['temp_parm.parm']):
-        err = "Parameters class has been Deprecated; Calling" \
-              " PrmsParameters class"
-        warnings.warn(err, PendingDeprecationWarning)
-
-        if parameters_list is not None:
-            return PrmsParameters(parameters_list=parameters_list)
-
-        elif os.path.isfile(parameter_files[0]):
-            return PrmsParameters.load_from_file(parameter_files)
-
-        else:
-            raise AssertionError("Cannot instatiate Parameters class")
-
-
 class PrmsParameters(ParameterBase):
     """
     Class to hold parameters information.
@@ -397,21 +377,6 @@ class PrmsParameters(ParameterBase):
                             record.write(fid)
 
                 fid.write("\n")
-
-
-class Parm_record(object):
-    """
-    Deprecated ParameterRecord method
-    """
-    def __new__(cls, name=None, values=None, dimensions=None,
-                datatype=None, width=10, file_name=None):
-        err_msg = "Parm_record will be replaced by " \
-                  "ParameterRecord(); Calling ParameterRecord()"
-        warnings.warn(err_msg, PendingDeprecationWarning)
-        return ParameterRecord(name=name, values=values,
-                               dimensions=dimensions,
-                               datatype=datatype, width=width,
-                               file_name=file_name)
 
 
 class ParameterRecord(RecordBase):

@@ -216,17 +216,3 @@ class ParameterBase(object):
             if nm == name:
                 self._record_names.pop(index)
                 self._records_list.pop(index)
-
-    def get_record_names(self):
-        """
-        Method to get record names, Deprecated
-
-        Returns
-        -------
-            list of record names
-
-        """
-        err = "get_record_names() is Deprecated," \
-              " calling record_names"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.record_names

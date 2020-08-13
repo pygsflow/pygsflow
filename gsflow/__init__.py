@@ -11,11 +11,11 @@ __author__ = """Ayman Alzraiee, Josh Larsen"""
 __email__ = """aalzraiee@usgs.gov, jlarsen@usgs.gov"""
 __version__ = '0.1.0'
 
-from .control import Control, ControlFile, ControlRecord
-from .prms.prms_model import Prms, PrmsModel
-from .prms.prms_parameter import Parameters, PrmsParameters, ParameterRecord
-from .prms.prms_data import Prms_data, PrmsData
-from .gsflow import Gsflow, GsflowModel
+from .control import ControlFile, ControlRecord
+from .prms.prms_model import PrmsModel
+from .prms.prms_parameter import PrmsParameters, ParameterRecord
+from .prms.prms_data import PrmsData
+from .gsflow import GsflowModel
 from . import utils
 from . import modflow
 from . import output

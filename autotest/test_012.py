@@ -1,6 +1,6 @@
-# test ModflowAwu package
+# test ModflowAg package
 import os
-from gsflow.modflow import Modflow, ModflowAwu
+from gsflow.modflow import Modflow, ModflowAwu, ModflowAg
 import numpy as np
 
 
@@ -14,14 +14,16 @@ def test_ModflowAg_load_write():
     ag = ModflowAwu.load(os.path.join(ws, agfile), ml,
                          nper=nper, ext_unit_dict={})
 
+    if not isinstance(ag, ModflowAg):
+        raise AssertionError("Override of Awu failed")
 
     ws2 = "./temp"
     ml.change_model_ws(ws2)
     ag.write_file()
 
-    agfile2 = "agtest.awu"
+    agfile2 = "agtest.ag"
     ml2 = Modflow("agtest2", model_ws=ws2)
-    ag2 = ModflowAwu.load(os.path.join(ws2, agfile2), ml2,
+    ag2 = ModflowAg.load(os.path.join(ws2, agfile2), ml2,
                           nper=nper, ext_unit_dict={})
 
     assert repr(ag.options) == repr(ag2.options)
@@ -49,8 +51,11 @@ def test_ModflowAg_load_write():
             assert rec['wellid'] == rec2['wellid']
             assert rec['segid0'] == rec2['segid0']
 
-    assert not ag.plotable
-    assert ModflowAwu.ftype() == "AWU"
+    if ag.plotable:
+        raise AssertionError("ModflowAg should be non-plottable")
+
+    if not ModflowAg.ftype() == "AG":
+        raise AssertionError("ModflowAg ftype should be AG")
 
 
 if __name__ == "__main__":

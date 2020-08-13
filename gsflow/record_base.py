@@ -4,7 +4,6 @@ import numpy as np
 import warnings
 from .utils import io
 from .utils import GsConstant
-import warnings
 
 
 class RecordBase(object):

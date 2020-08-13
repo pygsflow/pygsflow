@@ -37,6 +37,7 @@ def test_build_prms_parameter_object():
     assert isinstance(pp.parameters_list[0], ParameterRecord)
     assert np.allclose(pp.parameters_list[0].values, pr.values)
 
+
 def test_build_control_file_object():
     cf_name = "test.control"
     model_dir = "./"

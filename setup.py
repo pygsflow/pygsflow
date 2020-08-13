@@ -5,57 +5,57 @@
 
 from setuptools import setup, find_packages
 import sys
+import os
+
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
-
 if sys.version_info >= (3, 0):
     requirements = ["pandas",
                     "numpy",
-                    "flopy >= 3.2.11",
+                    "flopy >= 3.3.1",
                     "pyshp",
                     "pycrs",
                     "matplotlib"]
 else:
-    requirements = ["pandas",
-                    "numpy",
-                    "flopy == 3.2.13",
-                    "pyshp",
-                    "pycrs",
-                    "matplotlib"]
+    raise EnvironmentError("pyGSFLOW is only supported with python 3")
 
 setup_requirements = []
 
 test_requirements = []
 
+try:
+    import pypandoc
+
+    fpth = os.path.join(".", "RELEASE.md")
+    long_description = pypandoc.convert_file(fpth, 'rst')
+except ImportError:
+    long_description = ""
+
+
 setup(
     author="Ayman Alzraiee, Joshua Larsen",
     author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Topic :: Scientific/Engineering :: Hydrology'
+        'Topic :: Scientific/Engineering :: Hydrology',
+        "Operating System :: OS Independent"
     ],
-    description="""Python package to read, edit, write, and visualize GSFLOW models.
-                   This package relies on FloPy for reading modflow input, but adds additional
-                   fuctionality and flexibility through it's interface. It includes additional
-                   support for the new MODFLOW-NWT AG package. The plotting library is also 
-                   compatible with FloPy's PlotMapView and PlotCrossSection.""",
+    python_requires=">=3.4",
+    description="pyGSFLOW is a python package to create, run, and " +
+                "post-process GSFLOW-based models",
     install_requires=requirements,
     license="MIT license",
-    long_description=readme + '\n\n' + history,
+    long_description=long_description,
     include_package_data=True,
     keywords='gsflow',
     name='gsflow',
@@ -68,7 +68,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='autotest',
     tests_require=test_requirements,
-    url='https://github.com/aymanalz/gsflow',
-    version='0.1.0',
+    url='https://github.com/pygsflow/pygsflow',
+    version='1.0.0',
     zip_safe=False,
 )

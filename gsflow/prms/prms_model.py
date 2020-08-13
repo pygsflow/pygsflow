@@ -8,19 +8,6 @@ warnings.simplefilter('always', PendingDeprecationWarning)
 warnings.simplefilter('always', UserWarning)
 
 
-class Prms(object):
-    def __new__(cls, control=None, parameters=None, control_file=None):
-        err = "Prms is deprecated; calling PrmsModel()"
-        warnings.warn(err, PendingDeprecationWarning)
-
-        if isinstance(control, ControlFile):
-            if isinstance(parameters, PrmsParameters):
-                return PrmsModel(control, parameters=parameters)
-            return PrmsModel(control)
-        else:
-            return PrmsModel.load_from_file(control)
-
-
 class PrmsModel(object):
     """
     PrmsModel loading class
@@ -80,12 +67,6 @@ class PrmsModel(object):
             f = self.parameters.export_nc(f, modflow, **kwargs)
 
         return f
-
-    @property
-    def Data(self):
-        err = "Data is depreciated, calling data"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.data
 
     @staticmethod
     def load_from_file(control_file):
@@ -151,19 +132,6 @@ class PrmsModel(object):
             err = "PrmsData load error, Skipping data files"
             warnings.warn(err, UserWarning)
             return
-
-    def get_statVar(self):
-        """
-        Deprecated method to get statvar output
-
-        Returns
-        -------
-            pd.DataFrame of the stat_var file
-
-        """
-        err = "get_statVar is Deprecated, use get_StatVar()"
-        warnings.warn(err, PendingDeprecationWarning)
-        return self.get_StatVar()
 
     def get_StatVar(self):
         """
