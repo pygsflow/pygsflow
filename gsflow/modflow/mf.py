@@ -185,6 +185,7 @@ class Modflow(fpModflow):
             else:
                 tmp = self._check_basenames(pkg)
                 pkg.file_name[0] = tmp
+                pkg.fn_path = os.path.join(self.model_ws, tmp)
             # rpth = os.path.relpath(pkg.file_name[0], self.model_ws)
             # pkg.file_name[0] = rpth
 
@@ -231,12 +232,13 @@ class Modflow(fpModflow):
 
         """
         # todo: need to override this to make it work with GSFLOW
+        self._set_relative_paths()
         super(Modflow, self).write_input(SelPackList=SellPackList,
                                          check=check)
 
     @staticmethod
     def load(f, version='mfnwt', exe_name='mfnwt.exe', verbose=False,
-             model_ws='.', load_only=None, forgive=True, check=True,
+             model_ws='.', load_only=None, forgive=False, check=True,
              control_file=None):
         """
         Load an existing MODFLOW model.

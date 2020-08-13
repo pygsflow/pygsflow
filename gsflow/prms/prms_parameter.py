@@ -198,8 +198,12 @@ class PrmsParameters(ParameterBase):
                                     val_count = val_count + int(comp_val[0])
 
                                 else:
-                                    value.append(val_)
-                                    val_count = val_count + 1
+                                    for va_ in val_.split():
+                                        if datatype != 4:
+                                            if not (is_number(va_)):
+                                                break
+                                        value.append(va_)
+                                        val_count = val_count + 1
 
                             par_dim = []
                             for dn in dim_nms:
@@ -450,7 +454,7 @@ class ParameterRecord(RecordBase):
     @values.setter
     def values(self, new_values):
         self._check_values(new_values)
-        if np.prod(np.array(self.dims)) != self.nvalues:
+        if (np.prod(np.array(self.dims)) != self.nvalues) and self.section != 'Dimensions':
             err = " The number of values is not " \
                   "compatible with the dimensions"
             raise ValueError(err)

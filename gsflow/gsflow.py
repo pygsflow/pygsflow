@@ -141,7 +141,7 @@ class GsflowModel(object):
 
     @staticmethod
     def load_from_file(control_file, gsflow_exe="gsflow.exe", modflow_only=False,
-                       prms_only=False, mf_load_only=None):
+                       prms_only=False, mf_load_only=None, forgive=True):
         """
         Method to load a gsflow model from it's control file
 
@@ -157,6 +157,8 @@ class GsflowModel(object):
             flag to load only prms from the control file
         mf_load_only : list
             list of packages to load from modflow ex. [DIS, BAS, LPF]
+        forgive : bool
+            forgive file loading errors in flopy
 
         Returns
         -------
@@ -178,6 +180,16 @@ class GsflowModel(object):
         control = ControlFile.load_from_file(control_file)
         print("Control file is loaded")
 
+        mode = control.get_values('model_mode')[0].upper()
+        if mode == 'MODFLOW':
+            modflow_only = True
+        elif mode == 'PRMS':
+            prms_only = True
+        elif "MODSIM" in mode:
+            modsim = True
+        else:
+            pass
+
         # load prms
         if not modflow_only:
             print("Working on loading PRMS model ...")
@@ -185,14 +197,11 @@ class GsflowModel(object):
 
         if not prms_only:
             # get model mode
-            mode = control.get_values('model_mode')
-            if 'GSFLOW' in mode[0].upper() or 'MODFLOW' in mode[0].upper():
+            if 'GSFLOW' in mode.upper() or 'MODFLOW' in mode.upper():
                 print("Working on loading MODFLOW files ....")
-                modflow = GsflowModel._load_modflow(control, mf_load_only)
+                modflow = GsflowModel._load_modflow(control, mf_load_only,
+                                                    forgive)
                 print("MODFLOW files are loaded ... ")
-
-                if "MODSIM" in mode[0].upper():
-                    modsim = True
 
             else:
                 prms_only = True
@@ -204,7 +213,7 @@ class GsflowModel(object):
                            gsflow_exe=gsflow_exe, modsim=modsim)
 
     @staticmethod
-    def _load_modflow(control, mf_load_only):
+    def _load_modflow(control, mf_load_only, forgive=True):
         """
         The package files in the .nam file are relative to the execuatble gsflow. So here, we generate a temp.nam
         file that that has the absolute files
@@ -218,6 +227,8 @@ class GsflowModel(object):
             control file object
         mf_load_only : list
             list of packages to restrict modflow loading to
+        forgive : bool
+            forgive file load errors in modflow
 
         Returns
         -------
@@ -230,7 +241,8 @@ class GsflowModel(object):
         model_dir, name = os.path.split(name)
         return Modflow.load(name, model_ws=model_dir,
                             control_file=control_file,
-                            load_only=mf_load_only)
+                            load_only=mf_load_only,
+                            forgive=forgive)
 
     def write_input(self, basename=None, workspace=None, write_only=None):
         """
@@ -272,23 +284,24 @@ class GsflowModel(object):
             self.control.model_dir = workspace
             self.control.control_file = os.path.join(workspace, fnn)
             self.control_file = os.path.join(workspace, fnn)
-            self.prms.control_file = self.control_file
+            if self.prms is not None:
+                self.prms.control_file = self.control_file
 
-            # change parameters
-            new_param_file_list = []
-            for par_record in self.prms.parameters.parameters_list:
-                curr_file = os.path.basename(par_record.file_name)
-                curr_file = os.path.join(workspace, curr_file)
-                par_record.file_name = curr_file
-                if not (curr_file in new_param_file_list):
-                    new_param_file_list.append(curr_file)
-            self.control.set_values('param_file', new_param_file_list)
+                # change parameters
+                new_param_file_list = []
+                for par_record in self.prms.parameters.parameters_list:
+                    curr_file = os.path.basename(par_record.file_name)
+                    curr_file = os.path.join(workspace, curr_file)
+                    par_record.file_name = curr_file
+                    if not (curr_file in new_param_file_list):
+                        new_param_file_list.append(curr_file)
+                self.control.set_values('param_file', new_param_file_list)
 
-            # change datafile
-            curr_file = os.path.relpath(os.path.join(workspace, self.prms.data.name),
-                                        self.control.model_dir)
-            self.prms.data.model_dir = workspace
-            self.control.set_values('data_file', [curr_file])
+                # change datafile
+                curr_file = os.path.relpath(os.path.join(workspace, self.prms.data.name),
+                                            self.control.model_dir)
+                self.prms.data.model_dir = workspace
+                self.control.set_values('data_file', [curr_file])
 
             # change mf
             if self.mf is not None:
@@ -299,7 +312,8 @@ class GsflowModel(object):
             # update file names in control object
             self._update_control_fnames(workspace, basename)
             # write
-            self.prms.control = self.control
+            if self.prms is not None:
+                self.prms.control = self.control
             self._write_all(write_only)
 
         # only change the basename
@@ -506,15 +520,16 @@ class GsflowModel(object):
             print("Writing Control file ...")
             self.control.write()
 
-        # self write parameters
-        if len(write_only) == 0 or 'parameters' in write_only:
-            print("Writing Parameters files ...")
-            self.prms.parameters.write()
+        if self.prms is not None:
+            # self write parameters
+            if len(write_only) == 0 or 'parameters' in write_only:
+                print("Writing Parameters files ...")
+                self.prms.parameters.write()
 
-        # write data
-        if len(write_only) == 0 or 'prms_data' in write_only:
-            print("Writing Data file ...")
-            self.prms.data.write()
+            # write data
+            if len(write_only) == 0 or 'prms_data' in write_only:
+                print("Writing Data file ...")
+                self.prms.data.write()
 
         # write mf
         if self.mf is not None:
@@ -527,9 +542,14 @@ class GsflowModel(object):
                 print("Writing MODSIM shapefile")
                 self.modsim.write_modsim_shapefile()
 
-    def run_model(self):
+    def run_model(self, forgive=False):
         """
         Method to run a gsflow model
+
+        Parameters
+        ----------
+        forgive : bool
+            forgives convergence issues
 
         Returns
         -------
@@ -547,7 +567,13 @@ class GsflowModel(object):
             print("Warning : The executable of the model is not specified. Use .gsflow_exe "
                   "to define its path... ")
             return None
-        return self.__run(exe_name=self.gsflow_exe, namefile=fn)
+
+        normal_msg = ['normal termination']
+        if forgive:
+            normal_msg.append('failed to meet solver convergence criteria')
+
+        return self.__run(exe_name=self.gsflow_exe, namefile=fn,
+                          normal_msg=normal_msg)
 
     def _generate_batch_file(self):
         fn = os.path.dirname(self.control_file)

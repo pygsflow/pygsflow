@@ -23,7 +23,7 @@ class Modsim(object):
 
     Parameters
     ----------
-        model : gsflow.GsflowModel instance
+        model : gsflow.GsflowModel instance or gsflow.modflow.Modflow instance
 
     Examples
     --------
@@ -34,8 +34,15 @@ class Modsim(object):
 
     """
     def __init__(self, model):
-        self.parent = model
-        self.mf = self.parent.mf
+        from ..gsflow import GsflowModel
+        from ..modflow import Modflow
+
+        if isinstance(model, Modflow):
+            self.parent = model
+            self.mf = model
+        else:
+            self.parent = model
+            self.mf = self.parent.mf
         self._sfr = self.mf.get_package("SFR")
         self._lak = self.mf.get_package("LAK")
         self._ready = True

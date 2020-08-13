@@ -42,6 +42,7 @@ class ModflowAwu(ModflowAg):
     >>> awu = gsflow.modflow.ModflowAwu.load('test.awu', ml, nper=2, method="gsflow")
 
     """
+    
     def __init__(self, model, options=None, time_series=None, well_list=None,
                  irrdiversion=None, irrwell=None, supwell=None,
                  extension="awu", unitnumber=None, filenames=None, nper=0):

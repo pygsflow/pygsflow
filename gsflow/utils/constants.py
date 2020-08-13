@@ -10,4 +10,6 @@ class GsConstant(object):
                     'model_output_file', 'modflow_name', 'param_file', 'stat_var_file',
                     'var_init_file', 'var_save_file',
                     'ani_output_file', 'param_print_file',
-                    'stats_output_file', 'nsubOutBaseFileName']
+                    'stats_output_file', 'nsubOutBaseFileName',
+                    'basinOutBaseFileName', 'nsegmentOutBaseFileName',
+                    'nhruOutBaseFileName']
