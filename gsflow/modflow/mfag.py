@@ -134,6 +134,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
     def __init__(self, model, options=None, time_series=None, well_list=None,
                  irrdiversion=None, irrwell=None, supwell=None,
                  extension="ag", unitnumber=None, filenames=None, nper=0):
+        if unitnumber is None:
+            unitnumber = 37
 
         super(ModflowAg, self).__init__(model=model, options=options,
                                         time_series=time_series,
