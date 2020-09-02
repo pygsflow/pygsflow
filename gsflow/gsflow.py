@@ -568,7 +568,7 @@ class GsflowModel(object):
                   "to define its path... ")
             return None
 
-        normal_msg = ['normal termination', "simulation successful"]
+        normal_msg = ['normal termination',] #, "simulation successful"]
         if forgive:
             normal_msg.append('failed to meet solver convergence criteria')
 
