@@ -248,7 +248,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                                 foo.write("{:d} \n".format(len(recarray)))
 
                                 # item 21b
-                                fmt21 = "{:d}   {:f}   {:f}\n"
+                                fmt21 = "{:d}   {:d}   {:f}   {:f}\n"
 
                                 for rec in recarray:
                                     num = rec['numcell']
@@ -265,6 +265,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                                     for i in range(num):
                                         foo.write(fmt21.format(
                                             rec['hru_id{}'.format(i)] + 1,
+                                            rec['dum{}'.format(i)] + 1,
                                             rec["eff_fact{}".format(i)],
                                             rec['field_fact{}'.format(i)]))
 
@@ -425,6 +426,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
 
             for i in range(maxells):
                 dtype += [("hru_id{}".format(i), np.int),
+                          ("dum{}".format(i), np.int),
                           ("eff_fact{}".format(i), np.float),
                           ("field_fact{}".format(i), np.float)]
 

@@ -54,7 +54,7 @@ def test_ModflowAg_load_write():
     if ag.plotable:
         raise AssertionError("ModflowAg should be non-plottable")
 
-    if not ModflowAg.ftype() == "AG":
+    if not ModflowAg._ftype() == "AG":
         raise AssertionError("ModflowAg ftype should be AG")
 
 
