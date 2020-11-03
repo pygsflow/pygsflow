@@ -362,9 +362,17 @@ class PrmsParameters(ParameterBase):
                 # write dimension
                 for record in self.parameters_list:
                     # write dimension first
-                    if ifile == 0 and record.section == 'Dimensions':
-                        if os.path.normpath(record.file_name) == os.path.normpath(filename):
-                            record.write(fid)
+                    if record.section != "Dimensions":
+                        continue
+
+                    if name is not None:
+                        record.write(fid)
+
+                    else:
+                        if ifile == 0 and record.section == 'Dimensions':
+                            if os.path.normpath(record.file_name) == \
+                                    os.path.normpath(filename):
+                                record.write(fid)
                 ##
                 # write param
                 if ifile == 0:
@@ -372,8 +380,15 @@ class PrmsParameters(ParameterBase):
                     fid.write("** Parameters **")
                 for record in self.parameters_list:
                     # write dimension first
-                    if not(record.section == 'Dimensions'):
-                        if os.path.normpath(record.file_name) == os.path.normpath(filename):
+                    if record.section == "Dimensions":
+                        continue
+
+                    if name is not None:
+                        record.write(fid)
+
+                    else:
+                        if os.path.normpath(record.file_name) == \
+                                os.path.normpath(filename):
                             record.write(fid)
 
                 fid.write("\n")
