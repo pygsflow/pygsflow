@@ -203,7 +203,7 @@ class ParameterBase(object):
 
         """
         if isinstance(name, str):
-            pass
+            name = name.lower()
         else:
             raise ValueError("Record name must be a string")
 
