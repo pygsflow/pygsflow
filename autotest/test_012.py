@@ -51,7 +51,7 @@ def test_ModflowAg_load_write():
             assert rec['wellid'] == rec2['wellid']
             assert rec['segid0'] == rec2['segid0']
 
-    if ag.plotable:
+    if ag.plottable:
         raise AssertionError("ModflowAg should be non-plottable")
 
     if not ModflowAg._ftype() == "AG":
