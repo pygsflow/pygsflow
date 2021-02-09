@@ -305,7 +305,7 @@ class GsflowModel(object):
 
             # change mf
             if self.mf is not None:
-                self.mf.change_model_ws(workspace)
+                self.mf.change_model_ws(workspace, reset_external=True)
                 mfnm = self.mf.name + ".nam"
                 self.control.set_values('modflow_name', [mfnm])
 

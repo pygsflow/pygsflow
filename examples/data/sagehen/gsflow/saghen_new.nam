@@ -12,5 +12,5 @@ DATA(BINARY)      55  saghen_new.cbc REPLACE
 DATA              81  saghen_new.sfr.out
 DATA(BINARY)      51  saghen_new.hds REPLACE
 DATA(BINARY)      70  saghen_new.UZF.cbc REPLACE
-DATA(BINARY)      91  saghen_netrch.out REPLACE
-DATA(BINARY)      92  saghen_netdis.out REPLACE
+# DATA(BINARY)      91  saghen_netrch.out REPLACE
+# DATA(BINARY)      92  saghen_netdis.out REPLACE
