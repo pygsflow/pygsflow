@@ -48,7 +48,7 @@ class ParameterBase(object):
         if self._records_list is not None:
             if len(self._records_list) > 0:
                 for rec in self._records_list:
-                    rn.append(rec.name)
+                    rn.append(rec.name.lower())
         return rn
 
     def get_record(self, name, rectype):
@@ -147,7 +147,7 @@ class ParameterBase(object):
 
         """
         if isinstance(name, str):
-            pass
+            name = name.lower()
         else:
             raise ValueError("Record name must be string")
         if isinstance(values, list) or isinstance(values, np.ndarray):
@@ -181,15 +181,15 @@ class ParameterBase(object):
             for index, rec in enumerate(self._record_names):
                 if rec == after:
                     break
-            self._record_names.insert(index + 1, recobj.name)
+            self._record_names.insert(index + 1, recobj.name.lower())
             self._records_list.insert(index + 1, recobj)
             return
 
         elif where:
-            self._record_names.insert(where, recobj.name)
+            self._record_names.insert(where, recobj.name.lower())
             self._records_list.insert(where, recobj)
         else:
-            self._record_names.append(recobj.name)
+            self._record_names.append(recobj.name.lower())
             self._records_list.append(recobj)
 
     def remove_record(self, name):

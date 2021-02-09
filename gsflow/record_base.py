@@ -24,7 +24,7 @@ class RecordBase(object):
     def __init__(self, name, values=None, datatype=None):
 
         if isinstance(name, str):
-            self.name = name.lower()
+            self.name = name
         else:
             raise ValueError("Error: Name of the record ( {} ) is not a string".format(name))
 
