@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import warnings
+import flopy as fp
 
 try:
     import shapefile
@@ -37,7 +38,7 @@ class Modsim(object):
         from ..gsflow import GsflowModel
         from ..modflow import Modflow
 
-        if isinstance(model, Modflow):
+        if isinstance(model, (Modflow, fp.modflow.Modflow)):
             self.parent = model
             self.mf = model
         else:
