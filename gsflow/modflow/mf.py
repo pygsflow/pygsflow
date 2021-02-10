@@ -158,7 +158,6 @@ class Modflow(fpModflow):
 
         """
         super(Modflow, self).change_model_ws(new_pth, reset_external)
-        print('break')
 
     def _set_relative_paths(self):
         """
