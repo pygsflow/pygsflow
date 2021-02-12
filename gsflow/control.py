@@ -138,7 +138,7 @@ class ControlFile(ParameterBase):
         """
         for file in GsConstant.GSFLOW_FILES:
 
-            if file in self._record_names:
+            if file in self.record_names:
                 gs_fn = self.get_values(file)
                 flist = []
                 for ff in gs_fn:

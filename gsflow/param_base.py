@@ -26,7 +26,6 @@ class ParameterBase(object):
 
     """
     def __init__(self, records_list, name=None, model_dir=None, header=None):
-        self._record_names = []
 
         if name is not None:
             self.name = name
@@ -37,7 +36,6 @@ class ParameterBase(object):
         if header is not None:
             self.header = header
 
-        self._record_names = []
         self._records_list = []
         if records_list is not None:
             self._records_list = copy.deepcopy(records_list)
@@ -155,7 +153,7 @@ class ParameterBase(object):
         else:
             raise ValueError("Value must be a list or np.ndarray")
 
-        if name in self._record_names:
+        if name in self.record_names:
             err = "The record already exists, skipping add_record: {}...".format(name)
             warnings.warn(err, UserWarning)
             return False
@@ -178,18 +176,18 @@ class ParameterBase(object):
         """
         if after:
             index = -1
-            for index, rec in enumerate(self._record_names):
+            for index, rec in enumerate(self.record_names):
                 if rec == after:
                     break
-            self._record_names.insert(index + 1, recobj.name.lower())
+            self.record_names.insert(index + 1, recobj.name.lower())
             self._records_list.insert(index + 1, recobj)
             return
 
         elif where:
-            self._record_names.insert(where, recobj.name.lower())
+            self.record_names.insert(where, recobj.name.lower())
             self._records_list.insert(where, recobj)
         else:
-            self._record_names.append(recobj.name.lower())
+            self.record_names.append(recobj.name.lower())
             self._records_list.append(recobj)
 
     def remove_record(self, name):
@@ -207,12 +205,12 @@ class ParameterBase(object):
         else:
             raise ValueError("Record name must be a string")
 
-        if name not in self._record_names:
+        if name not in self.record_names:
             warnings.warn("The record does not exist: {}".format(name),
                           UserWarning)
             return
 
-        for index, nm in enumerate(self._record_names):
+        for index, nm in enumerate(self.record_names):
             if nm == name:
-                self._record_names.pop(index)
+                self.record_names.pop(index)
                 self._records_list.pop(index)
