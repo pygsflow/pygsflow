@@ -179,15 +179,12 @@ class ParameterBase(object):
             for index, rec in enumerate(self.record_names):
                 if rec == after:
                     break
-            self.record_names.insert(index + 1, recobj.name.lower())
             self._records_list.insert(index + 1, recobj)
             return
 
         elif where:
-            self.record_names.insert(where, recobj.name.lower())
             self._records_list.insert(where, recobj)
         else:
-            self.record_names.append(recobj.name.lower())
             self._records_list.append(recobj)
 
     def remove_record(self, name):
