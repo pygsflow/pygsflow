@@ -24,4 +24,4 @@ jobs:
         uses: openjournals/openjournals-draft-action@v.1.0
         with:
            journal: joss
-           paper-path: ./pygsflow/JOSS/pygsflow_JOSS.md 
+           paper-path: ./master/JOSS/pygsflow_JOSS.md 
