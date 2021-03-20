@@ -25,6 +25,7 @@ affiliations:
   - name: U.S. Geological Survey, Water Mission Area, Menlo Park, CA
     index: 2  
 date: 19 March 2021
+bibliography: paper.bib
 ---
 
 # Overview
@@ -68,6 +69,8 @@ package.](Package_architecture.png)
 
 # Conclusion
 Paste conclusion text here
+
+# References
 
 
 
