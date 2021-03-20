@@ -1,5 +1,5 @@
 ---
-title: Integrated hydrologic model development and postprocessing for GSFLOW using pyGSFLOW
+title: 'Integrated hydrologic model development and postprocessing for GSFLOW using pyGSFLOW'
 tags:
   - Python
   - hydrology

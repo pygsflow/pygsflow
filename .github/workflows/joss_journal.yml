@@ -34,7 +34,7 @@ jobs:
         uses: openjournals/openjournals-draft-action@master
         with:
            journal: joss
-           paper-path: ./JOSS/pygsflow_JOSS.md 
+           paper-path: ./JOSS/paper.md
       
       - name: Upload draft paper
         uses: actions/upload-artifact@v1
@@ -43,4 +43,4 @@ jobs:
           # This is the output path where Pandoc will write the compiled
           # PDF. Note, this should be the same directory as the input
           # paper.md
-          path: ./JOSS/pygsflow_JOSS.pdf
+          path: ./JOSS/paper.pdf
