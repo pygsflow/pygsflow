@@ -19,9 +19,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     if: github.repository_owner == 'pygsflow'
-    steps:  
+    steps:
+      - name: Where in the world are we
+        run: ls -la
+        
       - name: Open Journals PDF Generator
         uses: openjournals/openjournals-draft-action@v.1.0
         with:
            journal: joss
-           paper-path: ./trunk/JOSS/pygsflow_JOSS.md 
+           paper-path: ./JOSS/pygsflow_JOSS.md 
