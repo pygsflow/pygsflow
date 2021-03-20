@@ -47,7 +47,7 @@ spatial contour plot of PRMS ssr2gw_rate which is a multiplier that scales
 the volume of recharge from PRMS to MODFLOW. MODFLOW’s IBOUND array 
 (black is inactive cells) is also plotted to distinguish active versus 
 inactive model cells, Sagehen Creek GSFLOW model, 
-Truckee, California. \label{fig:plotting}](sagehen_plot.png)
+Truckee, California.](sagehen_plot.png)
 
 
 more body text
@@ -58,7 +58,7 @@ Paste package text here
 ![Hierarchical representation of the pyGSFLOW package. Each sub-package lists 
 the model building classes within each package. The GSFlowModel class interacts 
 with each of these listed modules and the FloPy 
-package. \label{fig:arch}](Package_architecture.png)
+package.](Package_architecture.png)
 
 
 # Conclusion
