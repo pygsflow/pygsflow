@@ -21,7 +21,8 @@ jobs:
     if: github.repository_owner == 'pygsflow'
     steps:
       - name: Where in the world are we
-        run: ls -la
+        run: cd .. 
+          ls -la
         
       - name: Open Journals PDF Generator
         uses: openjournals/openjournals-draft-action@v.1.0
