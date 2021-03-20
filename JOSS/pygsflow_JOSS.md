@@ -19,7 +19,6 @@ authors:
     ocrid: 0000-0001-6397-2403
     affiliation: U.S. Geological Survey, Water Mission Area, Menlo Park, CA
 date: 3/19/2021
-bibliography: pygsflow_JOSS.bib
 ---
 
 # Overview
@@ -37,7 +36,7 @@ Paste body text here
 ![Mean squared error in streamflow preditions for three PRMS parameters 
 (gsflow_coef, snarea_curve, and ssr2gw_rate) during calibration experiments 
 on the Santa Rosa Plain Integrated Hydrologic Model, Santa Rosa, 
-California.](./JOSS/calibration_example.png)
+California.](calibration_example.png)
 
 
 more body text
@@ -47,7 +46,7 @@ spatial contour plot of PRMS ssr2gw_rate which is a multiplier that scales
 the volume of recharge from PRMS to MODFLOW. MODFLOW’s IBOUND array 
 (black is inactive cells) is also plotted to distinguish active versus 
 inactive model cells, Sagehen Creek GSFLOW model, 
-Truckee, California.](./JOSS/sagehen_plot.png)
+Truckee, California.](sagehen_plot.png)
 
 
 more body text
@@ -58,7 +57,7 @@ Paste package text here
 ![Hierarchical representation of the pyGSFLOW package. Each sub-package lists 
 the model building classes within each package. The GSFlowModel class interacts 
 with each of these listed modules and the FloPy 
-package.](./JOSS/Package_architecture.png)
+package.](Package_architecture.png)
 
 
 # Conclusion
