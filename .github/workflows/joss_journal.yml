@@ -30,11 +30,17 @@ jobs:
           echo $GITHUB_REF
           echo $GITHUB_EVENT_NAME
         
-      - name: Where in the world are we
-        run: ls -la
-        
       - name: Open Journals PDF Generator
         uses: openjournals/openjournals-draft-action@v.1.0
         with:
            journal: joss
            paper-path: ./JOSS/pygsflow_JOSS.md 
+      
+      - name: Upload draft paper
+        uses: actions/upload-artifact@v1
+        with:
+          name: pygsflow_JOSS
+          # This is the output path where Pandoc will write the compiled
+          # PDF. Note, this should be the same directory as the input
+          # paper.md
+          path: ./JOSS/pygsflow_JOSS.pdf
