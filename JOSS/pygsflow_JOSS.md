@@ -19,6 +19,7 @@ authors:
   - name: Richard G. Niswonger
     ocrid: 0000-0001-6397-2403
     affiliation: 2
+affiliations:
   -name: U.S. Geological Survey, California Water Science Center, Sacramento, CA
    index: 1
   -name: U.S. Geological Survey, Water Mission Area, Menlo Park, CA
