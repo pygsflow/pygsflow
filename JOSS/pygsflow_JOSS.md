@@ -37,7 +37,7 @@ Paste body text here
 ![Mean squared error in streamflow preditions for three PRMS parameters 
 (gsflow_coef, snarea_curve, and ssr2gw_rate) during calibration experiments 
 on the Santa Rosa Plain Integrated Hydrologic Model, Santa Rosa, 
-California. \label{fig:calibration}](calibration_example.png)
+California.](calibration_example.png)
 
 
 more body text
