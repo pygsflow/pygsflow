@@ -34,27 +34,14 @@ Paste statement of need text here
 # pyGSFLOW
 Paste body text here
 
-\autoref{fig:calibration}
-
-more body text
-
-\autoref{fig:plotting}
-
-more body text
-
-# Package architecture
-Paste package text here
-
-\autoref{fig:arch}
-
-# Conclusion
-Paste conclusion text here
-
-# Figures
 ![Mean squared error in streamflow preditions for three PRMS parameters 
 (gsflow_coef, snarea_curve, and ssr2gw_rate) during calibration experiments 
 on the Santa Rosa Plain Integrated Hydrologic Model, Santa Rosa, 
 California.\label{fig:calibration}](calibration_example.png)
+
+\autoref{fig:calibration}
+
+more body text
 
 ![Mean recharge for the entire simulation from MODFLOW is overlain with a 
 spatial contour plot of PRMS ssr2gw_rate which is a multiplier that scales 
@@ -63,9 +50,21 @@ the volume of recharge from PRMS to MODFLOW. MODFLOW’s IBOUND array
 inactive model cells, Sagehen Creek GSFLOW model, 
 Truckee, California.\label{fig:plotting}](sagehen_plot.png)
 
+\autoref{fig:plotting}
+
+more body text
+
+# Package architecture
+Paste package text here
+
 ![Hierarchical representation of the pyGSFLOW package. Each sub-package lists 
 the model building classes within each package. The GSFlowModel class interacts 
 with each of these listed modules and the FloPy 
 package.\label{fig:arch}](Package_architecture.png)
+
+\autoref{fig:arch}
+
+# Conclusion
+Paste conclusion text here
 
 # References
