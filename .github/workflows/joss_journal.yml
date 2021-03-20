@@ -20,9 +20,18 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     if: github.repository_owner == 'pygsflow'
     steps:
+      - name: Checkout pygsflow repo
+        uses: actions/checkout@v2.3.4
+
+      - name: Output repo information
+        run: |
+          echo $GITHUB_REPOSITORY_OWNER
+          echo $GITHUB_REPOSITORY
+          echo $GITHUB_REF
+          echo $GITHUB_EVENT_NAME
+        
       - name: Where in the world are we
-        run: cd .. 
-          ls -la
+        run: ls -la
         
       - name: Open Journals PDF Generator
         uses: openjournals/openjournals-draft-action@v.1.0
