@@ -62,5 +62,3 @@ package.](Package_architecture.png)
 
 # Conclusion
 Paste conclusion text here
-
-# References
