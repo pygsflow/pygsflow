@@ -199,7 +199,7 @@ class PrmsDiscretization(object):
         return PrmsDiscretization(xypts)
 
     @staticmethod
-    def load_from_shapefile(shp):
+    def load_from_shapefile(shp, hru_id="hru_id"):
         """
         Load method from a polygon shapefile. Shapefile
         must also have a hru field in the dbf file to sort
@@ -208,6 +208,8 @@ class PrmsDiscretization(object):
         Parameters
         ----------
         shp : str or shapefile.Reader object
+        hru_id : str
+            field of hru id in shapefile
 
         Returns
         -------
@@ -227,7 +229,7 @@ class PrmsDiscretization(object):
 
         hru_field = False
         for ix, field in enumerate(sf.fields):
-            if "hru_id" == field[0].lower():
+            if hru_id == field[0].lower():
                 # index the hru field
                 hru_field = ix - 1
                 break
