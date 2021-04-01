@@ -60,7 +60,7 @@ improvements in model applicability [@Bakker:2016; @Gardner:2018; @Ng:2018].
 
 # Statement of need
 GSFLOW model development previously has been a piecemeal approach. Arcpy-GSFLOW 
-scripts [@Gardener:2018] or GSFLOW-GRASS packages have been used to 
+scripts [@Gardner:2018] or GSFLOW-GRASS packages have been used to 
 process surface water input data into model files. PRMS-Python 
 [@Volk:2019] could be used to edit most of the PRMS inputs to 
 GSFLOW. Finally, FloPy [@Bakker:2016; @Bakker:2021] could 
