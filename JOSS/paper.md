@@ -92,7 +92,7 @@ are developing, calibrating, or running prediction scenarios with GSFLOW. The
 code base currently is being used for the development of several river-basin 
 scale hydrologic models in western basins, including the example shown below 
 highlighting application to the Russian River basin and the Santa Rosa Plain 
-(fig. 1) [@Woolfenden:2014; @Gardner:2016]. 
+(fig. 1) [@Woolfenden:2014; @Gardner:2018]. 
 
 The Santa Rosa Plain (SRP) model [@Woolfenden:2014] is an IHM 
 that was developed as a tool to provide scientific information to water 
