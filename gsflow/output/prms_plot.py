@@ -163,8 +163,7 @@ class PrmsPlot(object):
 
         Parameters
         ----------
-        array : array to plot.
-            size must be equal to nhru
+        parameter : PrmsParameter object
 
         ax : matplotlib.pyplot.axes
 
@@ -235,8 +234,7 @@ class PrmsPlot(object):
 
         Parameters
         ----------
-        a : numpy.ndarray
-            Array to plot.
+        parameter : PrmsParameter object
         ax : matplotlib.pyplot.axes
             optional axes object
         masked_values : iterable of floats, ints
