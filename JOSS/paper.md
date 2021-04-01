@@ -39,14 +39,14 @@ The addition of new types of data sets and the need to represent the interaction
 between surface water and groundwater systems has been driving this complexity. 
 Ignoring landscape changes in space and time and applying simple boundary 
 conditions within hydrologic models is no longer adequate to address watershed 
-and basin scale issues (Fatichi et al., 2016). Instead, integrated hydrologic 
+and basin scale issues [@Fatichi:2016]. Instead, integrated hydrologic 
 models (IHMs), that couple governing equations for surface water and groundwater 
 flow, are used to represent feedback mechanisms between these systems.
 
-Among these IHMs is GSFLOW simulation code (Markstrom and others, 2008) that 
+Among these IHMs is GSFLOW simulation code [@Markstrom:2008] that 
 simulates surface and subsurface hydrologic processes by integrating the 
-Precipitation Runoff Modeling System (PRMS) (Markstrom and others, 2015) and 
-MODFLOW (Harbaugh, 2005, Niswonger and others, 2011) into a single code that 
+Precipitation Runoff Modeling System (PRMS) [@Markstrom:2015] and 
+MODFLOW [@Harbaugh:2005; @Niswonger:2011] into a single code that 
 simulates feedbacks between the two systems. Because modelers are moving toward 
 simulating greater portions of the hydrologic cycle, larger datasets, from 
 multiple sources are used to parameterize these models. Beyond the scope of 
@@ -56,15 +56,14 @@ like Python, R, and MATLAB make it easier to process large data sets and
 provide standard methods that can be used for developing, editing, and properly 
 formatting model input files and for analyzing model output data. These 
 developments have led to major advancements in model reproducibility and 
-improvements in model applicability (Bakker and others, 2016; Gardner and 
-others, 2018; Ng and others, 2018).
+improvements in model applicability [@Bakker:2016; @Gardner:2018; @Ng:2018].
 
 # Statement of need
 GSFLOW model development previously has been a piecemeal approach. Arcpy-GSFLOW 
-scripts (Gardener and others, 2018) or GSFLOW-GRASS packages have been used to 
+scripts [@Gardener:2018] or GSFLOW-GRASS packages have been used to 
 process surface water input data into model files. PRMS-Python 
-(Volk and Turner, 2019) could be used to edit most of the PRMS inputs to 
-GSFLOW. Finally, FloPy (Bakker and others, 2016; Bakker and others 2019) could 
+[@Volk:2019] could be used to edit most of the PRMS inputs to 
+GSFLOW. Finally, FloPy [@Bakker:2016; @Bakker:2021] could 
 be used to edit most of the MODFLOW inputs to GSFLOW. This approach 
 unfortunately is not tightly coupled and still required manual edits and 
 additional external scripts to edit, run models, and process output data. 
@@ -77,13 +76,13 @@ pyGSFLOW is a Python package for creating new GSFLOW models, importing existing
 models, running GSFLOW models, processing model outputs, and visualizing model 
 data. Instead of working directly with formatted model input files, the 
 pyGSFLOW API allows the user to work with class-based methods to create GSFLOW 
-(Markstrom and others, 2008), PRMS (Markstrom and others, 2015), MODSIM 
-(Labadie and Larson, 2006) vectorized surface water operations networks, and 
-MODFLOW (Harbaugh, 2005) model packages and binds them into a single integrated 
+[@Markstrom:2008], PRMS [@Markstrom:2015], MODSIM 
+[@Labadie:2006] vectorized surface water operations networks, and 
+MODFLOW [@Harbaugh:2005] model packages and binds them into a single integrated 
 model instance. pyGSFLOW leverages features from FloPy, an existing Python 
 package for the MODFLOW suite of groundwater modeling software 
-(Harbaugh, 2005; Niswonger and others, 2011; Panday and others, 2013; 
-Langevin and others, 2017) and extends the capabilities for integrated 
+[@Harbaugh:2005; @Niswonger:2011; @Panday:2013; @Langevin:2017] 
+and extends the capabilities for integrated 
 hydrologic models. pyGSFLOW relies on FloPy model and package objects and 
 interfaces with these features to provide FloPy users with familiar code syntax 
 and to ensure the long-term maintainability of the code base.
@@ -93,9 +92,9 @@ are developing, calibrating, or running prediction scenarios with GSFLOW. The
 code base currently is being used for the development of several river-basin 
 scale hydrologic models in western basins, including the example shown below 
 highlighting application to the Russian River basin and the Santa Rosa Plain 
-(fig. 1) (Woolfenden and Nishikawa, 2014; Gardner and others, 2016). 
+(fig. 1) [@Woolfenden:2014; @Gardner:2016]. 
 
-The Santa Rosa Plain (SRP) model (Woolfenden and Nishikawa, 2014) is an IHM 
+The Santa Rosa Plain (SRP) model [@Woolfenden:2014] is an IHM 
 that was developed as a tool to provide scientific information to water 
 managers about future climate change scenarios. The SRP model applied four 
 global-climate models and simulated relative change in water resources under 
