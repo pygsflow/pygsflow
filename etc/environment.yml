@@ -2,7 +2,6 @@ name: pygsflow
 channels:
   - conda-forge
 dependencies:
-  - pytest
   - numpy
   - pandas
   - pyshp
