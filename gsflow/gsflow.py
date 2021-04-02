@@ -542,12 +542,14 @@ class GsflowModel(object):
                 print("Writing MODSIM shapefile")
                 self.modsim.write_modsim_shapefile()
 
-    def run_model(self, forgive=False):
+    def run_model(self, model_ws=".", forgive=False):
         """
         Method to run a gsflow model
 
         Parameters
         ----------
+        model_ws : str
+            parameter to specify the model directory
         forgive : bool
             forgives convergence issues
 
@@ -573,7 +575,7 @@ class GsflowModel(object):
             normal_msg.append('failed to meet solver convergence criteria')
 
         return self.__run(exe_name=self.gsflow_exe, namefile=fn,
-                          normal_msg=normal_msg)
+                          normal_msg=normal_msg, model_ws=model_ws)
 
     def _generate_batch_file(self):
         fn = os.path.dirname(self.control_file)
@@ -585,7 +587,7 @@ class GsflowModel(object):
         fidw.write(cmd)
         fidw.close()
 
-    def __run(self, exe_name, namefile, model_ws='./',
+    def __run(self, exe_name, namefile, model_ws='.',
               silent=False, report=False,
               normal_msg='normal termination',
               cargs=None):

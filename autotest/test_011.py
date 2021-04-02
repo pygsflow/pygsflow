@@ -25,7 +25,7 @@ def test_open_write_run():
     gs.write_input(workspace=ws2)
     gs2 = GsflowModel.load_from_file(os.path.join(ws2, control_file),
                                      gsflow_exe=exe)
-    success, buff = gs2.run_model()
+    success, buff = gs2.run_model(model_ws=ws2)
     assert success
 
 

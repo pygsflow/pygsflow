@@ -7,6 +7,9 @@ import numpy as np
 import os
 
 
+ws = os.path.abspath(os.path.dirname(__file__))
+
+
 def test_empty_prms_parameter_object():
     pp = PrmsParameters([])
 
@@ -40,7 +43,7 @@ def test_build_prms_parameter_object():
 
 def test_build_control_file_object():
     cf_name = "test.control"
-    model_dir = "./"
+    model_dir = os.path.join(ws, ".")
     name = "model_mode"
     datatype = 4
     values = ["GSFLOW"]

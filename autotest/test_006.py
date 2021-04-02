@@ -5,10 +5,12 @@ import numpy as np
 import pandas as pd
 
 
+ws = os.path.abspath(os.path.dirname(__file__))
+
 def test_build_prms_model():
     # buld control file object
     cf_name = "test.control"
-    model_dir = "./"
+    model_dir = os.path.join(ws, ".")
     name = "model_mode"
     datatype = 4
     cr_values = ["GSFLOW"]
@@ -31,7 +33,7 @@ def test_build_prms_model():
     # build Data object
     data_df = pd.DataFrame()
     name = "test.data"
-    model_dir = "./"
+    model_dir = os.path.join(ws, ".")
     header = "this is a test"
     data = PrmsData(data_df, name=name, model_dir=model_dir, header=header)
 
