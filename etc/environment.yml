@@ -2,8 +2,7 @@ name: pygsflow
 channels:
   - conda-forge
 dependencies:
-  - nose
-  - nose-timer
+  - pytest
   - numpy
   - pandas
   - pyshp
