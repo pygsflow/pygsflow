@@ -65,6 +65,10 @@ jobs:
     - name: Run pytest CI testing suite for pyGSFLOW
       shell: bash -l {0}
       run: |
+        cd bin
+        chmod a+x gsflow
+        chmod a+x gsflow.exe
+        cd ..
         pip install pytest
         pip install pytest-cov
         pip install https://github.com/modflowpy/flopy/zipball/develop

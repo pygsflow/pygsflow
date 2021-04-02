@@ -6,6 +6,7 @@ from gsflow.output import StatVar
 
 ws = os.path.abspath(os.path.dirname(__file__))
 
+
 def test_read_stat_var():
     local_ws = os.path.join(ws, "temp")
     name = "saghen_new_stat_var.dat"
