@@ -59,6 +59,7 @@ jobs:
     - name: Install flopy and pygsflow
       shell: bash -l {0}
       run: |
+        pip install nose
         pip install https://github.com/modflowpy/flopy/zipball/develop
         pip install .
 
@@ -66,4 +67,7 @@ jobs:
       run: |
         cd autotest
         nosetests -v -with-id --with-timer -w ./autotest --with-coverage --cover-package=gsflow
+
+    - name: Run Coveralls
+      run: |
         coveralls
