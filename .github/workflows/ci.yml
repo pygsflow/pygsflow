@@ -63,7 +63,7 @@ jobs:
         pip install .
 
     - name: Install gfortran
-      shell: bash -l {0}
+      if: runner.os != 'Windows'
       run: |
         sudo apt install gfortran-7
 
