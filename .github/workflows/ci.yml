@@ -1,0 +1,23 @@
+name: pygsflow continuous integration
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [master, develop]
+    
+jobs:
+  pygsflowCI:
+    name: autotests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.8, 3.7, 3.6]
+        run-type: [std]
+        test-pth: ["./autotest"]
+  steps:
+  - name: Checkout pygsflow repo
+    uses: actions/checkout@v2.3.4
+    
