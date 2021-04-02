@@ -1,0 +1,24 @@
+name: pygsflow
+channels:
+  - conda-forge
+dependencies:
+  - nose
+  - nose-timer
+  - numpy
+  - pandas
+  - pyshp
+  - pycrs
+  - matplotlib
+  - coverage
+  - appdirs
+  - requests
+  - affine
+  - scipy
+  - pandas
+  - netcdf4
+  - rasterio
+  - fiona
+  - descartes
+  - pyproj
+  - shapely
+  - geos=3.8.1
