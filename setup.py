@@ -35,8 +35,8 @@ except ImportError:
 
 
 setup(
-    author="Ayman Alzraiee, Joshua Larsen",
-    author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov',
+    author="Ayman Alzraiee, Joshua Larsen, Rich Niswonger",
+    author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov, rniswon@usgs.gov',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

@@ -29,7 +29,7 @@ Alternatively the user can download a copy of the repository, open a command pro
 `pip install . `
 
 ## Authors
-Ayman Alzraiee and Joshua Larsen
+Ayman Alzraiee, Joshua Larsen, Rich Niswonger
 
 ## Bugs
 The code is in active development and although there is a testing infrastructure set up we cannot catch all the software bugs without the help of users. If you find a bug or have an issue, please report it by opening a new issue. You can open a new issue by clicking the issues tab near the top of the page.

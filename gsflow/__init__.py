@@ -1,15 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-@ comment JL
-
-Author, email, and version information is supposed to
-go into either the setup.py or a version.py, email.py, author.py
-
-this is not an appropriate place for it
-"""
-__author__ = """Ayman Alzraiee, Josh Larsen"""
-__email__ = """aalzraiee@usgs.gov, jlarsen@usgs.gov"""
-__version__ = "0.1.0"
+__author__ = """Ayman Alzraiee, Josh Larsen, Rich Niswonger"""
+__email__ = """aalzraiee@usgs.gov, jlarsen@usgs.gov, rniswon@usgs.gov"""
+__version__ = "1.0.0"
 
 from .control import ControlFile, ControlRecord
 from .prms.prms_model import PrmsModel
