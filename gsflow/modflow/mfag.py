@@ -409,44 +409,44 @@ class ModflowAg(flopy.modflow.ModflowAg):
             dtype : (list, tuple)
         """
         if block == "well":
-            dtype = [('k', np.int), ('i', np.int),
-                     ('j', np.int), ('flux', np.float)]
+            dtype = [('k', "int"), ('i', "int"),
+                     ('j', "int"), ('flux', "float")]
 
         elif block == "tabfile_well":
-            dtype = [('unit', np.int), ('tabval', np.int),
-                     ('k', np.int), ('i', np.int), ('j', np.int)]
+            dtype = [('unit', "int"), ('tabval', "int"),
+                     ('k', "int"), ('i', "int"), ('j', "int")]
 
         elif block == "time series":
-            dtype = [('keyword', np.object), ('id', np.int),
-                     ('unit', np.int)]
+            dtype = [('keyword', "object"), ('id', "int"),
+                     ('unit', "int")]
 
         elif block == "irrdiversion":
-            dtype = [("segid", np.int), ("numcell", np.int),
-                     ("period", np.float), ("triggerfact", np.float)]
+            dtype = [("segid", "int"), ("numcell", "int"),
+                     ("period", "float"), ("triggerfact", "float")]
 
             for i in range(maxells):
-                dtype += [("hru_id{}".format(i), np.int),
-                          ("dum{}".format(i), np.int),
-                          ("eff_fact{}".format(i), np.float),
-                          ("field_fact{}".format(i), np.float)]
+                dtype += [("hru_id{}".format(i), "int"),
+                          ("dum{}".format(i), "int"),
+                          ("eff_fact{}".format(i), "float"),
+                          ("field_fact{}".format(i), "float")]
 
         elif block == "irrwell":
-            dtype = [("wellid", np.int), ("numcell", np.int),
-                     ("period", np.float), ("triggerfact", np.float)]
+            dtype = [("wellid", "int"), ("numcell", "int"),
+                     ("period", "float"), ("triggerfact", "float")]
 
             for i in range(maxells):
-                dtype += [("hru_id{}".format(i), np.int),
-                          ("dum{}".format(i), np.int),
-                          ("eff_fact{}".format(i), np.float),
-                          ("field_fact{}".format(i), np.float)]
+                dtype += [("hru_id{}".format(i), "int"),
+                          ("dum{}".format(i), "int"),
+                          ("eff_fact{}".format(i), "float"),
+                          ("field_fact{}".format(i), "float")]
 
         elif block == "supwell":
-            dtype = [("wellid", np.int), ("numcell", np.int)]
+            dtype = [("wellid", "int"), ("numcell", "int")]
 
             for i in range(maxells):
-                dtype += [("segid{}".format(i), np.int),
-                          ("fracsup{}".format(i), np.float),
-                          ("fracsupmax{}".format(i), np.float)]
+                dtype += [("segid{}".format(i), "int"),
+                          ("fracsup{}".format(i), "float"),
+                          ("fracsupmax{}".format(i), "float")]
 
         else:
             raise NotImplementedError(
