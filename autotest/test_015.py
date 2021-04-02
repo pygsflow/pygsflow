@@ -4,15 +4,17 @@ from gsflow.utils import Rasters
 from gsflow.output import PrmsDiscretization
 
 
+ws = os.path.abspath(os.path.dirname(__file__))
+
 def test_raster_functions():
 
     # load the PrmsDiscrtization object
-    ws = r"../examples/data/sagehen/shapefiles"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "shapefiles")
     shp = "hru_params.shp"
-    dis = PrmsDiscretization.load_from_shapefile(os.path.join(ws, shp))
+    dis = PrmsDiscretization.load_from_shapefile(os.path.join(local_ws, shp))
 
     # load a DEM raster of the area
-    path = r'../examples/data/geospatial'
+    path = os.path.join(ws, '..', 'examples', 'data', 'geospatial')
     name = "dem.img"
     try:
         x = Rasters.load(os.path.join(path, name))

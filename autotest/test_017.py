@@ -5,14 +5,17 @@ import pycrs
 import shapefile
 
 
+ws = os.path.abspath(os.path.dirname(__file__))
+
+
 def test_modsim():
-    ws = "../examples/data/sagehen/gsflow-modsim"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "gsflow-modsim")
     control_file = "saghen_modsim_cont.control"
-    shp = "./temp/test_modsim_modsim.shp"
-    prj = "./temp/test_modsim_modsim.prj"
+    shp = os.path.join(ws, "temp", "test_modsim_modsim.shp")
+    prj = os.path.join(ws, "temp", "test_modsim_modsim.prj")
     proj4 = "+proj=utm +zone=10 +ellps=GRS80 +datum=NAD83 +units=m +no_defs "
 
-    gsf = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    gsf = gsflow.GsflowModel.load_from_file(os.path.join(local_ws, control_file))
     modsim = gsflow.modsim.Modsim(gsf)
 
     if not modsim._ready:
@@ -39,14 +42,15 @@ def test_modsim():
 
 
 def test_gsflow_modsim_read_write():
-    ws = "../examples/data/sagehen/gsflow-modsim"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen",
+                            "gsflow-modsim")
     control_file = "saghen_modsim_cont.control"
-    ws2 = "./temp"
-    shp = "./temp/saghen_modsim_modsim.shp"
-    prj = "./temp/saghen_modsim_modsim.prj"
+    ws2 = os.path.join(ws, "temp")
+    shp = os.path.join(ws, "temp", "test_modsim_modsim.shp")
+    prj = os.path.join(ws, "temp", "test_modsim_modsim.prj")
     proj4 = "+proj=utm +zone=10 +ellps=GRS80 +datum=NAD83 +units=m +no_defs "
 
-    gsf = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    gsf = gsflow.GsflowModel.load_from_file(os.path.join(local_ws, control_file))
     gsf.mf.modelgrid.set_coord_info(proj4=proj4)
     gsf.write_input(workspace=ws2)
 
@@ -66,16 +70,16 @@ def test_gsflow_modsim_read_write():
 
 
 def test_modsim_flag_spillway():
-    ws = "../examples/data/sagehen_3lay_modsim/windows"
-    ws2 = "./temp"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen_3lay_modsim", "windows")
+    ws2 = os.path.join(ws, "temp")
     control_file = "sagehen_modsim_3lay.control"
     proj4 = "+proj=utm +zone=10 +ellps=GRS80 +datum=NAD83 +units=m +no_defs "
 
-    shp_iseg = "modsim_flg_iseg.shp"
-    shp_elev = "modsim_flg_elev.shp"
-    shp_flow = "modsim_flg_flow.shp"
+    shp_iseg = os.path.join(ws, "modsim_flg_iseg.shp")
+    shp_elev = os.path.join(ws, "modsim_flg_elev.shp")
+    shp_flow = os.path.join(ws, "modsim_flg_flow.shp")
 
-    gsf = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    gsf = gsflow.GsflowModel.load_from_file(os.path.join(local_ws, control_file))
     gsf.mf.modelgrid.set_coord_info(proj4=proj4)
     gsf.modsim.write_modsim_shapefile(shp=os.path.join(ws2, shp_iseg),
                                       flag_spillway=[24,], nearest=False)

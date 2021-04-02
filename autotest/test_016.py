@@ -4,13 +4,16 @@ import os
 from gsflow.utils import SfrRenumber
 
 
+ws = os.path.abspath(os.path.dirname(__file__))
+
+
 def test_sfr_renumber():
     # simple test to ensure no crashes in the renumbering schemes
     # expand this later to test LAK, AG, and GAGE
-    ws = "../examples/data/sagehen/gsflow"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "gsflow")
     control_file = "saghen_new_cont.control"
 
-    gsf = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    gsf = gsflow.GsflowModel.load_from_file(os.path.join(local_ws, control_file))
     ml = gsf.mf
 
     # renumber by topology

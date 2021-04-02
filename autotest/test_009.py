@@ -51,7 +51,7 @@ def test_load_write_gsflow():
     assert isinstance(gs.prms.data, PrmsData)
     assert isinstance(gs.mf, gsflow.modflow.Modflow)
 
-    ws2 = "./temp"
+    ws2 = os.path.join(ws, "temp")
 
     # change ws only ...
     gs.write_input(workspace=ws2)
@@ -62,7 +62,7 @@ def test_load_write_gsflow():
     assert len(gs2.mf.packagelist) == len(gs.mf.packagelist)
     assert gs2.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
 
-    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen" "gsflow")
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "gsflow")
     control_file = "saghen_new_cont.control"
 
     gs = gsflow.GsflowModel.load_from_file(os.path.join(local_ws, control_file))
@@ -103,6 +103,6 @@ def test_load_write_gsflow():
 
 
 if __name__ == "__main__":
-    # test_load_write_model_prms_only()
-    # test_load_write_gsflow_modflow()
+    test_load_write_model_prms_only()
+    test_load_write_gsflow_modflow()
     test_load_write_gsflow()
