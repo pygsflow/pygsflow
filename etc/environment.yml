@@ -21,4 +21,5 @@ dependencies:
   - descartes
   - pyproj
   - shapely
+  - pycrs
   - geos=3.8.1
