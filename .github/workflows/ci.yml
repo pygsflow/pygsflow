@@ -62,17 +62,12 @@ jobs:
         pip install https://github.com/modflowpy/flopy/zipball/develop
         pip install .
 
-    - name: Install gfortran
-      if: runner.os != 'Windows'
-      run: |
-        sudo apt install gfortran-7
-
     - name: Setup symbolic link to gfortran on Linux
       if: runner.os == 'Linux'
       run: |
-        sudo ln -fs /usr/bin/gfortran-7 /usr/local/bin/gfortran
-        sudo ln -fs /usr/bin/gcc-7 /usr/local/bin/gcc
-        sudo ln -fs /usr/bin/g++-7 /usr/local/bin/g++
+        sudo ln -fs /usr/bin/gfortran-10 /usr/local/bin/gfortran
+        sudo ln -fs /usr/bin/gcc-10 /usr/local/bin/gcc
+        sudo ln -fs /usr/bin/g++-10 /usr/local/bin/g++
 
     - name: Setup symbolic link to gfortran on macOS
       if: runner.os == 'macOS'
