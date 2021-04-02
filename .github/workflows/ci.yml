@@ -63,8 +63,11 @@ jobs:
         pip install .
       
     - name: Run pytest CI testing suite for pyGSFLOW
+      shell: bash -l {0}
       run: |
         cd autotest
         pip install pytest
         pip install pytest-cov
+        pip install https://github.com/modflowpy/flopy/zipball/develop
+        pip install .
         pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
