@@ -4,20 +4,23 @@ from gsflow.modflow import Modflow, ModflowAwu, ModflowAg
 import numpy as np
 
 
+ws = os.path.abspath(os.path.dirname(__file__))
+
+
 def test_ModflowAg_load_write():
-    ws = "../examples/data/sagehen/modflow"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "modflow")
     agfile = "sagehen.awu"
     nper = 344
 
-    ml = Modflow("agtest", model_ws=ws)
+    ml = Modflow("agtest", model_ws=local_ws)
 
-    ag = ModflowAwu.load(os.path.join(ws, agfile), ml,
+    ag = ModflowAwu.load(os.path.join(local_ws, agfile), ml,
                          nper=nper, ext_unit_dict={})
 
     if not isinstance(ag, ModflowAg):
         raise AssertionError("Override of Awu failed")
 
-    ws2 = "./temp"
+    ws2 = os.path.join(ws, "temp")
     ml.change_model_ws(ws2)
     ag.write_file()
 

@@ -4,19 +4,22 @@ import platform
 # open, write to new directory, run model
 
 
+ws = os.path.abspath(os.path.dirname(__file__))
+
+
 def test_open_write_run():
-    ws = "../examples/data/sagehen/gsflow"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "gsflow")
     control_file = "saghen_new_cont.control"
 
-    exe = "../bin/gsflow"
+    exe = os.path.join(ws, "..", "bin", "gsflow")
     if platform.system().lower() == "windows":
-        exe = r"..\bin\gsflow.exe"
+        exe = os.path.join(ws, "..", "bin", "gsflow.exe")
 
     exe = os.path.abspath(exe)
-    gs = GsflowModel.load_from_file(os.path.join(ws, control_file),
+    gs = GsflowModel.load_from_file(os.path.join(local_ws, control_file),
                                     gsflow_exe=exe)
 
-    ws2 = "./temp"
+    ws2 = os.path.join(ws, "temp")
 
     # change ws only ...
     gs.write_input(workspace=ws2)

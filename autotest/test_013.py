@@ -9,15 +9,18 @@ from gsflow import GsflowModel
 from gsflow.output import PrmsDiscretization, PrmsPlot
 
 
-def test_prms_plotting():
-    ws = "../examples/data/sagehen/gsflow"
-    control_file = "saghen_new_cont.control"
-    gs = GsflowModel.load_from_file(os.path.join(ws, control_file))
+ws = os.path.abspath(os.path.dirname(__file__))
 
-    ws = r"../examples/data/sagehen/shapefiles"
+
+def test_prms_plotting():
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "gsflow")
+    control_file = "saghen_new_cont.control"
+    gs = GsflowModel.load_from_file(os.path.join(local_ws, control_file))
+
+    shp_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "shapefiles")
     shp = "hru_params.shp"
 
-    dis = PrmsDiscretization.load_from_shapefile(os.path.join(ws, shp))
+    dis = PrmsDiscretization.load_from_shapefile(os.path.join(shp_ws, shp))
     assert isinstance(dis, PrmsDiscretization)
     assert dis.nhru == 6468
     assert dis.extent is not None

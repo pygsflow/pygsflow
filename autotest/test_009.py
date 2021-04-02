@@ -4,15 +4,18 @@ import numpy as np
 from gsflow import ControlFile, PrmsParameters, PrmsData
 
 
+ws = os.path.abspath(os.path.dirname(__file__))
+
+
 def test_load_write_model_prms_only():
-    ws = "../examples/data/sagehen/prms/windows"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "prms", "windows")
     control_file = "sagehen.control"
-    gs = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    gs = gsflow.GsflowModel.load_from_file(os.path.join(local_ws, control_file))
     assert isinstance(gs.control, ControlFile)
     assert isinstance(gs.prms.parameters, PrmsParameters)
     assert isinstance(gs.prms.data, PrmsData)
 
-    ws2 = "./temp"
+    ws2 = os.path.join(ws, "temp")
     gs.write_input(workspace=ws2)
 
     gs2 = gsflow.GsflowModel.load_from_file(os.path.join(ws2, control_file))
@@ -22,12 +25,12 @@ def test_load_write_model_prms_only():
 
 
 def test_load_write_gsflow_modflow():
-    ws = "../examples/data/sagehen/modflow"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "modflow")
     nam = "saghen.nam"
-    ml = gsflow.modflow.Modflow.load(nam, model_ws=ws)
+    ml = gsflow.modflow.Modflow.load(nam, model_ws=local_ws)
     assert isinstance(ml, gsflow.modflow.Modflow)
 
-    ws2 = "./temp"
+    ws2 = os.path.join(ws, "temp")
     ml.change_model_ws(ws2)
     ml.write_input()
 
@@ -39,10 +42,10 @@ def test_load_write_gsflow_modflow():
 
 def test_load_write_gsflow():
 
-    ws = "../examples/data/sagehen/gsflow"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "gsflow")
     control_file = "saghen_new_cont.control"
 
-    gs = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    gs = gsflow.GsflowModel.load_from_file(os.path.join(local_ws, control_file))
     assert isinstance(gs.control, ControlFile)
     assert isinstance(gs.prms.parameters, PrmsParameters)
     assert isinstance(gs.prms.data, PrmsData)
@@ -59,14 +62,14 @@ def test_load_write_gsflow():
     assert len(gs2.mf.packagelist) == len(gs.mf.packagelist)
     assert gs2.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
 
-    ws = "../examples/data/sagehen/gsflow"
+    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen" "gsflow")
     control_file = "saghen_new_cont.control"
 
-    gs = gsflow.GsflowModel.load_from_file(os.path.join(ws, control_file))
+    gs = gsflow.GsflowModel.load_from_file(os.path.join(local_ws, control_file))
     assert not gs.modflow_only
     assert not gs.prms_only
 
-    ws2 = "./temp"
+    ws2 = os.path.join(ws, "temp")
     basename = "test2"
 
     # change ws and basename...
