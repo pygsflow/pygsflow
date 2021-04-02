@@ -9,7 +9,7 @@ this is not an appropriate place for it
 """
 __author__ = """Ayman Alzraiee, Josh Larsen"""
 __email__ = """aalzraiee@usgs.gov, jlarsen@usgs.gov"""
-__version__ = '0.1.0'
+__version__ = "0.1.0"
 
 from .control import ControlFile, ControlRecord
 from .prms.prms_model import PrmsModel

@@ -5,7 +5,8 @@ import datetime
 import matplotlib.pyplot as plt
 import os
 import warnings
-warnings.simplefilter('always', PendingDeprecationWarning)
+
+warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class StatVar(object):
@@ -34,7 +35,10 @@ class StatVar(object):
     >>> stats = StatVar("mystatvar.txt")
 
     """
-    def __init__(self, statvar_file, statvar_names=None, statvar_elements=None):
+
+    def __init__(
+        self, statvar_file, statvar_names=None, statvar_elements=None
+    ):
 
         self.statvar_file = statvar_file
         self.statvar_names = statvar_names
@@ -90,8 +94,8 @@ class StatVar(object):
             svn = True
             self.statvar_names = []
 
-        print ("Loading the statvar output file .....")
-        with open(self.statvar_file, 'r') as fid:
+        print("Loading the statvar output file .....")
+        with open(self.statvar_file, "r") as fid:
             nvals = int(fid.readline().strip())
             var_names = []
             var_element = []
@@ -107,19 +111,24 @@ class StatVar(object):
                 var_names.append(nm)
                 var_element.append(int(elem))
 
-            columns = ['ID'] + GsConstant.COLUMN_HEADER + var_names
+            columns = ["ID"] + GsConstant.COLUMN_HEADER + var_names
             stat_df = pd.read_csv(fid, delim_whitespace=True, names=columns)
             Dates = []
             for index, irow in stat_df.iterrows():
-                dt = datetime.datetime(year=int(irow['Year']), month=int(irow['Month']), day=int(irow['Day']),
-                                       hour=int(irow['Hour']),
-                                       minute=int(irow['Minute']), second=int(irow['Second']))
+                dt = datetime.datetime(
+                    year=int(irow["Year"]),
+                    month=int(irow["Month"]),
+                    day=int(irow["Day"]),
+                    hour=int(irow["Hour"]),
+                    minute=int(irow["Minute"]),
+                    second=int(irow["Second"]),
+                )
                 Dates.append(dt)
 
-            stat_df['Date'] = Dates
+            stat_df["Date"] = Dates
             self.stat_df = stat_df
 
-        print ("Finished Load the statvar output file .....")
+        print("Finished Load the statvar output file .....")
 
     """
     @ comment JL
@@ -129,6 +138,7 @@ class StatVar(object):
     layer two or three items on it. A custom plotting routine may be better
     suited to accomplish this... 
     """
+
     def plot(self):
         """
         Built in plotting method for the statvar object. Uses
@@ -137,9 +147,4 @@ class StatVar(object):
         """
         for i, name in enumerate(self.statvar_names):
             nm = name + "_" + self.statvar_elements[i]
-            self.stat_df.plot(x = 'Date', y = nm)
-
-
-
-
-
+            self.stat_df.plot(x="Date", y=nm)

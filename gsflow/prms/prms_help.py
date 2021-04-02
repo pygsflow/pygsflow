@@ -34,8 +34,10 @@ class Helper(object):
         Reads the PRMS parameter documentation
         """
 
-        fn = os.path.join(os.path.dirname(__file__), r"gsflow_prms.control.par_name")
-        with open(fn, 'r') as fid:
+        fn = os.path.join(
+            os.path.dirname(__file__), r"gsflow_prms.control.par_name"
+        )
+        with open(fn, "r") as fid:
             # content = fid.readlines()
             # fid.close()
             is_dim_section = False
@@ -46,9 +48,9 @@ class Helper(object):
             while True:
                 try:
                     line = fid.readline()
-                    if 'Bounded' in line:
+                    if "Bounded" in line:
                         curr_par = dimensions[name.strip()]
-                        key, value = line.split(':')
+                        key, value = line.split(":")
                         curr_par[key] = value
                         dimensions[name.strip()] = curr_par
                         continue
@@ -56,12 +58,18 @@ class Helper(object):
                     # End of file
                     break
 
-                if line.strip() == "--------------- DIMENSIONS ---------------":
+                if (
+                    line.strip()
+                    == "--------------- DIMENSIONS ---------------"
+                ):
                     is_dim_section = True
                     is_par_section = False
                     continue
 
-                if line.strip() == "--------------- PARAMETERS ---------------":
+                if (
+                    line.strip()
+                    == "--------------- PARAMETERS ---------------"
+                ):
                     is_par_section = True
                     is_dim_section = False
                     continue
@@ -70,7 +78,7 @@ class Helper(object):
                     continue
 
                 if is_dim_section:
-                    if line.strip() == '':
+                    if line.strip() == "":
                         # read three lines
                         line = fid.readline()
                         key, name = line.split(":")  # dim name
@@ -81,10 +89,13 @@ class Helper(object):
                         line = fid.readline()
                         key, desc = line.split(":")  # dim Desc
 
-                        dimensions[name.strip()] = {'Value': int(value.strip()), 'Desc': desc.strip()}
+                        dimensions[name.strip()] = {
+                            "Value": int(value.strip()),
+                            "Desc": desc.strip(),
+                        }
 
                 if is_par_section:
-                    if line.strip() == '':
+                    if line.strip() == "":
                         # read three lines
                         line = fid.readline()
                         key, name = line.split(":")  # dim name
@@ -96,19 +107,19 @@ class Helper(object):
                             except:
                                 pass
                             value = value.strip()
-                            if key.strip() in ['Ndimen', 'Size', 'Width']:
+                            if key.strip() in ["Ndimen", "Size", "Width"]:
                                 value = int(value)
-                            if key.strip() == 'Dimensions':
-                                values = value.split(',')
+                            if key.strip() == "Dimensions":
+                                values = value.split(",")
                                 value = []
                                 for v in values:
                                     dimname, val = v.split("-")
                                     value.append((dimname, int(val)))
 
-                            if key.strip() in ['Max', 'Min', 'Default']:
-                                if curr_par['Type'] == 'float':
+                            if key.strip() in ["Max", "Min", "Default"]:
+                                if curr_par["Type"] == "float":
                                     value = float(value)
-                                elif curr_par['Type'] == 'long':
+                                elif curr_par["Type"] == "long":
                                     value = int(value)
                                 else:
                                     pass  # unknow type
@@ -124,8 +135,10 @@ class Helper(object):
         """
         Reads the PRMS output variables documentation
         """
-        fn = os.path.join(os.path.dirname(__file__), r"gsflow_prms.control.var_name")
-        fid = open(fn, 'r')
+        fn = os.path.join(
+            os.path.dirname(__file__), r"gsflow_prms.control.var_name"
+        )
+        fid = open(fn, "r")
         content = fid.read()
         fid.close()
         content = content.split("****")[1]
@@ -139,11 +152,11 @@ class Helper(object):
                 vv = rec.strip().split(":")
                 name = vv[0]
                 value = " ".join(vv[1:])
-                if name in ['Ndimen', 'Size']:
+                if name in ["Ndimen", "Size"]:
                     value = int(value)
 
-                if name in ['Dimensions']:
-                    if curr_record['Ndimen'] > 1:
+                if name in ["Dimensions"]:
+                    if curr_record["Ndimen"] > 1:
                         values = value.split(",")
                         value = []
                         for val in values:

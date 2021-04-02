@@ -5,8 +5,9 @@ from .utils import io
 from .utils import GsConstant
 import copy
 import warnings
-warnings.simplefilter('always', PendingDeprecationWarning)
-warnings.simplefilter('always', UserWarning)
+
+warnings.simplefilter("always", PendingDeprecationWarning)
+warnings.simplefilter("always", UserWarning)
 
 
 class ParameterBase(object):
@@ -25,6 +26,7 @@ class ParameterBase(object):
         header for the parameter file
 
     """
+
     def __init__(self, records_list, name=None, model_dir=None, header=None):
 
         if name is not None:
@@ -154,7 +156,11 @@ class ParameterBase(object):
             raise ValueError("Value must be a list or np.ndarray")
 
         if name in self.record_names:
-            err = "The record already exists, skipping add_record: {}...".format(name)
+            err = (
+                "The record already exists, skipping add_record: {}...".format(
+                    name
+                )
+            )
             warnings.warn(err, UserWarning)
             return False
 
@@ -203,8 +209,9 @@ class ParameterBase(object):
             raise ValueError("Record name must be a string")
 
         if name not in self.record_names:
-            warnings.warn("The record does not exist: {}".format(name),
-                          UserWarning)
+            warnings.warn(
+                "The record does not exist: {}".format(name), UserWarning
+            )
             return
 
         for index, nm in enumerate(self.record_names):

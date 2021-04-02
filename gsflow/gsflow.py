@@ -10,8 +10,9 @@ import flopy
 import subprocess as sp
 import platform
 import warnings
-warnings.simplefilter('always', PendingDeprecationWarning)
-warnings.simplefilter('always', UserWarning)
+
+warnings.simplefilter("always", PendingDeprecationWarning)
+warnings.simplefilter("always", UserWarning)
 
 
 class GsflowModel(object):
@@ -52,8 +53,17 @@ class GsflowModel(object):
     >>> gsf = gsflow.GsflowModel(control=control)
 
     """
-    def __init__(self, control=None, prms=None, mf=None, modflow_only=False,
-                 prms_only=False, gsflow_exe=None, modsim=False):
+
+    def __init__(
+        self,
+        control=None,
+        prms=None,
+        mf=None,
+        modflow_only=False,
+        prms_only=False,
+        gsflow_exe=None,
+        modsim=False,
+    ):
 
         if not isinstance(control, ControlFile):
             raise ValueError("control must be a ControlFile object")
@@ -69,7 +79,9 @@ class GsflowModel(object):
         self.gsflow_exe = gsflow_exe
 
         if gsflow_exe is None:
-            self.gsflow_exe = os.path.join(os.path.dirname(__file__), r"bin\gsflow.exe")
+            self.gsflow_exe = os.path.join(
+                os.path.dirname(__file__), r"bin\gsflow.exe"
+            )
 
         # set prms object
         if not modflow_only:
@@ -83,7 +95,9 @@ class GsflowModel(object):
         if not prms_only:
             if mf and isinstance(mf, flopy.modflow.Modflow):
                 self.mf = mf
-                namefile = os.path.basename(control.get_values('modflow_name')[0])
+                namefile = os.path.basename(
+                    control.get_values("modflow_name")[0]
+                )
                 if namefile is not None:
                     self.mf.namefile = namefile
             else:
@@ -140,8 +154,14 @@ class GsflowModel(object):
         return f
 
     @staticmethod
-    def load_from_file(control_file, gsflow_exe="gsflow.exe", modflow_only=False,
-                       prms_only=False, mf_load_only=None, forgive=True):
+    def load_from_file(
+        control_file,
+        gsflow_exe="gsflow.exe",
+        modflow_only=False,
+        prms_only=False,
+        mf_load_only=None,
+        forgive=True,
+    ):
         """
         Method to load a gsflow model from it's control file
 
@@ -180,10 +200,10 @@ class GsflowModel(object):
         control = ControlFile.load_from_file(control_file)
         print("Control file is loaded")
 
-        mode = control.get_values('model_mode')[0].upper()
-        if mode == 'MODFLOW':
+        mode = control.get_values("model_mode")[0].upper()
+        if mode == "MODFLOW":
             modflow_only = True
-        elif mode == 'PRMS':
+        elif mode == "PRMS":
             prms_only = True
         elif "MODSIM" in mode:
             modsim = True
@@ -197,10 +217,11 @@ class GsflowModel(object):
 
         if not prms_only:
             # get model mode
-            if 'GSFLOW' in mode.upper() or 'MODFLOW' in mode.upper():
+            if "GSFLOW" in mode.upper() or "MODFLOW" in mode.upper():
                 print("Working on loading MODFLOW files ....")
-                modflow = GsflowModel._load_modflow(control, mf_load_only,
-                                                    forgive)
+                modflow = GsflowModel._load_modflow(
+                    control, mf_load_only, forgive
+                )
                 print("MODFLOW files are loaded ... ")
 
             else:
@@ -208,9 +229,15 @@ class GsflowModel(object):
                 modflow_only = False
                 print("Mode is set to PRMS only, loading PRMS model only")
 
-        return GsflowModel(control=control, prms=prms, mf=modflow,
-                           modflow_only=modflow_only, prms_only=prms_only,
-                           gsflow_exe=gsflow_exe, modsim=modsim)
+        return GsflowModel(
+            control=control,
+            prms=prms,
+            mf=modflow,
+            modflow_only=modflow_only,
+            prms_only=prms_only,
+            gsflow_exe=gsflow_exe,
+            modsim=modsim,
+        )
 
     @staticmethod
     def _load_modflow(control, mf_load_only, forgive=True):
@@ -235,14 +262,17 @@ class GsflowModel(object):
             Modflow object
 
         """
-        name = control.get_values('modflow_name')
+        name = control.get_values("modflow_name")
         control_file = control.control_file
         name = io.get_file_abs(control_file=control_file, fn=name[0])
         model_dir, name = os.path.split(name)
-        return Modflow.load(name, model_ws=model_dir,
-                            control_file=control_file,
-                            load_only=mf_load_only,
-                            forgive=forgive)
+        return Modflow.load(
+            name,
+            model_ws=model_dir,
+            control_file=control_file,
+            load_only=mf_load_only,
+            forgive=forgive,
+        )
 
     def write_input(self, basename=None, workspace=None, write_only=None):
         """
@@ -295,19 +325,21 @@ class GsflowModel(object):
                     par_record.file_name = curr_file
                     if not (curr_file in new_param_file_list):
                         new_param_file_list.append(curr_file)
-                self.control.set_values('param_file', new_param_file_list)
+                self.control.set_values("param_file", new_param_file_list)
 
                 # change datafile
-                curr_file = os.path.relpath(os.path.join(workspace, self.prms.data.name),
-                                            self.control.model_dir)
+                curr_file = os.path.relpath(
+                    os.path.join(workspace, self.prms.data.name),
+                    self.control.model_dir,
+                )
                 self.prms.data.model_dir = workspace
-                self.control.set_values('data_file', [curr_file])
+                self.control.set_values("data_file", [curr_file])
 
             # change mf
             if self.mf is not None:
                 self.mf.change_model_ws(workspace, reset_external=True)
                 mfnm = self.mf.name + ".nam"
-                self.control.set_values('modflow_name', [mfnm])
+                self.control.set_values("modflow_name", [mfnm])
 
             # update file names in control object
             self._update_control_fnames(workspace, basename)
@@ -327,7 +359,9 @@ class GsflowModel(object):
             # change parameters
             flist = self.prms.parameters.parameter_files
             new_param_file_list = []
-            for ifile, par_record in enumerate(self.prms.parameters.parameters_list):
+            for ifile, par_record in enumerate(
+                self.prms.parameters.parameters_list
+            ):
                 file_index = flist.index(par_record.file_name)
                 par_file = basename + "_par_{}.params".format(file_index)
                 curr_dir = self.control.model_dir
@@ -335,14 +369,16 @@ class GsflowModel(object):
                 par_record.file_name = curr_file
                 if not (curr_file in new_param_file_list):
                     new_param_file_list.append(curr_file)
-            self.control.set_values('param_file', new_param_file_list)
+            self.control.set_values("param_file", new_param_file_list)
 
             # change datafile
             dfile = basename + "_dat.data"
-            curr_file = os.path.relpath(os.path.join(self.prms.data.model_dir, dfile),
-                                        self.control.model_dir)
+            curr_file = os.path.relpath(
+                os.path.join(self.prms.data.model_dir, dfile),
+                self.control.model_dir,
+            )
             self.prms.data.name = dfile
-            self.control.set_values('data_file', [curr_file])
+            self.control.set_values("data_file", [curr_file])
 
             # change mf
             if self.mf is not None:
@@ -350,7 +386,7 @@ class GsflowModel(object):
                 self.mf._set_name(basename)
                 self._update_mf_basename(basename)
                 mfnm = self.mf.name + ".nam"
-                self.control.set_values('modflow_name',[mfnm])
+                self.control.set_values("modflow_name", [mfnm])
 
             # update file names in control object
             self._update_control_fnames(workspace, basename)
@@ -371,21 +407,24 @@ class GsflowModel(object):
             # get param files list
             flist = self.prms.parameters.parameter_files
             new_param_file_list = []
-            for ifile, par_record in enumerate(self.prms.parameters.parameters_list):
+            for ifile, par_record in enumerate(
+                self.prms.parameters.parameters_list
+            ):
                 file_index = flist.index(par_record.file_name)
                 par_file = basename + "_par_{}.params".format(file_index)
                 curr_file = os.path.join(workspace, par_file)
                 par_record.file_name = curr_file
                 if not (curr_file in new_param_file_list):
                     new_param_file_list.append(curr_file)
-            self.control.set_values('param_file', new_param_file_list)
+            self.control.set_values("param_file", new_param_file_list)
             # change datafile
             dfile = basename + "_dat.data"
-            curr_file = os.path.relpath(os.path.join(workspace, dfile),
-                                        self.control.model_dir)
+            curr_file = os.path.relpath(
+                os.path.join(workspace, dfile), self.control.model_dir
+            )
             self.prms.data.model_dir = workspace
             self.prms.data.name = dfile
-            self.control.set_values('data_file', [curr_file])
+            self.control.set_values("data_file", [curr_file])
 
             # flatten mf
             if self.mf is not None:
@@ -394,8 +433,14 @@ class GsflowModel(object):
                 self._update_mf_basename(basename)
 
             mfnm = basename + ".nam"
-            self.control.set_values('modflow_name', [os.path.relpath(os.path.join(workspace, mfnm),
-                                                                     self.control.model_dir)])
+            self.control.set_values(
+                "modflow_name",
+                [
+                    os.path.relpath(
+                        os.path.join(workspace, mfnm), self.control.model_dir
+                    )
+                ],
+            )
             # update file names in control object
             self._update_control_fnames(workspace, basename)
             self.prms.control = self.control
@@ -431,10 +476,14 @@ class GsflowModel(object):
         else:
             for rec_name in GsConstant.GSFLOW_FILES:
                 if rec_name in self.control.record_names:
-                    if rec_name in ('modflow_name', ):
+                    if rec_name in ("modflow_name",):
                         continue
 
-                    elif rec_name in ('modflow_name', 'param_file', 'data_file'):
+                    elif rec_name in (
+                        "modflow_name",
+                        "param_file",
+                        "data_file",
+                    ):
                         file_values = self.control.get_values(rec_name)
                         file_value = []
                         for fil in file_values:
@@ -442,7 +491,9 @@ class GsflowModel(object):
                             if not ws:
                                 pass
                             else:
-                                filvalue = os.path.relpath(fil, self.control.model_dir)
+                                filvalue = os.path.relpath(
+                                    fil, self.control.model_dir
+                                )
 
                             file_value.append(filvalue)
                         self.control.set_values(rec_name, file_value)
@@ -462,7 +513,9 @@ class GsflowModel(object):
                                 ext = "dat"
                             vvfile = basename + "_" + vvfile + "." + ext
                             filvalue = os.path.join(workspace, vvfile)
-                            filvalue = os.path.relpath(filvalue, self.control.model_dir)
+                            filvalue = os.path.relpath(
+                                filvalue, self.control.model_dir
+                            )
                             file_value.append(filvalue)
                         self.control.set_values(rec_name, file_value)
 
@@ -479,7 +532,7 @@ class GsflowModel(object):
         out_files_list = []
         for ix, out_file in enumerate(self.mf.output_fnames):
 
-            if out_file.count('.') > 1:
+            if out_file.count(".") > 1:
                 ext = out_file.split(".")
                 del ext[0]
                 ext = ".".join(ext)
@@ -502,7 +555,13 @@ class GsflowModel(object):
 
         """
 
-        write_only_options = ('control', 'parameters', 'prms_data', 'mf', "modsim")
+        write_only_options = (
+            "control",
+            "parameters",
+            "prms_data",
+            "mf",
+            "modsim",
+        )
         if write_only is not None:
             if not isinstance(write_only, list):
                 raise ValueError("write_only agrgument must be a list")
@@ -511,34 +570,38 @@ class GsflowModel(object):
             write_only = [i.lower() for i in write_only]
             for write_option in write_only:
                 if not (write_option in write_only_options):
-                    raise ValueError("The option '{}' is not recognized...".format(write_option))
+                    raise ValueError(
+                        "The option '{}' is not recognized...".format(
+                            write_option
+                        )
+                    )
         else:
             write_only = ()
 
         # write control
-        if len(write_only) == 0 or 'control' in write_only:
+        if len(write_only) == 0 or "control" in write_only:
             print("Writing Control file ...")
             self.control.write()
 
         if self.prms is not None:
             # self write parameters
-            if len(write_only) == 0 or 'parameters' in write_only:
+            if len(write_only) == 0 or "parameters" in write_only:
                 print("Writing Parameters files ...")
                 self.prms.parameters.write()
 
             # write data
-            if len(write_only) == 0 or 'prms_data' in write_only:
+            if len(write_only) == 0 or "prms_data" in write_only:
                 print("Writing Data file ...")
                 self.prms.data.write()
 
         # write mf
         if self.mf is not None:
-            if len(write_only) == 0 or 'mf' in write_only:
+            if len(write_only) == 0 or "mf" in write_only:
                 print("Writing Modflow files...")
                 self.mf.write_input()
 
         if self.modsim is not None:
-            if len(write_only) == 0 or 'modsim' in write_only:
+            if len(write_only) == 0 or "modsim" in write_only:
                 print("Writing MODSIM shapefile")
                 self.modsim.write_modsim_shapefile()
 
@@ -566,31 +629,45 @@ class GsflowModel(object):
         """
         fn = self.control_file
         if not os.path.isfile(self.gsflow_exe):
-            print("Warning : The executable of the model is not specified. Use .gsflow_exe "
-                  "to define its path... ")
+            print(
+                "Warning : The executable of the model is not specified. Use .gsflow_exe "
+                "to define its path... "
+            )
             return None
 
-        normal_msg = ['normal termination',] #, "simulation successful"]
+        normal_msg = [
+            "normal termination",
+        ]  # , "simulation successful"]
         if forgive:
-            normal_msg.append('failed to meet solver convergence criteria')
+            normal_msg.append("failed to meet solver convergence criteria")
 
-        return self.__run(exe_name=self.gsflow_exe, namefile=fn,
-                          normal_msg=normal_msg, model_ws=model_ws)
+        return self.__run(
+            exe_name=self.gsflow_exe,
+            namefile=fn,
+            normal_msg=normal_msg,
+            model_ws=model_ws,
+        )
 
     def _generate_batch_file(self):
         fn = os.path.dirname(self.control_file)
         fn = os.path.join(fn, "__run_gsflow.bat")
         self.__bat_file = fn
-        fidw = open(fn, 'w')
+        fidw = open(fn, "w")
         exe = os.path.normpath(os.path.join(os.getcwd(), self.gsflow_exe))
         cmd = exe + " " + self.control_file
         fidw.write(cmd)
         fidw.close()
 
-    def __run(self, exe_name, namefile, model_ws='.',
-              silent=False, report=False,
-              normal_msg='normal termination',
-              cargs=None):
+    def __run(
+        self,
+        exe_name,
+        namefile,
+        model_ws=".",
+        silent=False,
+        report=False,
+        normal_msg="normal termination",
+        cargs=None,
+    ):
         """
         This function will run the model using subprocess.Popen.
 
@@ -656,23 +733,27 @@ class GsflowModel(object):
         # Check to make sure that program and namefile exist
         exe = which(exe_name)
         if exe is None:
-            if platform.system() in 'Windows':
-                if not exe_name.lower().endswith('.exe'):
-                    exe = which(exe_name + '.exe')
+            if platform.system() in "Windows":
+                if not exe_name.lower().endswith(".exe"):
+                    exe = which(exe_name + ".exe")
         if exe is None:
-            s = 'The program {} does not exist or is not executable.'.format(
-                exe_name)
+            s = "The program {} does not exist or is not executable.".format(
+                exe_name
+            )
             raise Exception(s)
         else:
             if not silent:
-                s = 'pyGSFLOW is using the following executable to run the model: {}'.format(
-                    exe)
+                s = "pyGSFLOW is using the following executable to run the model: {}".format(
+                    exe
+                )
                 print(s)
 
         exe = os.path.normpath(os.path.join(os.getcwd(), exe))
 
         if not os.path.isfile(os.path.join(model_ws, namefile)):
-            s = 'The namefile for this model does not exists: {}'.format(namefile)
+            s = "The namefile for this model does not exists: {}".format(
+                namefile
+            )
             raise Exception(s)
 
         # simple little function for the thread to target
@@ -701,20 +782,19 @@ class GsflowModel(object):
             pass
 
         model_ws = os.path.dirname(self.control_file)
-        proc = sp.Popen(argv,
-                        stdout=sp.PIPE, stderr=sp.STDOUT, cwd=model_ws)
+        proc = sp.Popen(argv, stdout=sp.PIPE, stderr=sp.STDOUT, cwd=model_ws)
 
         while True:
             line = proc.stdout.readline()
-            c = line.decode('utf-8')
-            if c != '':
+            c = line.decode("utf-8")
+            if c != "":
                 for msg in normal_msg:
                     if msg in c.lower():
                         success = True
                         break
-                c = c.rstrip('\r\n')
+                c = c.rstrip("\r\n")
                 if not silent:
-                    print('{}'.format(c))
+                    print("{}".format(c))
                 if report:
                     buff.append(c)
             else:

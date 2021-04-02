@@ -13,7 +13,7 @@ try:
 except ImportError:
     pycrs = None
 
-warnings.simplefilter('always', UserWarning)
+warnings.simplefilter("always", UserWarning)
 
 
 class Modsim(object):
@@ -34,6 +34,7 @@ class Modsim(object):
     >>> modsim.write_modsim_shapefile("myshp.shp")
 
     """
+
     def __init__(self, model):
         from ..gsflow import GsflowModel
         from ..modflow import Modflow
@@ -134,8 +135,9 @@ class Modsim(object):
         """
         lake_topo = []
         for lake in self.lake_segs:
-            lake_topo.append(_LakTopology(self._lak, self.mf,
-                                          lake, self._nearest))
+            lake_topo.append(
+                _LakTopology(self._lak, self.mf, lake, self._nearest)
+            )
 
         return lake_topo
 
@@ -174,7 +176,6 @@ class Modsim(object):
                 if sfr.attributes.iupseg < 0:
                     res_connect.append(ix)
 
-
             t = []
             for i in res_connect:
                 sfr = sfr_topology[i]
@@ -206,8 +207,9 @@ class Modsim(object):
 
         return temp
 
-    def write_modsim_shapefile(self, shp=None, proj4=None,
-                               flag_spillway=False, nearest=True):
+    def write_modsim_shapefile(
+        self, shp=None, proj4=None, flag_spillway=False, nearest=True
+    ):
         """
         Method to create a modsim compatible
         shapefile from GSFLOW model inputs (SFR, LAK)
@@ -261,8 +263,9 @@ class Modsim(object):
         lake_topology = self.lake_topology
 
         if flag_spillway:
-            sfr_topology = self.__set_spillway_flag(flag_spillway,
-                                                    sfr_topology)
+            sfr_topology = self.__set_spillway_flag(
+                flag_spillway, sfr_topology
+            )
 
         w = shapefile.Writer(shp)
         w.shapeType = 3
@@ -274,26 +277,32 @@ class Modsim(object):
         for sfr in sfr_topology:
             w.line(sfr.polyline)
             attributes = sfr.attributes
-            w.record(attributes.iseg,
-                     attributes.iupseg,
-                     attributes.outseg,
-                     attributes.spill_flg)
+            w.record(
+                attributes.iseg,
+                attributes.iupseg,
+                attributes.outseg,
+                attributes.spill_flg,
+            )
 
         for lake in lake_topology:
             for ix, attributes in enumerate(lake.attributes):
                 w.line([lake.polyline[ix]])
-                w.record(attributes.iseg,
-                         attributes.iupseg,
-                         attributes.outseg,
-                         attributes.spill_flg)
+                w.record(
+                    attributes.iseg,
+                    attributes.iupseg,
+                    attributes.outseg,
+                    attributes.spill_flg,
+                )
         try:
             w.close()
         except AttributeError:
             pass
 
         if pycrs is None:
-            warn = "PyCRS must be installed to add a projection" \
-                   " to {}".format(shp)
+            warn = (
+                "PyCRS must be installed to add a projection"
+                " to {}".format(shp)
+            )
             warnings.warn(warn)
             return
 
@@ -321,8 +330,10 @@ class Modsim(object):
                 crs = None
 
         if crs is None:
-            warn = "Please provide a valid proj4 or epsg code to " \
-                   "flopy's model grid: Skipping writing {}".format(prj)
+            warn = (
+                "Please provide a valid proj4 or epsg code to "
+                "flopy's model grid: Skipping writing {}".format(prj)
+            )
             warnings.warn(warn)
             return
 
@@ -346,6 +357,7 @@ class _LakTopology(object):
         defaults to True, creates a connection to nearest node
         if False creates connection to the last reach
     """
+
     def __init__(self, lak, model, lakeno, nearest=True):
         self._parent = model
         self._lak = lak
@@ -477,8 +489,8 @@ class _LakTopology(object):
                     xv = self._mg.xcellcenters[i, j]
                     yv = self._mg.ycellcenters[i, j]
                     tverts.append((xv, yv))
-                    a = (xv - self.centroid[0])**2
-                    b = (yv - self.centroid[1])**2
+                    a = (xv - self.centroid[0]) ** 2
+                    b = (yv - self.centroid[1]) ** 2
                     c = np.sqrt(a + b)
                     dist.append(c)
 
@@ -541,6 +553,7 @@ class _SfrTopology(object):
         sfr segment number
 
     """
+
     def __init__(self, sfr, model, iseg):
         self._sfr = sfr
         self._parent = model
@@ -607,15 +620,15 @@ class _SfrTopology(object):
 
         updist = []
         for i, j in ijup:
-            a = (i - self.ij[0])**2
-            b = (j - self.ij[1])**2
+            a = (i - self.ij[0]) ** 2
+            b = (j - self.ij[1]) ** 2
             c = np.sqrt(a + b)
             updist.append(c)
 
         outdist = []
         for i, j in ijout:
-            a = (i - self.ij[0])**2
-            b = (j - self.ij[1])**2
+            a = (i - self.ij[0]) ** 2
+            b = (j - self.ij[1]) ** 2
             c = np.sqrt(a + b)
             outdist.append(c)
 
@@ -742,6 +755,7 @@ class _Attributes(object):
         minimum strtop elevation
 
     """
+
     def __init__(self, iseg, iupseg=0, outseg=0, flow=0, strtop=0):
         self.iseg = iseg
         self.iupseg = iupseg

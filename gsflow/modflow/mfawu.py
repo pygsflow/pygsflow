@@ -1,6 +1,7 @@
 from .mfag import ModflowAg
 import warnings
-warnings.simplefilter('always', PendingDeprecationWarning)
+
+warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class ModflowAwu(ModflowAg):
@@ -42,19 +43,41 @@ class ModflowAwu(ModflowAg):
     >>> awu = gsflow.modflow.ModflowAwu.load('test.awu', ml, nper=2, method="gsflow")
 
     """
-    
-    def __init__(self, model, options=None, time_series=None, well_list=None,
-                 irrdiversion=None, irrwell=None, supwell=None,
-                 extension="awu", unitnumber=None, filenames=None, nper=0):
 
-        err = "ModflowAwu is deprecated and will be removed, please use" \
-              " ModflowAg in the future"
+    def __init__(
+        self,
+        model,
+        options=None,
+        time_series=None,
+        well_list=None,
+        irrdiversion=None,
+        irrwell=None,
+        supwell=None,
+        extension="awu",
+        unitnumber=None,
+        filenames=None,
+        nper=0,
+    ):
+
+        err = (
+            "ModflowAwu is deprecated and will be removed, please use"
+            " ModflowAg in the future"
+        )
         warnings.warn(err, PendingDeprecationWarning)
 
-        super(ModflowAwu, self).__init__(model, options, time_series,
-                                         well_list, irrdiversion, irrwell,
-                                         supwell, extension, unitnumber,
-                                         filenames, nper)
+        super(ModflowAwu, self).__init__(
+            model,
+            options,
+            time_series,
+            well_list,
+            irrdiversion,
+            irrwell,
+            supwell,
+            extension,
+            unitnumber,
+            filenames,
+            nper,
+        )
 
     @staticmethod
     def load(f, model, nper=0, method="gsflow", ext_unit_dict=None):

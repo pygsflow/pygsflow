@@ -1,6 +1,7 @@
 import os
 import warnings
-warnings.simplefilter('always', UserWarning)
+
+warnings.simplefilter("always", UserWarning)
 
 
 def get_file_abs(control_file=None, fn=None):
@@ -48,7 +49,9 @@ def _get_relative_path(control, fn):
     control_file_abs = os.path.abspath(control)
     fn_abs = os.path.abspath(fn)
     # find common path
-    rel_dir = os.path.relpath(os.path.dirname(fn), os.path.dirname(control_file_abs))
+    rel_dir = os.path.relpath(
+        os.path.dirname(fn), os.path.dirname(control_file_abs)
+    )
     rel_path = os.path.join(rel_dir + os.path.basename(fn))
     return rel_path
 
@@ -98,10 +101,10 @@ def line_strip(line):
         str : line with comments removed and commas replaced
 
     """
-    for comment_flag in [';', '#', '!!']:
+    for comment_flag in [";", "#", "!!"]:
         line = line.split(comment_flag)[0]
     line = line.strip()
-    return line.replace(',', ' ')
+    return line.replace(",", " ")
 
 
 def multi_line_strip(fobj):

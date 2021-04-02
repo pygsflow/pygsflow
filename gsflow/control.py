@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 import os
 import numpy as np
 import copy
@@ -7,7 +7,8 @@ from .param_base import ParameterBase
 from .utils import GsConstant
 from .utils import io
 import warnings
-warnings.simplefilter('always', PendingDeprecationWarning)
+
+warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class ControlFile(ParameterBase):
@@ -39,8 +40,12 @@ class ControlFile(ParameterBase):
 
     """
 
-    def __init__(self, records_list, name="Control", model_dir="", header=None):
-        super(ControlFile, self).__init__(records_list, name=name, model_dir=model_dir, header=header)
+    def __init__(
+        self, records_list, name="Control", model_dir="", header=None
+    ):
+        super(ControlFile, self).__init__(
+            records_list, name=name, model_dir=model_dir, header=header
+        )
 
         if header is None:
             self.header = ["Control File"]
@@ -77,7 +82,7 @@ class ControlFile(ParameterBase):
         if not (os.path.isfile(control_file)):
             raise FileNotFoundError("Invalid file name ....")
 
-        with open(control_file, 'r') as fid:
+        with open(control_file, "r") as fid:
             headers = []
             records_list = []
             EndOfFile = False
@@ -94,7 +99,6 @@ class ControlFile(ParameterBase):
                     headers.append(record)
                     continue
 
-
                 # read records information
                 field_name = record
                 nvalues = int(fid.readline().strip())
@@ -105,22 +109,24 @@ class ControlFile(ParameterBase):
                 while True:
 
                     record = fid.readline()
-                    if record == '\n':
+                    if record == "\n":
                         continue  # empty line
                     elif not record:  # end of the file
                         EndOfFile = True
-                        curr_record = ControlRecord(name=field_name,
-                                                    values=values,
-                                                    datatype=data_type)
+                        curr_record = ControlRecord(
+                            name=field_name, values=values, datatype=data_type
+                        )
                         records_list.append(curr_record)
                         break
 
                     else:
                         record = record.strip()
                         if "####" in record:
-                            curr_record = ControlRecord(name=field_name,
-                                                        values=values,
-                                                        datatype=data_type)
+                            curr_record = ControlRecord(
+                                name=field_name,
+                                values=values,
+                                datatype=data_type,
+                            )
                             records_list.append(curr_record)
                             break
                         else:
@@ -128,8 +134,9 @@ class ControlFile(ParameterBase):
 
         model_dir, name = os.path.split(control_file)
 
-        return ControlFile(records_list, name=name,
-                           model_dir=model_dir, header=headers)
+        return ControlFile(
+            records_list, name=name, model_dir=model_dir, header=headers
+        )
 
     def _make_pths_abs(self):
         """
@@ -142,7 +149,9 @@ class ControlFile(ParameterBase):
                 gs_fn = self.get_values(file)
                 flist = []
                 for ff in gs_fn:
-                    abs_file = io.get_file_abs(control_file=self.control_file, fn=ff)
+                    abs_file = io.get_file_abs(
+                        control_file=self.control_file, fn=ff
+                    )
                     flist.append(abs_file)
                 self.set_values(file, flist)
 
@@ -217,7 +226,9 @@ class ControlFile(ParameterBase):
 
         if add:
             new_record = ControlRecord(name=name, values=values)
-            super(ControlFile, self).add_record(new_record, where=where, after=after)
+            super(ControlFile, self).add_record(
+                new_record, where=where, after=after
+            )
 
     def remove_record(self, name):
         """
@@ -246,7 +257,7 @@ class ControlFile(ParameterBase):
         else:
             filename = os.path.join(self.model_dir, name)
 
-        with open(filename, 'w') as fid:
+        with open(filename, "w") as fid:
             for iline, header in enumerate(self.header):
                 if iline == 0:
                     txt = header.strip()
@@ -282,6 +293,7 @@ class ControlRecord(RecordBase):
     >>> rec = ControlRecord("modflow_nam", "gsflow_test.nam")
 
     """
+
     def __init__(self, name=None, values=None, datatype=None):
 
         super(ControlRecord, self).__init__(name, values, datatype)

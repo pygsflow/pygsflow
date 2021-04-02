@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import flopy as fp
 import warnings
+
 warnings.simplefilter("always", UserWarning)
 
 
@@ -85,8 +86,18 @@ class SfrRenumber(object):
     >>> sfr_renumber.renumber_all()
 
     """
-    def __init__(self, model=None, sfr=None, dis=None, gage=None,
-                 lak=None, ag=None, scheme="topology", user_scheme=None):
+
+    def __init__(
+        self,
+        model=None,
+        sfr=None,
+        dis=None,
+        gage=None,
+        lak=None,
+        ag=None,
+        scheme="topology",
+        user_scheme=None,
+    ):
         from ..modflow import Modflow
         from ..gsflow import GsflowModel
 
@@ -198,8 +209,9 @@ class SfrRenumber(object):
                         if record.iseg == iseg:
                             if record.ireach == 1:
                                 strtop = record.strtop
-                                s2 = pd.Series({'segment': iseg,
-                                                "elev": strtop})
+                                s2 = pd.Series(
+                                    {"segment": iseg, "elev": strtop}
+                                )
                                 data = data.append(s2, ignore_index=True)
                                 break
 
@@ -212,8 +224,9 @@ class SfrRenumber(object):
                                 i = record.i
                                 j = record.j
                                 strelev = top[i, j]
-                                s2 = pd.Series({"segment": iseg,
-                                                "elev": strelev})
+                                s2 = pd.Series(
+                                    {"segment": iseg, "elev": strelev}
+                                )
                                 data = data.append(s2, ignore_index=True)
                                 break
 
@@ -238,7 +251,12 @@ class SfrRenumber(object):
 
             stack = topo.sort()
             stack = [[iseg] for iseg in stack if iseg != 0]
-            data = pd.DataFrame(stack, columns=["segment", ])
+            data = pd.DataFrame(
+                stack,
+                columns=[
+                    "segment",
+                ],
+            )
 
         if self.__renumber is None:
             # add zeros for ioutseg renumbering
@@ -260,12 +278,16 @@ class SfrRenumber(object):
         in most cases
         """
         if self.gage is not None:
-            warn = "Gage package will not be renumbered\n" \
-                   "MODFLOW may not run properly"
+            warn = (
+                "Gage package will not be renumbered\n"
+                "MODFLOW may not run properly"
+            )
             warnings.warn(warn, UserWarning)
         elif self.ag is not None:
-            warn = "Ag package will not be renumbered\n" \
-                   "GSFLOW may not run properly"
+            warn = (
+                "Ag package will not be renumbered\n"
+                "GSFLOW may not run properly"
+            )
             warnings.warn(warn, UserWarning)
 
         self.__renumber_sfr()
@@ -293,12 +315,13 @@ class SfrRenumber(object):
             record.iseg = self.renumbering[record.iseg]
             ra[ix] = record
 
-        ra.sort(order=['iseg', "ireach"])
+        ra.sort(order=["iseg", "ireach"])
 
         # set reach_data and set stress_period_data
         self.sfr.reach_data = ra
-        self.sfr.stress_period_data = fp.utils.MfList(self.sfr,
-                                                      ra, dtype=ra.dtype)
+        self.sfr.stress_period_data = fp.utils.MfList(
+            self.sfr, ra, dtype=ra.dtype
+        )
 
         # then renumber transient data
         sfr_ds6 = self.sfr.segment_data
@@ -422,6 +445,7 @@ class Topology(object):
         number of sfr segments in network
 
     """
+
     def __init__(self, nss=None):
         self.topology = dict()
         self.nss = nss

@@ -16,6 +16,7 @@ class Rasters(object):
         raster : osgeo.gdal.Dataset object
 
     """
+
     def __init__(self, raster):
         self.raster = raster
         self._band_data = None
@@ -31,8 +32,12 @@ class Rasters(object):
             (xmin, xmax, ymin, ymax)
 
         """
-        return self.raster.bounds.left, self.raster.bounds.right, \
-               self.raster.bounds.bottom, self.raster.bounds.top
+        return (
+            self.raster.bounds.left,
+            self.raster.bounds.right,
+            self.raster.bounds.bottom,
+            self.raster.bounds.top,
+        )
 
     @property
     def xpoints(self):
@@ -47,7 +52,7 @@ class Rasters(object):
                 xmin, xmax = self.extent[0:2]
                 ynum, xnum = self._band_data.shape
                 t = np.linspace(xmin, xmax, xnum)
-                self._xpoints = np.tile(t,(ynum, 1))
+                self._xpoints = np.tile(t, (ynum, 1))
 
             return self._xpoints
 
@@ -112,8 +117,12 @@ class Rasters(object):
 
         """
 
-        xy = list(zip(prms_discretizaiton.x_hru_centers,
-                      prms_discretizaiton.y_hru_centers))
+        xy = list(
+            zip(
+                prms_discretizaiton.x_hru_centers,
+                prms_discretizaiton.y_hru_centers,
+            )
+        )
         temp = np.array(list(self.raster.sample(xy))).flatten()
         temp[temp == self.raster.nodata] = np.nan
         return temp
@@ -145,5 +154,6 @@ class Rasters(object):
 
         """
         import rasterio
+
         raster = rasterio.open(name)
         return Rasters(raster)

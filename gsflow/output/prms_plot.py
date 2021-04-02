@@ -28,6 +28,7 @@ class PrmsPlot(object):
     >>> plt.show()
 
     """
+
     def __init__(self, prms_dis=None, extent=None):
 
         if prms_dis is not None:
@@ -69,8 +70,10 @@ class PrmsPlot(object):
 
         """
         if not self.__maps:
-            raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
-                                 " object to plot parameter maps")
+            raise AssertionError(
+                "PrmsPlot must be given a PrmsDiscretization"
+                " object to plot parameter maps"
+            )
 
         if len(array) != self.prms_dis.nhru:
             raise AssertionError("array size does not match nhru")
@@ -113,8 +116,10 @@ class PrmsPlot(object):
         import matplotlib.tri as tri
 
         if not self.__maps:
-            raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
-                                 " object to plot parameter maps")
+            raise AssertionError(
+                "PrmsPlot must be given a PrmsDiscretization"
+                " object to plot parameter maps"
+            )
 
         if len(array) != self.prms_dis.nhru:
             raise AssertionError("array size does not match nhru")
@@ -132,9 +137,9 @@ class PrmsPlot(object):
             for mval in masked_values:
                 array = np.ma.masked_equal(array, mval)
 
-        if 'colors' in kwargs.keys():
-            if 'cmap' in kwargs.keys():
-                kwargs.pop('cmap')
+        if "colors" in kwargs.keys():
+            if "cmap" in kwargs.keys():
+                kwargs.pop("cmap")
 
         triang = tri.Triangulation(xcentergrid, ycentergrid)
 
@@ -156,8 +161,7 @@ class PrmsPlot(object):
 
         return contour_set
 
-    def plot_parameter(self, parameter, ax=None,
-                       masked_values=None, **kwargs):
+    def plot_parameter(self, parameter, ax=None, masked_values=None, **kwargs):
         """
         Method to plot a parameter from a ParameterRecord
 
@@ -179,8 +183,10 @@ class PrmsPlot(object):
 
         """
         if not self.__maps:
-            raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
-                                 " object to plot parameter maps")
+            raise AssertionError(
+                "PrmsPlot must be given a PrmsDiscretization"
+                " object to plot parameter maps"
+            )
 
         dims = parameter.dims
         if len(dims) == 1:
@@ -192,8 +198,9 @@ class PrmsPlot(object):
                 raise AssertionError("Parameter dimensions do not match nhru")
 
             array = parameter.values
-            return self.plot_array(array, ax=ax, masked_values=masked_values,
-                                   **kwargs)
+            return self.plot_array(
+                array, ax=ax, masked_values=masked_values, **kwargs
+            )
 
         elif len(dims) == 2:
             if dims[0] != self.prms_dis.nhru:
@@ -203,32 +210,38 @@ class PrmsPlot(object):
             nplot = dims[1]
             values = parameter.values
             values.shape = (nplot, hru_dim)
-            kwargs['vmin'] = np.min(values)
-            kwargs['vmax'] = np.max(values)
+            kwargs["vmin"] = np.min(values)
+            kwargs["vmax"] = np.max(values)
 
             if nplot == 12:
                 fig = plt.figure(figsize=(22, 9))
                 for i in range(1, 13):
                     ax = fig.add_subplot(3, 4, i)
-                    ax.set_aspect('auto')
+                    ax.set_aspect("auto")
                     txt = "Month {}".format(i)
                     ax.set_title(txt)
-                    ax.tick_params(axis='both', which='both', labelsize=8)
-                    ax.tick_params(axis="y", which='both', labelrotation=0)
-                    p = self.plot_array(values[i - 1], ax=ax,
-                                        masked_values=masked_values, **kwargs)
+                    ax.tick_params(axis="both", which="both", labelsize=8)
+                    ax.tick_params(axis="y", which="both", labelrotation=0)
+                    p = self.plot_array(
+                        values[i - 1],
+                        ax=ax,
+                        masked_values=masked_values,
+                        **kwargs
+                    )
 
-                fig.subplots_adjust(left=0.10, right=0.85, wspace=0.3, hspace=0.3)
+                fig.subplots_adjust(
+                    left=0.10, right=0.85, wspace=0.3, hspace=0.3
+                )
                 cbar_ax = fig.add_axes([0.9, 0.1, 0.05, 0.7])
                 fig.colorbar(p, cax=cbar_ax)
                 return fig
 
-
         else:
             raise ValueError("Valid number of dimensions is 1 or 2")
 
-    def contour_parameter(self, parameter, ax=None,
-                          masked_values=None, **kwargs):
+    def contour_parameter(
+        self, parameter, ax=None, masked_values=None, **kwargs
+    ):
         """
         Contour an array.
 
@@ -248,8 +261,10 @@ class PrmsPlot(object):
 
         """
         if not self.__maps:
-            raise AssertionError("PrmsPlot must be given a PrmsDiscretization"
-                                 " object to plot parameter maps")
+            raise AssertionError(
+                "PrmsPlot must be given a PrmsDiscretization"
+                " object to plot parameter maps"
+            )
 
         dims = parameter.dims
         if len(dims) == 1:
@@ -261,8 +276,9 @@ class PrmsPlot(object):
                 raise AssertionError("Parameter dimensions do not match nhru")
 
             array = parameter.values
-            return self.contour_array(array, ax=ax, masked_values=masked_values,
-                                      **kwargs)
+            return self.contour_array(
+                array, ax=ax, masked_values=masked_values, **kwargs
+            )
 
         elif len(dims) == 2:
             if dims[0] != self.prms_dis.nhru:
@@ -272,23 +288,29 @@ class PrmsPlot(object):
             nplot = dims[1]
             values = parameter.values
             values.shape = (nplot, hru_dim)
-            kwargs['vmin'] = np.min(values)
-            kwargs['vmax'] = np.max(values)
+            kwargs["vmin"] = np.min(values)
+            kwargs["vmax"] = np.max(values)
 
             if nplot == 12:
                 fig = plt.figure(figsize=(22, 9))
                 for i in range(1, 13):
                     ax = fig.add_subplot(3, 4, i)
-                    ax.set_aspect('auto')
+                    ax.set_aspect("auto")
                     txt = "Month {}".format(i)
                     ax.set_title(txt)
-                    ax.tick_params(axis='both', which='both', labelsize=8)
-                    ax.tick_params(axis="y", which='both', labelrotation=0)
+                    ax.tick_params(axis="both", which="both", labelsize=8)
+                    ax.tick_params(axis="y", which="both", labelrotation=0)
 
-                    p = self.contour_array(values[i-1], ax=ax,
-                                           masked_values=masked_values, **kwargs)
+                    p = self.contour_array(
+                        values[i - 1],
+                        ax=ax,
+                        masked_values=masked_values,
+                        **kwargs
+                    )
 
-                fig.subplots_adjust(left=0.10, right=0.85, wspace=0.3, hspace=0.3)
+                fig.subplots_adjust(
+                    left=0.10, right=0.85, wspace=0.3, hspace=0.3
+                )
                 cbar_ax = fig.add_axes([0.9, 0.1, 0.05, 0.7])
                 fig.colorbar(p, cax=cbar_ax)
                 return fig
@@ -311,7 +333,9 @@ class PrmsPlot(object):
         -------
 
         """
-        raise NotImplementedError("plot_data_timeseries is not yet implemented")
+        raise NotImplementedError(
+            "plot_data_timeseries is not yet implemented"
+        )
 
     def plot_model_discretization(self, ax=None, **kwargs):
         """
@@ -348,13 +372,13 @@ class PrmsPlot(object):
         # if "color" not in kwargs:
         #    kwargs["facecolor"] = "None"
 
-        if 'vmin' in kwargs:
-            vmin = kwargs.pop('vmin')
+        if "vmin" in kwargs:
+            vmin = kwargs.pop("vmin")
         else:
             vmin = np.min(array)
 
-        if 'vmax' in kwargs:
-            vmax = kwargs.pop('vmax')
+        if "vmax" in kwargs:
+            vmax = kwargs.pop("vmax")
         else:
             vmax = np.max(array)
 

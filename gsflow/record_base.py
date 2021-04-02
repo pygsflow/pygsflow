@@ -21,12 +21,15 @@ class RecordBase(object):
         record datatype
 
     """
+
     def __init__(self, name, values=None, datatype=None):
 
         if isinstance(name, str):
             self.name = name
         else:
-            raise ValueError("Error: Name of the record ( {} ) is not a string".format(name))
+            raise ValueError(
+                "Error: Name of the record ( {} ) is not a string".format(name)
+            )
 
         self._values = None
         self._check_values(values)
@@ -42,15 +45,21 @@ class RecordBase(object):
         Method to infer the dtype from data available
 
         """
-        print("Warning: {} data type will be infered from data supplied".format(self.name))
-        if 'float' in self._values.dtype.name:
+        print(
+            "Warning: {} data type will be infered from data supplied".format(
+                self.name
+            )
+        )
+        if "float" in self._values.dtype.name:
             self.datatype = 2
-        elif 'int' in self._values.dtype.name:
+        elif "int" in self._values.dtype.name:
             self.datatype = 1
-        elif 'str' in self._values.dtype.name:
+        elif "str" in self._values.dtype.name:
             self.datatype = 4
         else:
-            raise ValueError("Value type is not recognized...{}", self.values.dtype)
+            raise ValueError(
+                "Value type is not recognized...{}", self.values.dtype
+            )
 
     def _check_values(self, new_values):
         """
@@ -72,7 +81,6 @@ class RecordBase(object):
         else:
             raise ValueError("Values must be list or 1D numpy array ")
 
-
     @property
     def values(self):
         return self._values
@@ -91,16 +99,18 @@ class RecordBase(object):
         Method that checks if a valid dtype has been suplied
 
         """
-        if 'float' in self._values.dtype.name:
+        if "float" in self._values.dtype.name:
             self.datatype = 2
-        elif 'int' in self._values.dtype.name:
+        elif "int" in self._values.dtype.name:
             self.datatype = 1
-        elif 'str' in self._values.dtype.name:
+        elif "str" in self._values.dtype.name:
             self.datatype = 4
         elif "unicode" in self._values.dtype.name:
             self.datatype = 4
         else:
-            raise ValueError("Value type is not recognized...{}".format(self._values.dtype))
+            raise ValueError(
+                "Value type is not recognized...{}".format(self._values.dtype)
+            )
 
     def _force_dtype(self):
         """
@@ -108,11 +118,11 @@ class RecordBase(object):
 
         """
         dtype = GsConstant.PRMS_DATA_TYPES[self.datatype]
-        if dtype == 'integer':
+        if dtype == "integer":
             self._values = self._values.astype(int)
-        elif dtype in ('real', 'double'):
+        elif dtype in ("real", "double"):
             self._values = self._values.astype(float)
-        elif dtype == 'string':
+        elif dtype == "string":
             self._values = self._values.astype(str)
         else:
             raise ValueError("Error : Cannot recognize data type")

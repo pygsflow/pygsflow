@@ -4,7 +4,8 @@ import datetime
 import numpy as np
 from ..utils import GsConstant
 import warnings
-warnings.simplefilter('always', PendingDeprecationWarning)
+
+warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class PrmsData(object):
@@ -27,7 +28,17 @@ class PrmsData(object):
     >>> data = gsflow.prms.PrmsData.load_from_file("mydatafile")
 
     """
-    data_names = ['tmax', 'tmin', 'precip', 'runoff', 'pan_evap', 'solrad', 'from_data', 'rain_day']
+
+    data_names = [
+        "tmax",
+        "tmin",
+        "precip",
+        "runoff",
+        "pan_evap",
+        "solrad",
+        "from_data",
+        "rain_day",
+    ]
 
     def __init__(self, data_df, name="Data", model_dir="", header="\n"):
         self.name = name
@@ -62,12 +73,12 @@ class PrmsData(object):
 
         model_dir, name = os.path.split(data_file)
 
-        fid = open(data_file, 'r')
+        fid = open(data_file, "r")
         headers = fid.readline().strip()
         columns = []
         while True:
             line = fid.readline()
-            if line.strip() == '' or line.strip()[0:2] == '//':
+            if line.strip() == "" or line.strip()[0:2] == "//":
                 continue
 
             if "####" in line:
@@ -82,15 +93,21 @@ class PrmsData(object):
         data_pd = pd.read_csv(fid, delim_whitespace=True, names=columns)
         Dates = []
         for index, irow in data_pd.iterrows():
-            dt = datetime.datetime(year=int(irow['Year']), month=int(irow['Month']), day=int(irow['Day']),
-                                   hour=int(irow['Hour']),
-                                   minute=int(irow['Minute']), second=int(irow['Second']))
+            dt = datetime.datetime(
+                year=int(irow["Year"]),
+                month=int(irow["Month"]),
+                day=int(irow["Day"]),
+                hour=int(irow["Hour"]),
+                minute=int(irow["Minute"]),
+                second=int(irow["Second"]),
+            )
             Dates.append(dt)
 
-        data_pd['Date'] = Dates
+        data_pd["Date"] = Dates
         fid.close()
-        return PrmsData(data_df=data_pd, model_dir=model_dir,
-                        name=name, header=headers)
+        return PrmsData(
+            data_df=data_pd, model_dir=model_dir, name=name, header=headers
+        )
 
     def write(self, name=None):
         """
@@ -130,7 +147,11 @@ class PrmsData(object):
             for clim_name in climate_unique:
                 line = clim_name + " " + str(climate_count[clim_name]) + "\n"
                 fid.write(line)
-            fid.write("#########################################################################\n")
+            fid.write(
+                "#########################################################################\n"
+            )
             pd_to_write = self.data_df.copy()
-            pd_to_write = pd_to_write.drop(['Date'], axis=1)
-            pd_to_write.to_csv(fid, index = False, sep =" ", line_terminator='\n',  header = False)
+            pd_to_write = pd_to_write.drop(["Date"], axis=1)
+            pd_to_write.to_csv(
+                fid, index=False, sep=" ", line_terminator="\n", header=False
+            )

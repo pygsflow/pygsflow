@@ -34,6 +34,7 @@ class PrmsDiscretization(object):
     >>> dis = gsflow.output.PrmsDiscretization.load_from_flopy(model=ml)
 
     """
+
     def __init__(self, xypts):
         self._xypts = xypts
         self._nhru = len(xypts)
@@ -171,10 +172,14 @@ class PrmsDiscretization(object):
         """
         import flopy
         from gsflow.modflow import Modflow
-        if not isinstance(model, flopy.modflow.Modflow) or \
-                not isinstance(model, Modflow):
-            raise ValueError("Model must be a flopy.modflow.Modflow or "
-                             "gsflow.modflow.Modflow model")
+
+        if not isinstance(model, flopy.modflow.Modflow) or not isinstance(
+            model, Modflow
+        ):
+            raise ValueError(
+                "Model must be a flopy.modflow.Modflow or "
+                "gsflow.modflow.Modflow model"
+            )
 
         sr = model.sr
         if not isinstance(sr, flopy.utils.SpatialReference):
@@ -182,18 +187,20 @@ class PrmsDiscretization(object):
 
         if (xll, yll, rotation) != (None, None, None):
             if rotation is None:
-                rotation = 0.
+                rotation = 0.0
             sr.set_spatialreference(xll=xll, yll=yll, rotation=rotation)
 
         xypts = []
         # create closed polygons for each hru from UL to LR
         for i in range(1, sr.xgrid.shape[0]):
             for j in range(1, sr.xgrid.shape[1]):
-                t = [(sr.xgrid[i - 1, j - 1], sr.ygrid[i - 1, j - 1]),
-                     (sr.xgrid[i - 1, j], sr.ygrid[i - 1, j]),
-                     (sr.xgrid[i, j], sr.ygrid[i, j]),
-                     (sr.xgrid[i, j - 1], sr.ygrid[i, j - 1]),
-                     (sr.xgrid[i - 1, j - 1], sr.ygrid[i - 1, j - 1])]
+                t = [
+                    (sr.xgrid[i - 1, j - 1], sr.ygrid[i - 1, j - 1]),
+                    (sr.xgrid[i - 1, j], sr.ygrid[i - 1, j]),
+                    (sr.xgrid[i, j], sr.ygrid[i, j]),
+                    (sr.xgrid[i, j - 1], sr.ygrid[i, j - 1]),
+                    (sr.xgrid[i - 1, j - 1], sr.ygrid[i - 1, j - 1]),
+                ]
                 xypts.append(t)
 
         return PrmsDiscretization(xypts)
@@ -221,10 +228,11 @@ class PrmsDiscretization(object):
         else:
             sf = shp
 
-        if sf.shapeType not in (shapefile.POLYGON,
-                                shapefile.POLYGONZ):
-            err = "A polygon shapefile must be supplied;" \
-                  " current shape type is: {}".format(sf.shapeTypeName)
+        if sf.shapeType not in (shapefile.POLYGON, shapefile.POLYGONZ):
+            err = (
+                "A polygon shapefile must be supplied;"
+                " current shape type is: {}".format(sf.shapeTypeName)
+            )
             raise TypeError("Shapefile must ")
 
         hru_field = False
@@ -235,10 +243,11 @@ class PrmsDiscretization(object):
                 break
 
         if not hru_field:
-            err = "A hru_id field must be present in the shapefile; hru_id must be " \
-                  "from 1 to n_hru"
+            err = (
+                "A hru_id field must be present in the shapefile; hru_id must be "
+                "from 1 to n_hru"
+            )
             raise AssertionError(err)
-
 
         shapes = sf.shapes()
 

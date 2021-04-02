@@ -4,8 +4,9 @@ from .prms_data import PrmsData
 from ..output import StatVar
 from ..utils import io
 import warnings
-warnings.simplefilter('always', PendingDeprecationWarning)
-warnings.simplefilter('always', UserWarning)
+
+warnings.simplefilter("always", PendingDeprecationWarning)
+warnings.simplefilter("always", UserWarning)
 
 
 class PrmsModel(object):
@@ -31,6 +32,7 @@ class PrmsModel(object):
     >>> prms = gsflow.prms.PrmsModel(control, parmaters=None, data=None)
 
     """
+
     def __init__(self, control, parameters=None, data=None):
         self.control = control
         self._control_file = control.control_file
@@ -86,7 +88,9 @@ class PrmsModel(object):
         print("Prms model loading ...")
         control = ControlFile.load_from_file(control_file)
         parameter_files = control.get_values("param_file")
-        parameter_files = [io.get_file_abs(control_file, pfn) for pfn in parameter_files]
+        parameter_files = [
+            io.get_file_abs(control_file, pfn) for pfn in parameter_files
+        ]
         parameters = PrmsModel._load_parameters(parameter_files)
         data_file = control.get_values("data_file")[0]
         data_file = io.get_file_abs(control_file, data_file)
