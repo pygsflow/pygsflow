@@ -42,3 +42,18 @@ jobs:
         auto-update-conda: true
         activate-environment: pygsflow
         use-only-tar-bz2: true
+
+    - name: Add packages to flopy environment using mamba or conda
+      shell: bash -l {0}
+      run: |
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          conda env update --name pygsflow --file etc/environment.yml
+        else
+          mamba env update --name pygsflow --file etc/environment.yml
+        fi
+
+    - name: Install flopy and pygsflow
+      shell: bash -l {0}
+      run: |
+        pip install https://github.com/modflowpy/flopy/zipball/develop
+        pip install .
