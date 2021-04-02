@@ -63,11 +63,10 @@ jobs:
         pip install https://github.com/modflowpy/flopy/zipball/develop
         pip install .
 
-    - name: Run Nosetests
+    - name: Install pytest
+      uses: cclauss/GitHub-Action-for-pytest@0.5.0
+      
+    - name: Run CI testing suite for pyGSFLOW
       run: |
         cd autotest
-        nosetests -v -with-id --with-timer -w ./autotest --with-coverage --cover-package=gsflow
-
-    - name: Run Coveralls
-      run: |
-        coveralls
+        pytest -v -with-id --with-timer -w ./autotest --with-coverage --cover-package=gsflow
