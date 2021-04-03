@@ -86,7 +86,7 @@ jobs:
         pip install pytest-cov
         pip install https://github.com/modflowpy/flopy/zipball/develop
         pip install .
-        pytest ./autotest/ --cov=./ --cov-report=xml
+        pytest ./autotest/ --cov=gsflow --cov-report=xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1.0.15
