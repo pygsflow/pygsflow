@@ -81,6 +81,20 @@ class ModflowAg(flopy.modflow.ModflowAg):
                 },
             ),
             (
+                "irrigation_pond",
+                {
+                    OptionBlock.dtype: np.bool_,
+                    OptionBlock.nested: True,
+                    OptionBlock.n_nested: 2,
+                    OptionBlock.vars: OrderedDict(
+                        [
+                            ("numirrponds", OptionBlock.simple_int),
+                            ("maxcellspond", OptionBlock.simple_int),
+                        ]
+                    ),
+                },
+            ),
+            (
                 "supplemental_well",
                 {
                     OptionBlock.dtype: np.bool_,
@@ -105,14 +119,55 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     ),
                 },
             ),
-            ("tabfiles", OptionBlock.simple_tabfile),
+            (
+                "maxpond",
+                {
+                    OptionBlock.dtype: np.bool_,
+                    OptionBlock.nested: True,
+                    OptionBlock.n_nested: 1,
+                    OptionBlock.vars: OrderedDict(
+                        [("nummaxpond", OptionBlock.simple_int)]
+                    ),
+                },
+            ),
+            ('tabfiles', OptionBlock.simple_tabfile),
+            (
+                "tabfileswell",
+                {
+                    OptionBlock.dtype: np.bool_,
+                    OptionBlock.nested: True,
+                    OptionBlock.n_nested: 2,
+                    OptionBlock.vars: OrderedDict(
+                        [
+                            ("numtabwell", OptionBlock.simple_int),
+                            ("maxvalwell", OptionBlock.simple_int),
+                        ]
+                    ),
+                },
+            ),
+            (
+                "tabfilespond",
+                {
+                    OptionBlock.dtype: np.bool_,
+                    OptionBlock.nested: True,
+                    OptionBlock.n_nested: 2,
+                    OptionBlock.vars: OrderedDict(
+                        [
+                            ("numtabpond", OptionBlock.simple_int),
+                            ("maxvalpond", OptionBlock.simple_int),
+                        ]
+                    ),
+                },
+            ),
             ("phiramp", OptionBlock.simple_flag),
             ("etdemand", OptionBlock.simple_flag),
             ("trigger", OptionBlock.simple_flag),
             ("timeseries_diversion", OptionBlock.simple_flag),
             ("timeseries_well", OptionBlock.simple_flag),
+            ("timeseries_pond", OptionBlock.simple_flag),
             ("timeseries_diversionet", OptionBlock.simple_flag),
             ("timeseries_wellet", OptionBlock.simple_flag),
+            ("timeseries_pondet", OptionBlock.simple_flag),
             (
                 "diversionlist",
                 {
@@ -143,6 +198,28 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     OptionBlock.n_nested: 1,
                     OptionBlock.vars: OrderedDict(
                         [("unit_wellirrlist", OptionBlock.simple_int)]
+                    ),
+                },
+            ),
+            (
+                "pondlist",
+                {
+                    OptionBlock.dtype: np.bool_,
+                    OptionBlock.nested: True,
+                    OptionBlock.n_nested: 1,
+                    OptionBlock.vars: OrderedDict(
+                        [("unit_pondlist", OptionBlock.simple_int)]
+                    ),
+                },
+            ),
+            (
+                "pondirrlist",
+                {
+                    OptionBlock.dtype: np.bool_,
+                    OptionBlock.nested: True,
+                    OptionBlock.n_nested: 1,
+                    OptionBlock.vars: OrderedDict(
+                        [("unit_pondirrlist", OptionBlock.simple_int)]
                     ),
                 },
             ),
@@ -187,6 +264,24 @@ class ModflowAg(flopy.modflow.ModflowAg):
     ):
         if unitnumber is None:
             unitnumber = 37
+
+        self.irrigation_pond = False
+        self.numirrponds = 0
+        self.maxcellspond = 0
+        self.maxpond = False
+        self.nummaxpond = 0
+        self.tabfileswell = False
+        self.numtabwell = 0
+        self.maxvalwell = 0
+        self.tabfilespond = False
+        self.numtabpond = 0
+        self.maxvalpond = 0
+        self.timeseries_pond = False
+        self.timeseries_pondet = False
+        self.pondlist = False
+        self.unit_pondlist = None
+        self.pondirrlist = False
+        self.unit_pondirrlist = None
 
         super(ModflowAg, self).__init__(
             model=model,

@@ -25,6 +25,9 @@ class Modsim(object):
     Parameters
     ----------
         model : gsflow.GsflowModel instance or gsflow.modflow.Modflow instance
+        other : str or None
+            include can be used to add an optional sfr field (ex. strhc1) to the
+            stream vector shapefile.
 
     Examples
     --------
@@ -35,7 +38,7 @@ class Modsim(object):
 
     """
 
-    def __init__(self, model):
+    def __init__(self, model, other=None):
         from ..gsflow import GsflowModel
         from ..modflow import Modflow
 
@@ -45,6 +48,9 @@ class Modsim(object):
         else:
             self.parent = model
             self.mf = self.parent.mf
+        if other is not None:
+            other = other.lower()
+        self._other = other
         self._sfr = self.mf.get_package("SFR")
         self._lak = self.mf.get_package("LAK")
         self._ready = True
@@ -118,7 +124,7 @@ class Modsim(object):
         """
         sfr_topo = []
         for seg in self.sfr_segs:
-            sfr_topo.append(_SfrTopology(self._sfr, self.mf, seg))
+            sfr_topo.append(_SfrTopology(self._sfr, self.mf, seg, self._other))
 
         return sfr_topo
 
@@ -207,6 +213,18 @@ class Modsim(object):
 
         return temp
 
+    def __add_field(self, field_name):
+        """
+
+        Parameters
+        ----------
+        field_name
+
+        Returns
+        -------
+
+        """
+
     def write_modsim_shapefile(
         self, shp=None, proj4=None, flag_spillway=False, nearest=True
     ):
@@ -273,26 +291,46 @@ class Modsim(object):
         w.field("IUPSEG", "N")
         w.field("OUTSEG", "N")
         w.field("SPILL_FLG", "N")
+        if self._other is not None:
+            w.field(self._other.upper(), "N", decimal=5)
 
         for sfr in sfr_topology:
             w.line(sfr.polyline)
             attributes = sfr.attributes
-            w.record(
-                attributes.iseg,
-                attributes.iupseg,
-                attributes.outseg,
-                attributes.spill_flg,
-            )
-
-        for lake in lake_topology:
-            for ix, attributes in enumerate(lake.attributes):
-                w.line([lake.polyline[ix]])
+            if self._other is None:
                 w.record(
                     attributes.iseg,
                     attributes.iupseg,
                     attributes.outseg,
                     attributes.spill_flg,
                 )
+            else:
+                w.record(
+                    attributes.iseg,
+                    attributes.iupseg,
+                    attributes.outseg,
+                    attributes.spill_flg,
+                    attributes.other
+                )
+
+        for lake in lake_topology:
+            for ix, attributes in enumerate(lake.attributes):
+                w.line([lake.polyline[ix]])
+                if self._other is None:
+                    w.record(
+                        attributes.iseg,
+                        attributes.iupseg,
+                        attributes.outseg,
+                        attributes.spill_flg,
+                    )
+                else:
+                    w.record(
+                        attributes.iseg,
+                        attributes.iupseg,
+                        attributes.outseg,
+                        attributes.spill_flg,
+                        attributes.other
+                    )
         try:
             w.close()
         except AttributeError:
@@ -551,13 +589,18 @@ class _SfrTopology(object):
     model : flopy.modflow.Modflow or gsflow.modflow.Modflow object
     iseg : int
         sfr segment number
+    other : str or None
+        include can be used to add an optional sfr field (ex. strhc1) to the
+        stream vector shapefile.
+
 
     """
 
-    def __init__(self, sfr, model, iseg):
+    def __init__(self, sfr, model, iseg, other=None):
         self._sfr = sfr
         self._parent = model
         self._iseg = iseg
+        self._other = other
         self._mg = self._parent.modelgrid
         self._xv = self._mg.xvertices
         self._yv = self._mg.yvertices
@@ -710,12 +753,15 @@ class _SfrTopology(object):
 
         ij = []
         strtop = []
+        other = []
         reach_data = self._sfr.reach_data
         reach_data.sort(axis=0, order=["iseg", "ireach"])
         for rec in reach_data:
             if rec.iseg == self.iseg:
                 ij.append([rec.i, rec.j])
                 strtop.append(rec.strtop)
+                if self._other is not None:
+                    other.append(rec[self._other])
 
         if ij:
             self._ij = tuple(ij[-1])
@@ -731,9 +777,15 @@ class _SfrTopology(object):
             iupseg = 0
 
         strtop = min(strtop)
+        if self._other is not None:
+            other = np.mean(other)
+        else:
+            other = None
         flow = max(flow)
 
-        self._attributes = _Attributes(self.iseg, iupseg, outseg, flow, strtop)
+        self._attributes = _Attributes(
+            self.iseg, iupseg, outseg, flow, strtop, other
+        )
 
 
 class _Attributes(object):
@@ -753,13 +805,20 @@ class _Attributes(object):
         maximum specified flow rate
     strtop : float
         minimum strtop elevation
-
+    other : None or float
+        additional field data
     """
 
-    def __init__(self, iseg, iupseg=0, outseg=0, flow=0, strtop=0):
+    def __init__(
+            self, iseg, iupseg=0, outseg=0, flow=0, strtop=0, other=None
+    ):
         self.iseg = iseg
         self.iupseg = iupseg
         self.outseg = outseg
         self.flow = flow
         self.elev = strtop
         self.spill_flg = 0
+        if other is None:
+            self.other = np.nan
+        else:
+            self.other = other
