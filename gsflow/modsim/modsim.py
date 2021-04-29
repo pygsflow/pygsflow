@@ -310,7 +310,7 @@ class Modsim(object):
                     attributes.iupseg,
                     attributes.outseg,
                     attributes.spill_flg,
-                    attributes.other
+                    attributes.other,
                 )
 
         for lake in lake_topology:
@@ -329,7 +329,7 @@ class Modsim(object):
                         attributes.iupseg,
                         attributes.outseg,
                         attributes.spill_flg,
-                        attributes.other
+                        attributes.other,
                     )
         try:
             w.close()
@@ -809,9 +809,7 @@ class _Attributes(object):
         additional field data
     """
 
-    def __init__(
-            self, iseg, iupseg=0, outseg=0, flow=0, strtop=0, other=None
-    ):
+    def __init__(self, iseg, iupseg=0, outseg=0, flow=0, strtop=0, other=None):
         self.iseg = iseg
         self.iupseg = iupseg
         self.outseg = outseg

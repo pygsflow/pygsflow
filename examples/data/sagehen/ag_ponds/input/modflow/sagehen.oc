@@ -1,0 +1,107 @@
+#Sagehen-GRID Simulation -- Example problem for GSFLOW
+#  (File modified for version 1.1.00 release)
+#Budget output is written to the List file (sagehen.mf.list) at
+#  the end of the steady-state simulation and
+#  September 30 of 1981, 1985, 1990, 1995, and 1996
+#Calculated heads are written to the List file (sagehen.mf.list)
+#  and to the head output file (unit 58) at
+#  the end of the steady-state simulation and
+#  September 30, 1996
+HEAD SAVE UNIT 58
+HEAD SAVE FORMAT (20F10.3) Label
+Period 	1	Step 	1
+print budget			
+save budget
+save head			
+Period 	2	Step 	1
+print budget			
+save budget	
+save head			
+Period 	3	Step 	1
+print budget			
+save budget		
+save head		
+Period 	4	Step 	1
+print budget			
+save budget		
+save head		
+Period 	5	Step 	1
+print budget			
+save budget	
+save head			
+Period 	6	Step 	1
+print budget			
+save budget	
+save head			
+Period 	7	Step 	1
+print budget			
+save budget	
+save head			
+Period 	8	Step 	1
+print budget			
+save budget	
+save head			
+Period 	9	Step 	1
+print budget			
+save budget	
+save head			
+Period 	10	Step 	1
+print budget			
+save budget	
+save head			
+Period 	11	Step 	6
+print budget			
+save budget	
+save head			
+Period 	12	Step 	1
+print budget			
+save budget	
+save head			
+Period 	13	Step 	1
+print budget			
+save budget	
+save head			
+Period 	14	Step 	1
+print budget			
+save budget	
+save head			
+Period 	15	Step 	1
+print budget			
+save budget	
+save head			
+Period 	16	Step 	1
+print budget			
+save budget	
+save head			
+Period 	17	Step 	1
+print budget			
+save budget	
+save head			
+Period 	18	Step 	1
+print budget			
+save budget	
+save head			
+Period 	19	Step 	1
+print budget			
+save budget	
+save head			
+Period 	20	Step 	1
+print budget			
+save budget	
+save head			
+Period 	21	Step 	1
+print budget			
+save budget	
+save head			
+Period 	22	Step 	1
+print budget			
+save budget	
+save head			
+Period 	23	Step 	1
+print budget			
+save budget	
+save head			
+Period 	24	Step 	1
+print budget			
+save budget	
+save head	

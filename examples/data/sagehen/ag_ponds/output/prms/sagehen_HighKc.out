@@ -1,0 +1,82 @@
+
+               Precipitation-Runoff Modeling System (PRMS)
+                       Version 5.3.0 04/27/2021
+
+        Process            Available Modules
+--------------------------------------------------------------------
+  Basin Definition: basin
+    Cascading Flow: cascade
+  Time Series Data: obs, water_use_read, dynamic_param_read
+   Potet Solar Rad: soltab
+  Temperature Dist: temp_1sta, temp_laps, temp_dist2, climate_hru,
+                    temp_map
+       Precip Dist: precip_1sta, precip_laps, precip_dist2,
+                    climate_hru, precip_map
+Temp & Precip Dist: xyz_dist, ide_dist
+    Solar Rad Dist: ccsolrad, ddsolrad, climate_hru
+Transpiration Dist: transp_tindex, climate_hru, transp_frost
+      Potential ET: potet_hamon, potet_jh, potet_pan, climate_hru,
+                    potet_hs, potet_pt, potet_pm, potet_pm_sta
+      Interception: intcp
+Snow & Glacr Dynam: snowcomp, glacr_melt
+    Surface Runoff: srunoff_smidx, srunoff_carea
+         Soil Zone: soilzone
+       Groundwater: gwflow
+Streamflow Routing: strmflow, strmflow_in_out, muskingum,
+                    muskingum_lake, muskingum_mann
+Stream Temperature: stream_temp
+    Output Summary: basin_sum, subbasin, map_results, prms_summary,
+                    nhru_summary, nsub_summary, water_balance
+                    basin_summary, nsegment_summary
+     Preprocessing: write_climate_hru, frost_date
+--------------------------------------------------------------------
+
+
+    Active modules listed in the order in which they are called
+
+        Process                    Module         Version Date
+==============================================================
+PRMS Computation Order          gsflow_prms         2021-04-27
+Basin Definition                basin               2021-04-21
+Cascading Flow                  cascade             2020-12-02
+Common States and Fluxes        climateflow         2021-02-05
+Potential Solar Radiation       soltab              2020-12-02
+Timestep Control                prms_time           2020-12-02
+Time Series Data                obs                 2020-12-02
+Temperature Distribution        temp_1sta           2020-12-02
+Precipitation Distribution      precip_1sta         2020-12-02
+Solar Radiation Distribution    ddsolrad            2020-12-02
+Transpiration Distribution      transp_tindex       2020-12-02
+Potential Evapotranspiration    potet_jh            2020-08-03
+Canopy Interception             intcp               2021-03-04
+Snow Dynamics                   snowcomp            2021-01-11
+Surface Runoff                  srunoff_smidx       2021-03-12
+Soilzone Computations           soilzone            2021-04-28
+GSFLOW PRMS to MODFLOW          gsflow_prms2mf      2021-03-12
+GSFLOW MODFLOW to PRMS          gsflow_mf2prms      2021-03-12
+GSFLOW Output Budget Summary    gsflow_budget       2021-01-12
+GSFLOW Output CSV Summary       gsflow_sum          2020-12-02
+Output Summary                  nhru_summary        2020-12-02
+Output Summary                  basin_summary       2020-12-02
+Output Summary                  nsegment_summary    2020-12-02
+==============================================================
+GSFLOW MODFLOW main             gsflow_modflow      2021-04-27
+UZF-NWT Package                 gwf2uzf1_NWT        2021-03-02
+SFR-NWT Package                 gwf2sfr7_NWT        2020-09-30
+AG-NWT Package                  gwf2ag1_NWT_ponds   2021-03-02
+
+Using Control File: Sagehen_ponds.control
+
+Using Parameter File: ..\input\prms\sagehen_grid_v5_highKc.params
+
+
+Start time: 1990/10/01 00:00:00
+End time:   1995/10/31 00:00:00
+
+
+Model domain area:        11226.32    Active basin area:      6740.99
+Fraction impervious:        0.0000    Fraction pervious:       0.9937
+DPRST area:                  22.42    Fraction DPRST:          0.0033
+Agriculture area:             0.01    Fraction AG:             0.0000
+
+
