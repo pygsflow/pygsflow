@@ -89,6 +89,6 @@ jobs:
         pytest ./autotest/ --cov=gsflow --cov-report=xml
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1.0.15
+      uses: codecov/codecov-action@v1.5.0
       with:
         file: ./coverage.xml
