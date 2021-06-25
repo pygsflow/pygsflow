@@ -89,7 +89,8 @@ def getfiletypeunit(nf, filetype):
     return None
 
 
-def parsenamefile(namfilename, packages, control_file=None, verbose=True):
+def parsenamefile(namfilename, packages, control_file=None, verbose=True,
+                  model_ws="."):
     """
     Returns dict from the nam file with NamData keyed by unit number
 
@@ -169,7 +170,7 @@ def parsenamefile(namfilename, packages, control_file=None, verbose=True):
 
         # update for GSFLOW
         if control_file is None:
-            fname = os.path.join(os.path.dirname(namfilename), fpath)
+            fname = os.path.join(model_ws, fpath)
         else:
             # if the user supplies a control_file, then it builds the absolute path
             fname = get_file_abs(control_file, fpath)

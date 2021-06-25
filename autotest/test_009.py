@@ -102,7 +102,19 @@ def test_load_write_gsflow():
     assert gs4.mf.nrow_ncol_nlay_nper == gs.mf.nrow_ncol_nlay_nper
 
 
+def test_load_modflow_irregular_paths():
+    from gsflow.modflow import Modflow
+
+    model_ws = os.path.join('..', 'examples', 'data',
+                            'sagehen_3lay_modsim', 'windows',)
+    nam = os.path.join("..", "input", 'modflow', 'sagehen_with_pumping.nam')
+    ml = Modflow.load(nam, model_ws=model_ws, version='mfnwt',
+                      load_only=['DIS', "BAS6"])
+
+    assert isinstance(ml, Modflow)
+
 if __name__ == "__main__":
     test_load_write_model_prms_only()
     test_load_write_gsflow_modflow()
     test_load_write_gsflow()
+    test_load_modflow_irregular_paths()

@@ -345,6 +345,7 @@ class Modflow(fpModflow):
             ml.mfnam_packages,
             control_file=control_file,
             verbose=verbose,
+            model_ws=model_ws
         )
         if ml.verbose:
             print(
