@@ -105,7 +105,7 @@ def test_load_write_gsflow():
 def test_load_modflow_irregular_paths():
     from gsflow.modflow import Modflow
 
-    model_ws = os.path.join('..', 'examples', 'data',
+    model_ws = os.path.join(ws, '..', 'examples', 'data',
                             'sagehen_3lay_modsim', 'windows',)
     nam = os.path.join("..", "input", 'modflow', 'sagehen_with_pumping.nam')
     ml = Modflow.load(nam, model_ws=model_ws, version='mfnwt',
