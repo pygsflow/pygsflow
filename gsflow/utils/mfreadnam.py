@@ -173,7 +173,7 @@ def parsenamefile(namfilename, packages, control_file=None, verbose=True,
             fname = os.path.join(model_ws, fpath)
         else:
             # if the user supplies a control_file, then it builds the absolute path
-            fname = get_file_abs(control_file, fpath)
+            fname = get_file_abs(control_file=control_file, fn=fpath)
 
         if not os.path.isfile(fname) or not os.path.exists(fname):
             # change to lower and make comparison (required for linux)

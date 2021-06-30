@@ -103,18 +103,55 @@ def test_load_write_gsflow():
 
 
 def test_load_modflow_irregular_paths():
-    from gsflow.modflow import Modflow
 
     model_ws = os.path.join(ws, '..', 'examples', 'data',
                             'sagehen_3lay_modsim', 'windows',)
     nam = os.path.join("..", "input", 'modflow', 'sagehen_with_pumping.nam')
-    ml = Modflow.load(nam, model_ws=model_ws, version='mfnwt',
-                      load_only=['DIS', "BAS6"])
+    ml = gsflow.modflow.Modflow.load(nam, model_ws=model_ws, version='mfnwt',
+                                     load_only=['DIS', "BAS6"])
 
-    assert isinstance(ml, Modflow)
+    assert isinstance(ml, gsflow.modflow.Modflow)
+
+
+def test_load_gsflow_irregular_path_relative_bat():
+
+    model_ws = os.path.join(ws, "..", 'examples', 'data',
+                            'sagehen', 'gsflow_paths')
+    control = os.path.join(model_ws, 'control', 'saghen_paths_cont.control')
+
+    gsf = gsflow.GsflowModel.load_from_file(control_file=control,
+                                            model_ws=model_ws)
+
+    ws2 = os.path.join(ws, "temp")
+
+    # change ws only ...
+    gsf.write_input(workspace=ws2)
+
+    gsf2 = gsflow.GsflowModel.load_from_file(
+        control_file=os.path.join(ws2, 'saghen_paths_cont.control')
+    )
+
+    prms = gsf2.prms
+    ml = gsf2.mf
+
+    pkgs = ("DIS", "BAS6", "UPW", "NWT", "SFR", "OC", "UZF")
+    loaded = []
+    for pkg in ml.packagelist:
+        loaded.append(pkg._ftype())
+    for pkg in pkgs:
+        if pkg not in loaded:
+            raise AssertionError("{} did not load".format(pkg))
+
+    if not isinstance(prms.parameters, gsflow.prms.PrmsParameters):
+        raise AssertionError("prms parameters did not load")
+
+    if not isinstance(prms.data, gsflow.prms.PrmsData):
+        raise AssertionError("prms data did not load")
+
 
 if __name__ == "__main__":
     test_load_write_model_prms_only()
     test_load_write_gsflow_modflow()
     test_load_write_gsflow()
     test_load_modflow_irregular_paths()
+    test_load_gsflow_irregular_path_relative_bat()

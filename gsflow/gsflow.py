@@ -38,6 +38,10 @@ class GsflowModel(object):
     modsim : bool
         boolean flag to indicate that modsim is active
         this creates a gsflow.modsim.Modsim object
+    model_ws : str, None
+        override method to set the base model directory when the
+        GSFLOW control file is not located in the same directory as
+        the script to run GSFLOW
 
     Examples
     --------
@@ -63,6 +67,7 @@ class GsflowModel(object):
         prms_only=False,
         gsflow_exe=None,
         modsim=False,
+        model_ws=None
     ):
 
         if not isinstance(control, ControlFile):
@@ -161,6 +166,7 @@ class GsflowModel(object):
         prms_only=False,
         mf_load_only=None,
         forgive=True,
+        model_ws=None
     ):
         """
         Method to load a gsflow model from it's control file
@@ -168,7 +174,7 @@ class GsflowModel(object):
         Parameters
         ----------
         control_file : str
-            control file path & name
+            control file path & name, GSFLOW
         gsflow_exe : str
             gsflow executable path & name
         modflow_only : bool
@@ -179,7 +185,10 @@ class GsflowModel(object):
             list of packages to load from modflow ex. [DIS, BAS, LPF]
         forgive : bool
             forgive file loading errors in flopy
-
+        model_ws : str, None
+            override method to set the base model directory when the
+            GSFLOW control file is not located in the same directory as
+            the script to run GSFLOW
         Returns
         -------
             GsflowModel object
@@ -197,7 +206,10 @@ class GsflowModel(object):
         if not (os.path.isfile(control_file)):
             raise ValueError("Cannot find control file")
 
-        control = ControlFile.load_from_file(control_file)
+        if model_ws is not None:
+            control = ControlFile.load_from_file(control_file, abs_path=False)
+        else:
+            control = ControlFile.load_from_file(control_file)
         print("Control file is loaded")
 
         mode = control.get_values("model_mode")[0].upper()
@@ -213,14 +225,14 @@ class GsflowModel(object):
         # load prms
         if not modflow_only:
             print("Working on loading PRMS model ...")
-            prms = PrmsModel.load_from_file(control_file)
+            prms = PrmsModel.load_from_file(control_file, model_ws=model_ws)
 
         if not prms_only:
             # get model mode
             if "GSFLOW" in mode.upper() or "MODFLOW" in mode.upper():
                 print("Working on loading MODFLOW files ....")
                 modflow = GsflowModel._load_modflow(
-                    control, mf_load_only, forgive
+                    control, mf_load_only, model_ws, forgive
                 )
                 print("MODFLOW files are loaded ... ")
 
@@ -240,13 +252,11 @@ class GsflowModel(object):
         )
 
     @staticmethod
-    def _load_modflow(control, mf_load_only, forgive=True):
+    def _load_modflow(control, mf_load_only, model_ws=None, forgive=True):
         """
-        The package files in the .nam file are relative to the execuatble gsflow. So here, we generate a temp.nam
-        file that that has the absolute files
-
-        We should be able to deprecate this after some time by overloading the Modflow load scheme and
-        the modflow write_input scheme
+        The package files in the .nam file are relative to the execuatble
+        gsflow. Here we set the model_ws to the location of the gsflow exe, via
+        the control file or a user supplied model_ws parameter
 
         Parameters
         ----------
@@ -254,8 +264,11 @@ class GsflowModel(object):
             control file object
         mf_load_only : list
             list of packages to restrict modflow loading to
+        model_ws : str
+            optional parameter that allows the use to set the model_ws
         forgive : bool
             forgive file load errors in modflow
+
 
         Returns
         -------
@@ -264,11 +277,17 @@ class GsflowModel(object):
         """
         name = control.get_values("modflow_name")
         control_file = control.control_file
-        name = io.get_file_abs(control_file=control_file, fn=name[0])
-        model_dir, name = os.path.split(name)
+        if model_ws is None:
+            name = io.get_file_abs(control_file=control_file, fn=name[0])
+            model_ws, name = os.path.split(name)
+        else:
+            model_ws = io.get_file_abs(model_ws=model_ws)
+            name = name[0]
+            control_file = None
+
         return Modflow.load(
             name,
-            model_ws=model_dir,
+            model_ws=model_ws,
             control_file=control_file,
             load_only=mf_load_only,
             forgive=forgive,

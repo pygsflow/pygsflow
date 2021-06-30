@@ -4,7 +4,7 @@ import warnings
 warnings.simplefilter("always", UserWarning)
 
 
-def get_file_abs(control_file=None, fn=None):
+def get_file_abs(control_file=None, model_ws=None, fn=None):
     """
     Utility method to create file's absolute path
 
@@ -12,6 +12,8 @@ def get_file_abs(control_file=None, fn=None):
     ----------
     control_file : str
         absoulute path to the control file
+    model_ws : str
+        relative path to model_ws
     fn : str
         path to file
 
@@ -21,13 +23,24 @@ def get_file_abs(control_file=None, fn=None):
             absolute file path
 
     """
-    fn = os.path.normpath(fn)
-    if os.path.isabs(fn):
-        return fn
+
+    if fn is not None:
+        fn = os.path.normpath(fn)
+        if os.path.isabs(fn):
+            return fn
+
+    if model_ws is not None:
+        sws = os.path.abspath(os.getcwd())
+        ws = os.path.join(sws, model_ws)
+        if fn is None:
+            abs_file = ws
+        else:
+            abs_file = os.path.join(ws, fn)
     else:
         control_folder = os.path.dirname(control_file)
         abs_file = os.path.abspath(os.path.join(control_folder, fn))
-        return abs_file
+
+    return abs_file
 
 
 def _get_relative_path(control, fn):

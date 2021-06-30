@@ -25,6 +25,9 @@ class ControlFile(ParameterBase):
         model working directory
     header : list
         file header
+    abs_path : bool
+        optional flag to store control file path variables to abs paths,
+        default is True
 
     Examples
     --------
@@ -41,7 +44,8 @@ class ControlFile(ParameterBase):
     """
 
     def __init__(
-        self, records_list, name="Control", model_dir="", header=None
+        self, records_list, name="Control", model_dir="", header=None,
+        abs_path=True
     ):
         super(ControlFile, self).__init__(
             records_list, name=name, model_dir=model_dir, header=header
@@ -52,7 +56,8 @@ class ControlFile(ParameterBase):
 
         self.control_file = os.path.join(self.model_dir, self.name)
 
-        self._make_pths_abs()
+        if abs_path:
+            self._make_pths_abs()
 
     @property
     def records_list(self):
@@ -64,7 +69,7 @@ class ControlFile(ParameterBase):
         return self._records_list
 
     @staticmethod
-    def load_from_file(control_file):
+    def load_from_file(control_file, abs_path=True):
         """
         Method to load and create a ControlFile object
         from a pre-built gsflow control file.
@@ -73,6 +78,10 @@ class ControlFile(ParameterBase):
         ----------
         control_file : str
             control file path & name
+
+        set_abs : bool
+            optional flag to set control file variables to abs paths, default
+            is True
 
         Returns
         -------
@@ -132,10 +141,12 @@ class ControlFile(ParameterBase):
                         else:
                             values.append(record)
 
+
         model_dir, name = os.path.split(control_file)
 
         return ControlFile(
-            records_list, name=name, model_dir=model_dir, header=headers
+            records_list, name=name, model_dir=model_dir, header=headers,
+            abs_path=abs_path
         )
 
     def _make_pths_abs(self):

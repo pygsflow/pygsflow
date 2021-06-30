@@ -71,7 +71,7 @@ class PrmsModel(object):
         return f
 
     @staticmethod
-    def load_from_file(control_file):
+    def load_from_file(control_file, model_ws=None):
         """
         PrmsModel load method from a control file
 
@@ -79,6 +79,8 @@ class PrmsModel(object):
         ----------
         control_file : str
             control file path and name
+        model_ws : str
+            optional method to set the model_ws
 
         Returns
         -------
@@ -86,14 +88,25 @@ class PrmsModel(object):
 
         """
         print("Prms model loading ...")
-        control = ControlFile.load_from_file(control_file)
-        parameter_files = control.get_values("param_file")
-        parameter_files = [
-            io.get_file_abs(control_file, pfn) for pfn in parameter_files
-        ]
+        if model_ws is not None:
+            control = ControlFile.load_from_file(control_file, abs_path=False)
+            parameter_files = control.get_values("param_file")
+            parameter_files = [
+                io.get_file_abs(model_ws=model_ws, fn=pfn) for pfn in
+                parameter_files
+            ]
+            data_file = control.get_values("data_file")[0]
+            data_file = io.get_file_abs(model_ws=model_ws, fn=data_file)
+        else:
+            control = ControlFile.load_from_file(control_file)
+            parameter_files = control.get_values("param_file")
+            parameter_files = [
+                io.get_file_abs(control_file, pfn) for pfn in parameter_files
+            ]
+            data_file = control.get_values("data_file")[0]
+            data_file = io.get_file_abs(control_file, data_file)
+
         parameters = PrmsModel._load_parameters(parameter_files)
-        data_file = control.get_values("data_file")[0]
-        data_file = io.get_file_abs(control_file, data_file)
         data = PrmsModel._load_data(data_file)
         print("PRMS model loaded ...")
         return PrmsModel(control=control, parameters=parameters, data=data)
