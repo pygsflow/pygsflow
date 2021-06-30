@@ -1,12 +1,10 @@
 from __future__ import print_function, division
-
-import os
-import sys
-import numpy as np
 import flopy
+import gsflow
+import os
+import numpy as np
 
 # from flopy.discretization import StructuredGrid
-import gsflow
 
 
 def start_tag(f, tag, indent_level, indent_char="  "):
@@ -641,81 +639,3 @@ class Vtk(object):
         s = "</DataArray>"
         indent_level = end_tag(f, s, indent_level)
         return
-
-
-if __name__ == "__main__":
-    import flopy
-
-    sys.path.append(r"/home/ayman/codes/pygsflow")
-    import gsflow
-
-    control_file = r"/home/ayman/codes/pygsflow/examples/data/sagehen/gsflow/saghen_new_cont.control"
-    gs = gsflow.GsflowModel.load_from_file(control_file)
-    ncols, nrows = gs.mf.ncol, gs.mf.nrow
-    delc, delr = gs.mf.dis.delc.array, gs.mf.dis.delr.array
-    origin = (0, 0, 0)
-    # xx = flopy.export.vtk.Vtk('test.vtu', gs.mf)
-    # xx.write(shared_vertex=True, ibound_filter=True)
-    vtkfile = Vtk("test.vtu", gs.mf)
-    vtkfile.add_array("hk", gs.mf.upw.hk.array)
-    vtkfile.write(shared_vertex=True, ibound_filter=True)
-
-    # prms----------------------------
-    dis = gs.mf.dis
-    mf2 = flopy.modflow.Modflow("xx")
-    nrow = dis.nrow
-    ncol = dis.ncol
-    delc = dis.delc
-    delr = dis.delr
-    top = dis.top.array
-    botm = top - 0.01
-
-    dis2 = flopy.modflow.ModflowDis(
-        mf2,
-        nlay=1,
-        nrow=nrow,
-        ncol=ncol,
-        nper=1,
-        delr=delr,
-        delc=delc,
-        top=top,
-        botm=botm,
-    )
-    bas = flopy.modflow.ModflowBas(
-        mf2, ibound=gs.mf.bas6.ibound[0, :, :], strt=1
-    )
-    vtkfile = Vtk("test2.vtu", mf2)
-    # ---------------------------------------------
-
-    all_prms = dict()
-    gsflow = gs
-    nhru = gsflow.prms.parameters.get_record("nhru").values[0]
-    for param in gsflow.prms.parameters.record_names:
-        par = gsflow.prms.parameters.get_record(param)
-        if par.section == "Dimensions":
-            continue
-        if "nhru" in par.dimensions_names:
-            if par.ndim > 1:
-                other_dim = list(np.copy(par.dims))
-                other_dim.remove(nhru)
-                parvalues = par.values.reshape((other_dim[0], nhru))
-                for ipar in range(other_dim[0]):
-                    ivar = parvalues[ipar, :]
-                    ivar = ivar.reshape(nrows, ncols)  # np.flipud()
-                    var = np.zeros((1, nrows, ncols))
-                    var[0, :, :] = ivar
-
-                    nm = par.name + "_" + str(ipar + 1)
-                    all_prms[nm] = var
-                    vtkfile.add_array(param, var)
-            else:
-                parvalues = par.values.reshape(nrows, ncols)
-                var = np.zeros((1, nrows, ncols))
-                var[0, :, :] = parvalues
-
-                all_prms[param] = var
-                vtkfile.add_array(param, var)
-    # ------------------------------------------------
-
-    # vtkfile.add_array('hk2', gs.mf.upw.hk.array)
-    vtkfile.write(shared_vertex=True, ibound_filter=True)

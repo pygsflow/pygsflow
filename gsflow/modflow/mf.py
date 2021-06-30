@@ -2,10 +2,8 @@ import os
 import inspect
 import flopy
 import platform
-from flopy.mbase import BaseModel
-from flopy.pakbase import Package
-from flopy.utils import SpatialReference, TemporalReference
-from flopy.modflow.mfpar import ModflowPar
+from flopy.utils import TemporalReference
+from flopy.utils.reference import SpatialReference
 from flopy.modflow.mf import Modflow as fpModflow
 from ..utils import mfreadnam
 
@@ -337,7 +335,7 @@ class Modflow(fpModflow):
         files_not_loaded = []
 
         # set the reference information
-        ref_attributes = SpatialReference.load(namefile_path)
+        attributes = mfreadnam.attribs_from_namfile_header(namefile_path)
 
         # read name file
         ext_unit_dict = mfreadnam.parsenamefile(
@@ -415,26 +413,14 @@ class Modflow(fpModflow):
             print("   {:4s} package load...success".format(dis.name[0]))
         assert ml.pop_key_list.pop() == dis_key
         ext_unit_dict.pop(dis_key)
-        start_datetime = ref_attributes.pop("start_datetime", "01-01-1970")
-        itmuni = ref_attributes.pop("itmuni", 4)
-        ref_source = ref_attributes.pop("source", "defaults")
-        if ml.structured:
-            # get model units from usgs.model.reference, if provided
-            if ref_source == "usgs.model.reference":
-                pass
-            # otherwise get them from the DIS file
-            else:
-                itmuni = dis.itmuni
-                ref_attributes["lenuni"] = dis.lenuni
-            sr = SpatialReference(
-                delr=ml.dis.delr.array,
-                delc=ml.dis.delc.array,
-                **ref_attributes
-            )
-        else:
-            sr = None
+        start_datetime = attributes.pop("start_datetime", "01-01-1970")
+        itmuni = attributes.pop("itmuni", 4)
+        ref_source = attributes.pop("source", "defaults")
 
-        dis.sr = sr
+        if ref_source != "usgs.model.reference":
+            itmuni = dis.itmuni
+            attributes["lenuni"] = dis.lenuni
+
         dis.tr = TemporalReference(
             itmuni=itmuni, start_datetime=start_datetime
         )

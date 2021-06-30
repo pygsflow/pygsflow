@@ -1,8 +1,5 @@
-import os
-import sys
 import numpy as np
-from .utils import io
-from .utils import GsConstant
+from .utils import gsflow_io
 import copy
 import warnings
 
@@ -67,7 +64,7 @@ class ParameterBase(object):
             RecordBase object
 
         """
-        record = io.find_parameter(name, self._records_list)
+        record = gsflow_io.find_parameter(name, self._records_list)
 
         if isinstance(record, rectype):
             return record
@@ -90,7 +87,7 @@ class ParameterBase(object):
             np.ndarray
 
         """
-        record = io.find_parameter(name, self._records_list)
+        record = gsflow_io.find_parameter(name, self._records_list)
 
         if record is None:
             err = "The record does not exist..."
@@ -118,7 +115,7 @@ class ParameterBase(object):
 
         """
 
-        record = io.find_parameter(name, self._records_list)
+        record = gsflow_io.find_parameter(name, self._records_list)
 
         if record is None:
             err = "The record does not exist {}".format(name)

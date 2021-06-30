@@ -1,8 +1,6 @@
-from ..control import ControlFile
 from ..utils import GsConstant
 import pandas as pd
 import datetime
-import matplotlib.pyplot as plt
 import os
 import warnings
 

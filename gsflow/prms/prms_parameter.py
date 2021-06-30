@@ -1,9 +1,6 @@
 from __future__ import absolute_import, division, print_function
 import os
-import six
 import numpy as np
-import logging
-import copy
 from ..record_base import RecordBase
 from ..param_base import ParameterBase
 import warnings

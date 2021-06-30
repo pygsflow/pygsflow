@@ -9,8 +9,10 @@ MODFLOW Guide
 """
 import os
 import sys
-from .io import get_file_abs
+from .gsflow_io import get_file_abs
 from flopy.utils.mfreadnam import NamData as fpNamData
+from flopy.utils.mfreadnam import attribs_from_namfile_header as fp_attribs
+
 
 if sys.version_info < (3, 6):
     from collections import OrderedDict
@@ -214,3 +216,7 @@ def parsenamefile(namfilename, packages, control_file=None, verbose=True,
                 key = ftype
         ext_unit_dict[key] = NamData(ftype, fname, filehandle, packages)
     return ext_unit_dict
+
+
+def attribs_from_namfile_header(namefile):
+    return fp_attribs(namefile)

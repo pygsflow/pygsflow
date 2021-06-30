@@ -1,5 +1,3 @@
-import os
-import sys
 import numpy as np
 import shapefile
 from matplotlib.patches import Polygon
@@ -181,25 +179,27 @@ class PrmsDiscretization(object):
                 "gsflow.modflow.Modflow model"
             )
 
-        sr = model.sr
-        if not isinstance(sr, flopy.utils.SpatialReference):
+        mg = model.modelgrid
+        if not isinstance(mg, flopy.discretization.grid.Grid):
             raise AssertionError("Cannot find flopy discretization")
 
         if (xll, yll, rotation) != (None, None, None):
             if rotation is None:
                 rotation = 0.0
-            sr.set_spatialreference(xll=xll, yll=yll, rotation=rotation)
+            mg.set_coord_info(xll=xll, yll=yll, angrot=rotation)
 
         xypts = []
         # create closed polygons for each hru from UL to LR
-        for i in range(1, sr.xgrid.shape[0]):
-            for j in range(1, sr.xgrid.shape[1]):
+        xv = mg.xvertices
+        yv = mg.yvertices
+        for i in range(1, mg.shape[1] + 1):
+            for j in range(1, mg.shape[2] + 1):
                 t = [
-                    (sr.xgrid[i - 1, j - 1], sr.ygrid[i - 1, j - 1]),
-                    (sr.xgrid[i - 1, j], sr.ygrid[i - 1, j]),
-                    (sr.xgrid[i, j], sr.ygrid[i, j]),
-                    (sr.xgrid[i, j - 1], sr.ygrid[i, j - 1]),
-                    (sr.xgrid[i - 1, j - 1], sr.ygrid[i - 1, j - 1]),
+                    (xv[i - 1, j - 1], yv[i - 1, j - 1]),
+                    (xv[i - 1, j], yv[i - 1, j]),
+                    (xv[i, j], yv[i, j]),
+                    (xv[i, j - 1], yv[i, j - 1]),
+                    (xv[i - 1, j - 1], yv[i - 1, j - 1]),
                 ]
                 xypts.append(t)
 

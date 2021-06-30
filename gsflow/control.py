@@ -1,11 +1,9 @@
 from __future__ import absolute_import, division, print_function
 import os
-import numpy as np
-import copy
 from .record_base import RecordBase
 from .param_base import ParameterBase
 from .utils import GsConstant
-from .utils import io
+from .utils import gsflow_io
 import warnings
 
 warnings.simplefilter("always", PendingDeprecationWarning)
@@ -160,7 +158,7 @@ class ControlFile(ParameterBase):
                 gs_fn = self.get_values(file)
                 flist = []
                 for ff in gs_fn:
-                    abs_file = io.get_file_abs(
+                    abs_file = gsflow_io.get_file_abs(
                         control_file=self.control_file, fn=ff
                     )
                     flist.append(abs_file)

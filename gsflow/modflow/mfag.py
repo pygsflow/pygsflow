@@ -3,7 +3,7 @@ import numpy as np
 import flopy
 from flopy.modflow.mfag import _read_block_21_25_or_29
 from flopy.utils.recarray_utils import create_empty_recarray
-from gsflow.utils.io import multi_line_strip
+from gsflow.utils.gsflow_io import multi_line_strip
 from flopy.utils.optionblock import OptionBlock
 from collections import OrderedDict
 

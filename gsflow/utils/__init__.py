@@ -3,6 +3,6 @@ from .constants import GsConstant
 from .rasters import Rasters
 from .sfr_renumber import SfrRenumber
 from . import mfreadnam
-from . import io
+from . import gsflow_io
 from . import vtk
 from . import netcdf

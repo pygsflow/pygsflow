@@ -2,7 +2,7 @@ from ..control import ControlFile
 from .prms_parameter import PrmsParameters
 from .prms_data import PrmsData
 from ..output import StatVar
-from ..utils import io
+from ..utils import gsflow_io
 import warnings
 
 warnings.simplefilter("always", PendingDeprecationWarning)
@@ -92,19 +92,19 @@ class PrmsModel(object):
             control = ControlFile.load_from_file(control_file, abs_path=False)
             parameter_files = control.get_values("param_file")
             parameter_files = [
-                io.get_file_abs(model_ws=model_ws, fn=pfn) for pfn in
+                gsflow_io.get_file_abs(model_ws=model_ws, fn=pfn) for pfn in
                 parameter_files
             ]
             data_file = control.get_values("data_file")[0]
-            data_file = io.get_file_abs(model_ws=model_ws, fn=data_file)
+            data_file = gsflow_io.get_file_abs(model_ws=model_ws, fn=data_file)
         else:
             control = ControlFile.load_from_file(control_file)
             parameter_files = control.get_values("param_file")
             parameter_files = [
-                io.get_file_abs(control_file, pfn) for pfn in parameter_files
+                gsflow_io.get_file_abs(control_file, pfn) for pfn in parameter_files
             ]
             data_file = control.get_values("data_file")[0]
-            data_file = io.get_file_abs(control_file, data_file)
+            data_file = gsflow_io.get_file_abs(control_file, data_file)
 
         parameters = PrmsModel._load_parameters(parameter_files)
         data = PrmsModel._load_data(data_file)

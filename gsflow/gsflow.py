@@ -2,7 +2,7 @@
 import os
 from .control import ControlFile
 from .prms import PrmsModel
-from .utils import io, GsConstant
+from .utils import gsflow_io, GsConstant
 from .prms import Helper
 from .modflow import Modflow
 from .modsim import Modsim
@@ -278,10 +278,10 @@ class GsflowModel(object):
         name = control.get_values("modflow_name")
         control_file = control.control_file
         if model_ws is None:
-            name = io.get_file_abs(control_file=control_file, fn=name[0])
+            name = gsflow_io.get_file_abs(control_file=control_file, fn=name[0])
             model_ws, name = os.path.split(name)
         else:
-            model_ws = io.get_file_abs(model_ws=model_ws)
+            model_ws = gsflow_io.get_file_abs(model_ws=model_ws)
             name = name[0]
             control_file = None
 
