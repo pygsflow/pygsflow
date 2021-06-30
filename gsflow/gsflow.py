@@ -165,7 +165,7 @@ class GsflowModel(object):
         modflow_only=False,
         prms_only=False,
         mf_load_only=None,
-        forgive=True,
+        forgive=False,
         model_ws=None
     ):
         """
@@ -252,7 +252,7 @@ class GsflowModel(object):
         )
 
     @staticmethod
-    def _load_modflow(control, mf_load_only, model_ws=None, forgive=True):
+    def _load_modflow(control, mf_load_only, model_ws=None, forgive=False):
         """
         The package files in the .nam file are relative to the execuatble
         gsflow. Here we set the model_ws to the location of the gsflow exe, via
