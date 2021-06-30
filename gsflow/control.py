@@ -42,8 +42,12 @@ class ControlFile(ParameterBase):
     """
 
     def __init__(
-        self, records_list, name="Control", model_dir="", header=None,
-        abs_path=True
+        self,
+        records_list,
+        name="Control",
+        model_dir="",
+        header=None,
+        abs_path=True,
     ):
         super(ControlFile, self).__init__(
             records_list, name=name, model_dir=model_dir, header=header
@@ -139,12 +143,14 @@ class ControlFile(ParameterBase):
                         else:
                             values.append(record)
 
-
         model_dir, name = os.path.split(control_file)
 
         return ControlFile(
-            records_list, name=name, model_dir=model_dir, header=headers,
-            abs_path=abs_path
+            records_list,
+            name=name,
+            model_dir=model_dir,
+            header=headers,
+            abs_path=abs_path,
         )
 
     def _make_pths_abs(self):

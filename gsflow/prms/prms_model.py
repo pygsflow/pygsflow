@@ -92,8 +92,8 @@ class PrmsModel(object):
             control = ControlFile.load_from_file(control_file, abs_path=False)
             parameter_files = control.get_values("param_file")
             parameter_files = [
-                gsflow_io.get_file_abs(model_ws=model_ws, fn=pfn) for pfn in
-                parameter_files
+                gsflow_io.get_file_abs(model_ws=model_ws, fn=pfn)
+                for pfn in parameter_files
             ]
             data_file = control.get_values("data_file")[0]
             data_file = gsflow_io.get_file_abs(model_ws=model_ws, fn=data_file)
@@ -101,7 +101,8 @@ class PrmsModel(object):
             control = ControlFile.load_from_file(control_file)
             parameter_files = control.get_values("param_file")
             parameter_files = [
-                gsflow_io.get_file_abs(control_file, pfn) for pfn in parameter_files
+                gsflow_io.get_file_abs(control_file, pfn)
+                for pfn in parameter_files
             ]
             data_file = control.get_values("data_file")[0]
             data_file = gsflow_io.get_file_abs(control_file, data_file)

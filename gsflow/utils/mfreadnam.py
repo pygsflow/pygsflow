@@ -91,8 +91,9 @@ def getfiletypeunit(nf, filetype):
     return None
 
 
-def parsenamefile(namfilename, packages, control_file=None, verbose=True,
-                  model_ws="."):
+def parsenamefile(
+    namfilename, packages, control_file=None, verbose=True, model_ws="."
+):
     """
     Returns dict from the nam file with NamData keyed by unit number
 

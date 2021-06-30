@@ -62,7 +62,7 @@ def param2d(f, model, parameter, **kwargs):
     array.shape = (nrow, ncol)
 
     with np.errstate(invalid="ignore"):
-        if array.dtype not in (int, np.int, np.int32, np.int64):
+        if array.dtype not in (int, np.int32, np.int64):
             array[array <= min_valid] = np.NaN
             array[array >= max_valid] = np.NaN
             array[array == 0.0] = np.NaN
@@ -135,7 +135,7 @@ def param3d(f, model, parameter, **kwargs):
     array.shape = (-1, nrow, ncol)
 
     with np.errstate(invalid="ignore"):
-        if array.dtype not in (int, np.int, np.int32, np.int64):
+        if array.dtype not in (int, np.int32, np.int64):
             array[array <= min_valid] = np.NaN
             array[array >= max_valid] = np.NaN
             array[array == 0.0] = np.NaN

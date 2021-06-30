@@ -3,7 +3,7 @@ BAS6            8    ..\input\modflow\sagehen.bas
 oc              9    ..\input\modflow\sagehen.oc
 dis            11    ..\input\modflow\sagehen.dis
 upw            12    ..\input\modflow\sagehen.UPW
-uzf            14    ..\input\modflow\sagehen.uzf
+# uzf            14    ..\input\modflow\sagehen.uzf
 sfr            15    ..\input\modflow\sagehen.sfr
 gage           16    ..\input\modflow\sagehen.gag
 nwt            17    ..\input\modflow\sagehen.nwt

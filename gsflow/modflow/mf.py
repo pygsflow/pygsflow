@@ -343,7 +343,7 @@ class Modflow(fpModflow):
             ml.mfnam_packages,
             control_file=control_file,
             verbose=verbose,
-            model_ws=model_ws
+            model_ws=model_ws,
         )
         if ml.verbose:
             print(
@@ -461,7 +461,7 @@ class Modflow(fpModflow):
                     if forgive:
                         try:
                             package_load_args = list(
-                                inspect.getargspec(item.package.load)
+                                inspect.getfullargspec(item.package.load)
                             )[0]
                             if "check" in package_load_args:
                                 pck = item.package.load(
@@ -494,7 +494,7 @@ class Modflow(fpModflow):
                             files_not_loaded.append(item.filename)
                     else:
                         package_load_args = list(
-                            inspect.getargspec(item.package.load)
+                            inspect.getfullargspec(item.package.load)
                         )[0]
                         if "check" in package_load_args:
                             pck = item.package.load(

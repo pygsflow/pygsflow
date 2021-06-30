@@ -67,7 +67,7 @@ class GsflowModel(object):
         prms_only=False,
         gsflow_exe=None,
         modsim=False,
-        model_ws=None
+        model_ws=None,
     ):
 
         if not isinstance(control, ControlFile):
@@ -166,7 +166,7 @@ class GsflowModel(object):
         prms_only=False,
         mf_load_only=None,
         forgive=False,
-        model_ws=None
+        model_ws=None,
     ):
         """
         Method to load a gsflow model from it's control file
@@ -278,7 +278,9 @@ class GsflowModel(object):
         name = control.get_values("modflow_name")
         control_file = control.control_file
         if model_ws is None:
-            name = gsflow_io.get_file_abs(control_file=control_file, fn=name[0])
+            name = gsflow_io.get_file_abs(
+                control_file=control_file, fn=name[0]
+            )
             model_ws, name = os.path.split(name)
         else:
             model_ws = gsflow_io.get_file_abs(model_ws=model_ws)
