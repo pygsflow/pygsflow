@@ -24,10 +24,6 @@ To install the version 1.0.0 release open a command prompt or anaconda prompt te
 
 or
 
-`pip install pygsflow`
-
-or
-
 `pip install https://github.com/pygsflow/pygsflow/zipball/master`
 
 Or to install the development version with the most recent updates
@@ -45,6 +41,9 @@ Ayman Alzraiee, Joshua Larsen, Rich Niswonger
 
 [Larsen, J. D., Alzraiee, A., Niswonger, R., 2021, pyGSFLOW v1.0.0: U.S. Geological
 Survey Software Release, 2 July 2021, https://doi.org/10.5066/P9NPZ5AD](https://doi.org/10.5066/P9NPZ5AD)
+
+## Bugs
+The code is in active development and although there is a testing infrastructure set up we cannot catch all the software bugs without the help of users. If you find a bug or have an issue, please report it by opening a new issue. You can open a new issue by clicking the issues tab near the top of the page.
 
 ## Project History
 This project is a refinement and continuation of the original pygsflow repository at:
