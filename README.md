@@ -31,8 +31,10 @@ Alternatively the user can download a copy of the repository, open a command pro
 ## Authors
 Ayman Alzraiee, Joshua Larsen, Rich Niswonger
 
-## Bugs
-The code is in active development and although there is a testing infrastructure set up we cannot catch all the software bugs without the help of users. If you find a bug or have an issue, please report it by opening a new issue. You can open a new issue by clicking the issues tab near the top of the page.
+## How to Cite
+
+[Larsen, J. D., Alzraiee, A., Niswonger, R., 2021, pyGSFLOW v1.0.0: U.S. Geological
+Survey Software Release, 2 July 2021, https://doi.org/10.5066/P9NPZ5AD](https://doi.org/10.5066/P9NPZ5AD)
 
 ## Project History
 This project is a refinement and continuation of the original pygsflow repository at:
@@ -40,4 +42,12 @@ This project is a refinement and continuation of the original pygsflow repositor
 https://github.com/aymanalz/pygsflow
 
 ## Disclaimer
-This software is preliminary or provisional and is subject to revision. It is being provided to meet the need for timely best science. The software has not received final approval by the U.S. Geological Survey (USGS). No warranty, expressed or implied, is made by the USGS or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. The software is provided on the condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from the authorized or unauthorized use of the software
+This software has been approved for release by the U.S. Geological Survey 
+(USGS). Although the software has been subjected to rigorous review, the USGS 
+reserves the right to update the software as needed pursuant to further 
+analysis and review. No warranty, expressed or implied, is made by the USGS or 
+the U.S. Government as to the functionality of the software and related 
+material nor shall the fact of release constitute any such warranty. 
+Furthermore, the software is released on condition that neither the USGS nor 
+the U.S. Government shall be held liable for any damages resulting from its 
+authorized or unauthorized use.
