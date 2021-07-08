@@ -62,6 +62,7 @@ class Modsim(object):
             self._ready = False
 
         self._nearest = True
+        self._sfr_nearest = False
 
     @property
     def sfr_segs(self):
@@ -124,7 +125,11 @@ class Modsim(object):
         """
         sfr_topo = []
         for seg in self.sfr_segs:
-            sfr_topo.append(_SfrTopology(self._sfr, self.mf, seg, self._other))
+            sfr_topo.append(
+                _SfrTopology(
+                    self._sfr, self.mf, seg, self._sfr_nearest, self._other
+                )
+            )
 
         return sfr_topo
 
@@ -213,20 +218,13 @@ class Modsim(object):
 
         return temp
 
-    def __add_field(self, field_name):
-        """
-
-        Parameters
-        ----------
-        field_name
-
-        Returns
-        -------
-
-        """
-
     def write_modsim_shapefile(
-        self, shp=None, proj4=None, flag_spillway=False, nearest=True
+        self,
+        shp=None,
+        proj4=None,
+        flag_spillway=False,
+        nearest=True,
+        sfr_nearest=False,
     ):
         """
         Method to create a modsim compatible
@@ -258,6 +256,10 @@ class Modsim(object):
             SFR reaches based on the segment they are connected to. If False
             lak topology will connect to the start or end of the Segment based
             on iupseg and outseg
+        sfr_nearest : bool
+            if sfr_nearest is True, sfr topology will connect using the
+            distance equation. If False topology will connect to the start
+            or end of the Segment based on iupseg and outseg
 
         """
         if not self._ready:
@@ -276,6 +278,7 @@ class Modsim(object):
             shp = os.path.join(ws, name)
 
         self._nearest = nearest
+        self._sfr_nearest = sfr_nearest
 
         sfr_topology = self.sfr_topology
         lake_topology = self.lake_topology
@@ -589,6 +592,9 @@ class _SfrTopology(object):
     model : flopy.modflow.Modflow or gsflow.modflow.Modflow object
     iseg : int
         sfr segment number
+    nearest : bool
+        method to determine whether topology is calculated via distance eq.
+        default is False
     other : str or None
         include can be used to add an optional sfr field (ex. strhc1) to the
         stream vector shapefile.
@@ -596,11 +602,12 @@ class _SfrTopology(object):
 
     """
 
-    def __init__(self, sfr, model, iseg, other=None):
+    def __init__(self, sfr, model, iseg, nearest=False, other=None):
         self._sfr = sfr
         self._parent = model
         self._iseg = iseg
         self._other = other
+        self._nearest = nearest
         self._mg = self._parent.modelgrid
         self._xv = self._mg.xvertices
         self._yv = self._mg.yvertices
@@ -653,31 +660,43 @@ class _SfrTopology(object):
 
         ijup = []
         ijout = []
+        irchup = []
+        irchout = []
         for rec in self._sfr.reach_data:
             if rec.iseg == iupseg:
                 ijup.append([rec.i, rec.j])
+                irchup.append(rec.ireach)
             elif rec.iseg == outseg:
                 ijout.append([rec.i, rec.j])
+                irchout.append(rec.ireach)
             else:
                 pass
 
-        updist = []
-        for i, j in ijup:
-            a = (i - self.ij[0]) ** 2
-            b = (j - self.ij[1]) ** 2
-            c = np.sqrt(a + b)
-            updist.append(c)
+        if self._nearest:
+            updist = []
+            for i, j in ijup:
+                a = (i - self.ij[0]) ** 2
+                b = (j - self.ij[1]) ** 2
+                c = np.sqrt(a + b)
+                updist.append(c)
 
-        outdist = []
-        for i, j in ijout:
-            a = (i - self.ij[0]) ** 2
-            b = (j - self.ij[1]) ** 2
-            c = np.sqrt(a + b)
-            outdist.append(c)
+            outdist = []
+            for i, j in ijout:
+                a = (i - self.ij[0]) ** 2
+                b = (j - self.ij[1]) ** 2
+                c = np.sqrt(a + b)
+                outdist.append(c)
+        else:
+            updist = irchup
+            outdist = irchout
 
         if updist:
-            upidx = updist.index(np.min(updist))
-            ijup = [ijup[upidx]]
+            if self._nearest:
+                upidx = updist.index(np.min(updist))
+                ijup = [ijup[upidx]]
+            else:
+                upidx = updist.index(np.max(updist))
+                ijup = [ijup[upidx]]
 
         if outdist:
             outix = outdist.index(np.min(outdist))
