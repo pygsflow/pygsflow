@@ -1,0 +1,1372 @@
+{
+    "bas": {
+        "hnoflo": -9999.0,
+        "ifrefm": true
+    },
+    "control": {
+        "cascade_flag": {
+            "dtype": 1,
+            "record": 1
+        },
+        "cascadegw_flag": {
+            "dtype": 1,
+            "record": 1
+        },
+        "et_module": {
+            "dtype": 4,
+            "record": "potet_jh"
+        },
+        "parameter_check_flag": {
+            "dtype": 1,
+            "record": 0
+        },
+        "precip_module": {
+            "dtype": 4,
+            "record": "precip_1sta"
+        },
+        "rpt_days": {
+            "dtype": 1,
+            "record": 7
+        },
+        "snarea_curve_flag": {
+            "dtype": 1,
+            "record": 0
+        },
+        "soilzone_aet_flag": {
+            "dtype": 1,
+            "record": 0
+        },
+        "solrad_module": {
+            "dtype": 4,
+            "record": "ddsolrad"
+        },
+        "srunoff_module": {
+            "dtype": 4,
+            "record": "srunoff_smidx"
+        },
+        "start_time": {
+            "dtype": 1,
+            "record": [
+                1975,
+                10,
+                1,
+                0,
+                0,
+                0
+            ]
+        },
+        "subbasin_flag": {
+            "dtype": 1,
+            "record": 1
+        },
+        "temp_module": {
+            "dtype": 4,
+            "record": "temp_1sta"
+        },
+        "transp_module": {
+            "dtype": 4,
+            "record": "transp_tindex"
+        }
+    },
+    "dis": {
+        "itmuni": 4,
+        "laycbd": 0,
+        "lenuni": 2,
+        "nlay": 1,
+        "nper": 1,
+        "nstp": 1,
+        "perlen": 1,
+        "steady": true,
+        "tsmult": 1.0
+    },
+    "nwt": {
+        "fluxtol": 500,
+        "headtol": 0.0001,
+        "ibotav": 0,
+        "iprnwt": 0,
+        "linmeth": 1,
+        "maxiterout": 100,
+        "options": "SIMPLE",
+        "thickfact": 1e-05
+    },
+    "oc": {
+        "ihedfm": 15,
+        "stress_period_data": {
+            "(0, 0)": [
+                "print head",
+                "print budget",
+                "save head",
+                "save budget"
+            ]
+        }
+    },
+    "parameter": {
+        "dimensions": {
+            "ndepl": 1,
+            "ndeplval": 11
+        },
+        "parameters": {
+            "adjmix_rain": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ]
+                ]
+            },
+            "albset_rna": {
+                "dimension": "one",
+                "dtype": 2,
+                "record": 0.8
+            },
+            "albset_rnm": {
+                "dimension": "one",
+                "dtype": 2,
+                "record": 0.6
+            },
+            "albset_sna": {
+                "dimension": "one",
+                "dtype": 2,
+                "record": 0.05
+            },
+            "albset_snm": {
+                "dimension": "one",
+                "dtype": 2,
+                "record": 0.2
+            },
+            "basin_tsta": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 0
+            },
+            "carea_max": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.6
+                ]
+            },
+            "cascade_tol": {
+                "dimension": "one",
+                "dtype": 2,
+                "record": 5.0
+            },
+            "cecn_coef": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ],
+                    [
+                        5.0
+                    ]
+                ]
+            },
+            "circle_switch": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 1
+            },
+            "cov_type": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": [
+                    3
+                ]
+            },
+            "covden_sum": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.5
+                ]
+            },
+            "covden_win": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.5
+                ]
+            },
+            "den_init": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.1
+                ]
+            },
+            "den_max": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.6
+                ]
+            },
+            "elev_units": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 1
+            },
+            "emis_noppt": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.757
+                ]
+            },
+            "fastcoef_lin": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.1
+                ]
+            },
+            "fastcoef_sq": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.8
+                ]
+            },
+            "freeh2o_cap": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.05
+                ]
+            },
+            "gvr_cell_pct": {
+                "dimension": "nhrucell",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "gvr_hru_pct": {
+                "dimension": "nhrucell",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "gw_pct_up": {
+                "dimension": "ncascadegw",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "gwflow_coef": {
+                "dimension": "ngw",
+                "dtype": 2,
+                "record": [
+                    0.015
+                ]
+            },
+            "gwsink_coef": {
+                "dimension": "ngw",
+                "dtype": 2,
+                "record": [
+                    0.0
+                ]
+            },
+            "gwstor_init": {
+                "dimension": "ngw",
+                "dtype": 2,
+                "record": [
+                    2.0
+                ]
+            },
+            "gwstor_min": {
+                "dimension": "ngw",
+                "dtype": 2,
+                "record": [
+                    0.0
+                ]
+            },
+            "hru_deplcrv": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": [
+                    1
+                ]
+            },
+            "hru_pct_up": {
+                "dimension": "ncascade",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "hru_percent_imperv": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.0
+                ]
+            },
+            "hru_psta": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": [
+                    0
+                ]
+            },
+            "hru_tsta": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": 0
+            },
+            "imperv_stor_max": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.05
+                ]
+            },
+            "jh_coef": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ],
+                    [
+                        0.014
+                    ]
+                ]
+            },
+            "jh_coef_hru": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    13.0
+                ]
+            },
+            "max_missing": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 7
+            },
+            "melt_force": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": [
+                    140
+                ]
+            },
+            "melt_look": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": [
+                    90
+                ]
+            },
+            "potet_sublim": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.5
+                ]
+            },
+            "ppt_rad_adj": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ],
+                    [
+                        0.02
+                    ]
+                ]
+            },
+            "ppt_zero_thresh": {
+                "dimension": "one",
+                "dtype": 2,
+                "record": 0.0
+            },
+            "precip_units": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 1
+            },
+            "pref_flow_den": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.0
+                ]
+            },
+            "print_freq": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 3
+            },
+            "print_type": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 1
+            },
+            "rad_trncf": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.5
+                ]
+            },
+            "radadj_intcp": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ]
+                ]
+            },
+            "radadj_slope": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ]
+                ]
+            },
+            "radj_sppt": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.44
+                ]
+            },
+            "radj_wppt": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.5
+                ]
+            },
+            "radmax": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ],
+                    [
+                        0.8
+                    ]
+                ]
+            },
+            "rain_adj": {
+                "dimension": [
+                    [
+                        "nhru",
+                        "nmonths"
+                    ]
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ]
+                ]
+            },
+            "sat_threshold": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    999.0
+                ]
+            },
+            "settle_const": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.1
+                ]
+            },
+            "slowcoef_lin": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.015
+                ]
+            },
+            "slowcoef_sq": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.1
+                ]
+            },
+            "smidx_coef": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.005
+                ]
+            },
+            "smidx_exp": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.3
+                ]
+            },
+            "snarea_curve": {
+                "dimension": "ndepval",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "snarea_thresh": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    50.0
+                ]
+            },
+            "snow_adj": {
+                "dimension": [
+                    [
+                        "nhru",
+                        "nmonths"
+                    ]
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ]
+                ]
+            },
+            "snow_intcp": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.1
+                ]
+            },
+            "snowinfil_max": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    2.0
+                ]
+            },
+            "snowpack_init": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0
+                ]
+            },
+            "soil2gw_max": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.0
+                ]
+            },
+            "soil_moist_init": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    3.0
+                ]
+            },
+            "soil_moist_init_frac": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": []
+            },
+            "soil_moist_max": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    2.0
+                ]
+            },
+            "soil_rechr_init": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "soil_rechr_init_frac": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.0
+                ]
+            },
+            "soil_rechr_max": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    1.5
+                ]
+            },
+            "soil_rechr_max_frac": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "soil_type": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": [
+                    2
+                ]
+            },
+            "srain_intcp": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.1
+                ]
+            },
+            "ssr2gw_exp": {
+                "dimension": "nssr",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "ssr2gw_rate": {
+                "dimension": "nssr",
+                "dtype": 2,
+                "record": [
+                    0.1
+                ]
+            },
+            "sstor_init": {
+                "dimension": "nssr",
+                "dtype": 2,
+                "record": [
+                    0.0
+                ]
+            },
+            "sstor_init_frac": {
+                "dimension": "nssr",
+                "dtype": 2,
+                "record": [
+                    0.0
+                ]
+            },
+            "temp_units": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 1
+            },
+            "tmax_adj": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ]
+                ]
+            },
+            "tmax_allsnow": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ]
+                ]
+            },
+            "tmax_index": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ],
+                    [
+                        10.0
+                    ]
+                ]
+            },
+            "tmax_lapse": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ]
+                ]
+            },
+            "tmin_adj": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ]
+                ]
+            },
+            "tmin_lapse": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 2,
+                "record": [
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ],
+                    [
+                        14.58
+                    ]
+                ]
+            },
+            "transp_beg": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": [
+                    3
+                ]
+            },
+            "transp_end": {
+                "dimension": "nhru",
+                "dtype": 1,
+                "record": [
+                    11
+                ]
+            },
+            "transp_tmax": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    1.0
+                ]
+            },
+            "tstorm_mo": {
+                "dimension": [
+                    "nhru",
+                    "nmonths"
+                ],
+                "dtype": 1,
+                "record": [
+                    [
+                        0
+                    ],
+                    [
+                        0
+                    ],
+                    [
+                        0
+                    ],
+                    [
+                        0
+                    ],
+                    [
+                        0
+                    ],
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    [
+                        0
+                    ],
+                    [
+                        0
+                    ],
+                    [
+                        0
+                    ]
+                ]
+            },
+            "wrain_intcp": {
+                "dimension": "nhru",
+                "dtype": 2,
+                "record": [
+                    0.1
+                ]
+            }
+        }
+    },
+    "sfr": {
+        "pkg": {
+            "const": 86400,
+            "dleak": 0.0001,
+            "isfropt": 1,
+            "isuzn": 1,
+            "nstrail": 10,
+            "reachinput": true
+        },
+        "reach": {
+            "strhc1": 1.0,
+            "strthick": 1.0
+        },
+        "segment": {
+            "etsw": 0.0,
+            "flow": 1.0,
+            "icalc": 1,
+            "iprior": 0,
+            "pptsw": 0.0,
+            "roughch": 0.025,
+            "runoff": 0.0,
+            "width1": 10,
+            "width2": 10
+        }
+    },
+    "upw": {
+        "chani": 1,
+        "hdry": -999.9,
+        "hk": 10.0,
+        "ipakcb": 0,
+        "iphdry": 0,
+        "layavg": 0,
+        "laytyp": 1,
+        "layvka": 0,
+        "laywet": 0,
+        "ss": 1e-06,
+        "sy": 0.2,
+        "vka": 1.0
+    },
+    "uzf": {
+        "eps": 3.5,
+        "ietflg": 0,
+        "irunflg": 1,
+        "iuzfopt": 1,
+        "nsets": 20,
+        "ntrail2": 10,
+        "nuztop": 1,
+        "surfdep": 1.0,
+        "thts": 0.25,
+        "vks": 1.0
+    }
+}
