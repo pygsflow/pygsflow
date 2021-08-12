@@ -30,12 +30,13 @@ class ModflowBuilder(object):
         instance to ModflowBuilder to use a custom set of default values
 
     """
+
     def __init__(self, modelgrid, dem_data, model_name, defaults=None):
         exe_name = "mfnwt.exe"
         self._ml = gsflow.modflow.Modflow(model_name, exe_name=exe_name)
 
         assert (modelgrid.nrow, modelgrid.ncol) == dem_data.shape
-        self._fishnet = modelgrid
+        self._modelgrid = modelgrid
         self._dem_data = dem_data
 
         if defaults is None:
@@ -57,7 +58,16 @@ class ModflowBuilder(object):
         """
         return self._ml
 
-    def build_all(self, reach_data, segment_data, irunbnd, finf=None, botm=None, ibound=None, iuzfbnd=None):
+    def build_all(
+        self,
+        reach_data,
+        segment_data,
+        irunbnd,
+        finf=None,
+        botm=None,
+        ibound=None,
+        iuzfbnd=None,
+    ):
         """
         Method to build all supported modflow packages
 
@@ -109,18 +119,18 @@ class ModflowBuilder(object):
 
         """
         if botm is None:
-            botm = self._dem_data - 50.
+            botm = self._dem_data - 50.0
         else:
             botm = botm
 
-        dis_defaults = self._defaults['dis']
+        dis_defaults = self._defaults["dis"]
 
         dis = flopy.modflow.ModflowDis(
             self._ml,
-            nrow=self._fishnet.nrow,
-            ncol=self._fishnet.ncol,
-            delc=self._fishnet.delc,
-            delr=self._fishnet.delr,
+            nrow=self._modelgrid.nrow,
+            ncol=self._modelgrid.ncol,
+            delc=self._modelgrid.delc,
+            delr=self._modelgrid.delr,
             top=self._dem_data,
             botm=botm,
             **dis_defaults
@@ -143,9 +153,13 @@ class ModflowBuilder(object):
 
         """
         if ibound is None:
-            ibound = np.ones((self._fishnet.nrow, self._fishnet.ncol), dtype=int)
-        bas_defaults = self._defaults['bas']
-        bas = flopy.modflow.ModflowBas(self._ml, ibound=ibound, strt=self._dem_data, **bas_defaults)
+            ibound = np.ones(
+                (self._modelgrid.nrow, self._modelgrid.ncol), dtype=int
+            )
+        bas_defaults = self._defaults["bas"]
+        bas = flopy.modflow.ModflowBas(
+            self._ml, ibound=ibound, strt=self._dem_data, **bas_defaults
+        )
         return bas
 
     def build_upw(self):
@@ -157,7 +171,7 @@ class ModflowBuilder(object):
             flopy.modflow.ModflowUpw
 
         """
-        upw_defaults = self._defaults['upw']
+        upw_defaults = self._defaults["upw"]
         upw = flopy.modflow.ModflowUpw(self._ml, **upw_defaults)
         return upw
 
@@ -178,7 +192,7 @@ class ModflowBuilder(object):
 
         """
         # get package defaults and build the sfr package
-        sfr_defaults = self._defaults['sfr']['pkg']
+        sfr_defaults = self._defaults["sfr"]["pkg"]
         nreaches = len(reach_data)
         nsegments = len(segment_data)
 
@@ -211,13 +225,19 @@ class ModflowBuilder(object):
             flopy.modflow.ModflowUzf
 
         """
-        uzf_defaults = self._defaults['uzf']
+        uzf_defaults = self._defaults["uzf"]
         if finf is None:
             finf = 1e-08
         if iuzfbnd is None:
             iuzfbnd = 1
 
-        uzf = flopy.modflow.ModflowUzf1(self._ml, irunbnd=irunbnd, iuzfbnd=iuzfbnd, finf=finf, **uzf_defaults)
+        uzf = flopy.modflow.ModflowUzf1(
+            self._ml,
+            irunbnd=irunbnd,
+            iuzfbnd=iuzfbnd,
+            finf=finf,
+            **uzf_defaults
+        )
         return uzf
 
     def build_nwt(self):
@@ -229,7 +249,7 @@ class ModflowBuilder(object):
             flopy.modflow.ModflowNwt
 
         """
-        nwt_defaults = self._defaults['nwt']
+        nwt_defaults = self._defaults["nwt"]
         nwt = flopy.modflow.ModflowNwt(self._ml, **nwt_defaults)
         return nwt
 
@@ -242,34 +262,6 @@ class ModflowBuilder(object):
             flopy.modflow.ModflowOc
         """
         # build output control
-        oc_defaults = self._defaults['oc']
+        oc_defaults = self._defaults["oc"]
         oc = flopy.modflow.ModflowOc(self._ml, **oc_defaults)
         return oc
-
-
-if __name__ == "__main__":
-    import os
-    # from flow_accumulation_non_recursive import FlowAccumulation
-    from gsflow.builder import GenerateFishnet
-
-    LxLy = 100
-    nrow = ncol = 10
-    delc = delr = np.array([LxLy / nrow] * nrow)
-
-    modelgrid = flopy.discretization.StructuredGrid(
-        delc,
-        delr,
-        nlay=1,
-        nrow=nrow,
-        ncol=ncol
-    )
-
-    top = np.ones((nrow, ncol)) * 50
-    ibound = np.ones((nrow, ncol), dtype=int)
-
-    modflow_packages = ModflowBuilder(modelgrid, top, "test_model")
-    modflow_packages.build_dis()
-    modflow_packages.build_bas6(ibound)
-    modflow_packages.build_upw()
-    ml = modflow_packages.model
-    print('break')
