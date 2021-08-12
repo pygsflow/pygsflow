@@ -94,8 +94,8 @@ class CRT(object):
         self.dpit = dpit
         self.outitmax = outitmax
         self.elev = self._check_shape(elev, "elev")
-        self.outflow_hrus = self._check_and_expand(outflow_hrus)
-        self.stream_cells = self._check_and_expand(stream_cells)
+        self.outflow_hrus = self._check_and_expand(outflow_hrus, CRT.outflow_hru_dtype())
+        self.stream_cells = self._check_and_expand(stream_cells, CRT.stream_cells_dtype())
         self.hru_ids = hru_ids
         if hru_ids is not None:
             if not isinstance(hru_ids, dict):
@@ -180,7 +180,7 @@ class CRT(object):
 
         return array
 
-    def _check_and_expand(self, array):
+    def _check_and_expand(self, array, dtype):
         """
         Method to check and expand the size of an array
 
@@ -198,7 +198,11 @@ class CRT(object):
         if len(array.shape) == 1:
             array = np.expand_dims(array, axis=0)
 
-        return np.asarray(array, dtype=int)
+        recarray = self.get_empty_recarray(len(array), dtype)
+        for ix, arr in enumerate(array):
+            recarray[ix] = tuple(arr)
+
+        return recarray
 
     def _write_hru_casc(self, model_ws):
         """
@@ -627,3 +631,15 @@ class CRT(object):
                     w.record(*list(rec))
 
         return recarray
+
+    @staticmethod
+    def outflow_hru_dtype():
+        return [('row', int), ('col', int)]
+
+    @staticmethod
+    def stream_cells_dtype():
+        return [('reach_row', int), ('reach_col', int), ('reach_seg', int), ('reach_num', int), ('on_off', int)]
+
+    @staticmethod
+    def get_empty_recarray(nrec, dtype):
+        return np.recarray((nrec,), dtype=dtype)
