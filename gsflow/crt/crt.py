@@ -94,8 +94,12 @@ class CRT(object):
         self.dpit = dpit
         self.outitmax = outitmax
         self.elev = self._check_shape(elev, "elev")
-        self.outflow_hrus = self._check_and_expand(outflow_hrus, CRT.outflow_hru_dtype())
-        self.stream_cells = self._check_and_expand(stream_cells, CRT.stream_cells_dtype())
+        self.outflow_hrus = self._check_and_expand(
+            outflow_hrus, CRT.outflow_hru_dtype()
+        )
+        self.stream_cells = self._check_and_expand(
+            stream_cells, CRT.stream_cells_dtype()
+        )
         self.hru_ids = hru_ids
         if hru_ids is not None:
             if not isinstance(hru_ids, dict):
@@ -634,11 +638,17 @@ class CRT(object):
 
     @staticmethod
     def outflow_hru_dtype():
-        return [('row', int), ('col', int)]
+        return [("row", int), ("col", int)]
 
     @staticmethod
     def stream_cells_dtype():
-        return [('reach_row', int), ('reach_col', int), ('reach_seg', int), ('reach_num', int), ('on_off', int)]
+        return [
+            ("reach_row", int),
+            ("reach_col", int),
+            ("reach_seg", int),
+            ("reach_num", int),
+            ("on_off", int),
+        ]
 
     @staticmethod
     def get_empty_recarray(nrec, dtype):
