@@ -4,3 +4,4 @@ from .builder_defaults import (
     PrmsDefaults,
     ControlFileDefaults,
 )
+from .fishnet import GenerateFishnet

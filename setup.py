@@ -29,8 +29,8 @@ with open(os.path.join(".", "README.md")) as foo:
     long_description = foo.read()
 
 setup(
-    author="Ayman Alzraiee, Joshua Larsen, Rich Niswonger",
-    author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov, rniswon@usgs.gov',
+    author="Ayman Alzraiee, Joshua Larsen, Rich Niswonger, Donald Martin",
+    author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov, rniswon@usgs.gov, domartin@usgs.gov',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

@@ -37,7 +37,7 @@ Alternatively the user can download a copy of the repository, open a command pro
 `pip install . `
 
 ## Authors
-Ayman Alzraiee, Joshua Larsen, Rich Niswonger
+Ayman Alzraiee, Joshua Larsen, Donald Martin, Rich Niswonger
 
 ## How to Cite
 
