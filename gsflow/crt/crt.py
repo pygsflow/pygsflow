@@ -16,10 +16,10 @@ class CRT(object):
     elev : np.ndarray
         elevation array for each hru
     outflow_hrus: list, tuple, np.ndarray
-        iteratable of row, column locations of outflow hrus
+        iteratable of [[row, column],] locations of outflow hrus
     stream_cells: list, tuple, np.ndarray
-        nx5 list of [[row, col, seg, reach, on_off],] that
-        describe the stream cells
+        iterable of [[row, col, seg, reach, on_off],] that
+        describes the stream cells
     hruflg : bool
         boolean flag to indicate whether the hrus are numbered differently
         than the grid-cells (ex. upper left corner is 1). Default is False
@@ -337,6 +337,7 @@ class CRT(object):
                                 hru_id, self.x_loc[i, j], self.y_loc[i, j]
                             )
                         )
+                        hru_id += 1
 
     def write_input(self, model_ws=None):
         """
@@ -394,6 +395,51 @@ class CRT(object):
             model_ws,
             normal_msg="cascades successfully generated",
         )
+
+    def load_cascade_parameters_output(self, model_ws=None):
+        """
+        Method to load the cascade parameter output after running CRT
+
+        Parameters
+        ----------
+        model_ws : str
+            optional model path directory to CRT files
+
+        Returns
+        -------
+            list of gsflow.prms.ParameterRecord objects
+        """
+        from ..prms import PrmsParameters
+
+        if model_ws is None:
+            model_ws = self.model_ws
+
+        dim_file = os.path.join(
+            os.path.join(model_ws, "parameter_dimensions.txt")
+        )
+        param_file = os.path.join(os.path.join(model_ws, "cascade.param"))
+        if not os.path.exists(dim_file):
+            raise FileNotFoundError("parameter_dimensions.txt file not found")
+
+        if not os.path.exists(param_file):
+            raise FileNotFoundError("cascade.param file not found")
+
+        # hack to be able to use built in loader methods to load parameters
+        crt_file = os.path.join(model_ws, "pygsflow_crt_params.txt")
+        with open(crt_file, "w") as foo:
+            with open(dim_file) as dim:
+                foo.write("** Dimensions **\n")
+                for line in dim:
+                    foo.write(line)
+
+            with open(param_file) as param:
+                foo.write("** Parameters **\n")
+                for line in param:
+                    foo.write(line)
+
+        # read parameters file
+        pobj = PrmsParameters.load_from_file(crt_file)
+        return pobj.parameters_list
 
     @staticmethod
     def load(model_ws):
@@ -520,3 +566,64 @@ class CRT(object):
             x_loc=x_loc,
             y_loc=y_loc,
         )
+
+    @classmethod
+    def get_vis_output(self, f, shp_name=None):
+        """
+        Method to load the CRT visualization file
+
+        Parameters
+        ----------
+        f : str
+            crt vis file path
+        shp_name : str
+            optional path to write a visualization shapefile
+
+        Returns
+        -------
+            np.reacarray
+        """
+        try:
+            import shapefile
+        except ImportError:
+            shapefile = None
+            if shp_name is not None:
+                print("Warning, pyshp not installed skipping shapefile write")
+                shp_name = None
+
+        float_types = ("up_x", "up_y", "down_x", "down_y", "casc_pct")
+        dtype = []
+        if not os.path.exists(f):
+            raise FileNotFoundError("{} not found".format(f))
+
+        with open(f) as foo:
+            header = foo.readline().lower().strip().split(",")
+            for h in header:
+                if h in float_types:
+                    dtype.append((h, float))
+                else:
+                    dtype.append((h, int))
+
+            arr = np.genfromtxt(foo, dtype=dtype, delimiter=",")
+
+        recarray = arr.view(np.recarray)
+
+        if shp_name is not None:
+            with shapefile.Writer(shp_name, shapeType=shapefile.POLYLINE) as w:
+                for name in recarray.dtype.names:
+                    if name in float_types:
+                        w.field(name, "F", decimal=6)
+                    else:
+                        w.field(name, "N")
+
+                for rec in recarray:
+                    line = [
+                        [
+                            [rec["up_x"], rec["up_y"]],
+                            [rec["down_x"], rec["down_y"]],
+                        ],
+                    ]
+                    w.line(line)
+                    w.record(*list(rec))
+
+        return recarray
