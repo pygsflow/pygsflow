@@ -10,6 +10,10 @@ def test_fishnet_import():
 def test_fishnet_generation():
     from gsflow.builder import GenerateFishnet
     from flopy.discretization import StructuredGrid
+    try:
+        import rasterio
+    except ImportError:
+        return
 
     raster = os.path.join(
         ws, '..', 'examples', 'data', 'geospatial', 'dem.img'

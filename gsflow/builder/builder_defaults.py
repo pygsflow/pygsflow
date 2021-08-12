@@ -5,9 +5,6 @@ except ImportError:
 
 import os
 
-# todo: finally create an "add" defaults method for each Builder
-#   maybe do this outside of here (on the modflow, gsflow, and prms objects?)
-
 
 class _DefaultsBase:
     """
