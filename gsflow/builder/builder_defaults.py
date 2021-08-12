@@ -13,6 +13,7 @@ class _DefaultsBase:
     """
     Base class for all defaults classes. Not to be instantiated directly!
     """
+
     def __init__(self, f=None):
         if f is None:
             ws = os.path.abspath(os.path.dirname(__file__))
@@ -59,6 +60,7 @@ class Defaults(_DefaultsBase):
         json file name, if None reads in pyGSFLOW's default JSON parameters
 
     """
+
     def __init__(self, f=None):
         super().__init__(f)
         self.modflow = ModflowDefaults(f)
@@ -110,26 +112,27 @@ class PrmsDefaults(_DefaultsBase):
        json file name, if None reads in pyGSFLOW's default JSON parameters
 
     """
+
     def __init__(self, f):
         super().__init__(f)
         self._create_records()
 
     def _create_records(self):
         if "parameter" in self._json_dict:
-            prms = self._json_dict['parameter']
+            prms = self._json_dict["parameter"]
         else:
             return
 
         if "dimensions" in prms:
-            self._dict['dimensions'] = {}
-            for name, value in prms['dimensions'].items():
-                self._dict['dimensions'][name] = _DefaultRecord(name, value)
+            self._dict["dimensions"] = {}
+            for name, value in prms["dimensions"].items():
+                self._dict["dimensions"][name] = _DefaultRecord(name, value)
 
         if "parameters" in prms:
-            self._dict['parameters'] = {}
-            for name, d in prms['parameters'].items():
-                self._dict['parameters'][name] = _PrmsDefaultRecord(
-                    name, d['dtype'], d['record'], d['dimension']
+            self._dict["parameters"] = {}
+            for name, d in prms["parameters"].items():
+                self._dict["parameters"][name] = _PrmsDefaultRecord(
+                    name, d["dtype"], d["record"], d["dimension"]
                 )
 
     @property
@@ -157,13 +160,13 @@ class PrmsDefaults(_DefaultsBase):
         _PrmsDefaultRecord object
 
         """
-        if 'dimensions' in self._dict:
-            if name in self._dict['dimensions']:
-                return self._dict['dimensions'][name]
+        if "dimensions" in self._dict:
+            if name in self._dict["dimensions"]:
+                return self._dict["dimensions"][name]
 
-        if 'parameters' in self._dict:
-            if name in self._dict['parameters']:
-                return self._dict['parameters'][name]
+        if "parameters" in self._dict:
+            if name in self._dict["parameters"]:
+                return self._dict["parameters"][name]
 
     def add_default(self, name, data, dtype=None, dimension=None):
         """
@@ -184,17 +187,17 @@ class PrmsDefaults(_DefaultsBase):
         if dimension is None:
             # assume that this is part of the dimensions block
             rec = _DefaultRecord(name, data)
-            if 'dimensions' in self._dict:
-                self._dict['dimensions'][name] = rec
+            if "dimensions" in self._dict:
+                self._dict["dimensions"][name] = rec
             else:
-                self._dict['dimensions'] = {name: rec}
+                self._dict["dimensions"] = {name: rec}
 
         else:
             rec = _PrmsDefaultRecord(name, dtype, data, dimension)
-            if 'parameters' in self._dict:
-                self._dict['parameters'][name] = rec
+            if "parameters" in self._dict:
+                self._dict["parameters"][name] = rec
             else:
-                self._dict['parameters'] = {name: rec}
+                self._dict["parameters"] = {name: rec}
 
     def delete_default(self, name):
         """
@@ -206,13 +209,13 @@ class PrmsDefaults(_DefaultsBase):
             parameters/dimension name
 
         """
-        if 'dimensions' in self._dict:
-            if name in self._dict['dimensions']:
-                self._dict['dimensions'].pop(name)
+        if "dimensions" in self._dict:
+            if name in self._dict["dimensions"]:
+                self._dict["dimensions"].pop(name)
 
-        if 'parameters' in self._dict:
-            if name in self._dict['parameters']:
-                return self._dict['parameters'].pop(name)
+        if "parameters" in self._dict:
+            if name in self._dict["parameters"]:
+                return self._dict["parameters"].pop(name)
 
     def to_dict(self, to_json=False):
         """
@@ -227,7 +230,7 @@ class PrmsDefaults(_DefaultsBase):
             d[k] = {}
             for name, v in dd.items():
                 d[k][name] = v.record(to_json)[-1]
-        return {'parameter': d}
+        return {"parameter": d}
 
 
 class ControlFileDefaults(_DefaultsBase):
@@ -241,19 +244,20 @@ class ControlFileDefaults(_DefaultsBase):
        json file name, if None reads in pyGSFLOW's default JSON parameters
 
     """
+
     def __init__(self, f):
         super().__init__(f)
         self._create_records()
 
     def _create_records(self):
         if "control" in self._json_dict:
-            control = self._json_dict['control']
+            control = self._json_dict["control"]
         else:
             return
 
         for name, d in control.items():
             self._dict[name] = _PrmsDefaultRecord(
-                name, d['dtype'], d['record']
+                name, d["dtype"], d["record"]
             )
 
     @property
@@ -318,7 +322,7 @@ class ControlFileDefaults(_DefaultsBase):
         d = {}
         for name, v in self._dict.items():
             d[name] = v.record(to_json)[-1]
-        return {'control': d}
+        return {"control": d}
 
 
 class ModflowDefaults(_DefaultsBase):
@@ -332,6 +336,7 @@ class ModflowDefaults(_DefaultsBase):
        json file name, if None reads in pyGSFLOW's default JSON parameters
 
     """
+
     def __init__(self, f):
         super().__init__(f)
         self._create_records()
@@ -391,14 +396,14 @@ class ModflowDefaults(_DefaultsBase):
                 if name in self._dict[pkg_name]:
                     return self._dict[pkg_name][name]
             else:
-                if name in self._dict[pkg_name]['pkg']:
-                    return self._dict[pkg_name]['pkg'][name]
+                if name in self._dict[pkg_name]["pkg"]:
+                    return self._dict[pkg_name]["pkg"][name]
 
-                elif name in self._dict[pkg_name]['reach']:
-                    return self._dict[pkg_name]['reach'][name]
+                elif name in self._dict[pkg_name]["reach"]:
+                    return self._dict[pkg_name]["reach"][name]
 
-                elif name in self._dict[pkg_name]['segment']:
-                    return self._dict[pkg_name]['segment'][name]
+                elif name in self._dict[pkg_name]["segment"]:
+                    return self._dict[pkg_name]["segment"][name]
 
     def add_default(self, pkg_name, name, data, sfr_block=None):
         """
@@ -425,7 +430,7 @@ class ModflowDefaults(_DefaultsBase):
             else:
                 self._dict[pkg_name][sfr_block][name] = rec
         else:
-            self._dict[pkg_name]= {name: rec}
+            self._dict[pkg_name] = {name: rec}
 
     def delete_default(self, pkg_name, name=None):
         """
@@ -447,14 +452,14 @@ class ModflowDefaults(_DefaultsBase):
                     if name in self._dict[pkg_name]:
                         self._dict[pkg_name].pop(name)
                 else:
-                    if name in self._dict[pkg_name]['pkg']:
-                        self._dict[pkg_name]['pkg'].pop(name)
+                    if name in self._dict[pkg_name]["pkg"]:
+                        self._dict[pkg_name]["pkg"].pop(name)
 
-                    elif name in self._dict[pkg_name]['reach']:
-                        self._dict[pkg_name]['reach'].pop(name)
+                    elif name in self._dict[pkg_name]["reach"]:
+                        self._dict[pkg_name]["reach"].pop(name)
 
-                    elif name in self._dict[pkg_name]['segment']:
-                        self._dict[pkg_name]['segment'].pop(name)
+                    elif name in self._dict[pkg_name]["segment"]:
+                        self._dict[pkg_name]["segment"].pop(name)
 
     def to_dict(self, to_json=False):
         """
@@ -485,7 +490,7 @@ class _DefaultRecord:
                 # need to replace string with tuple, OC package
                 for k, v in data.items():
                     if isinstance(k, str):
-                        x = k.split(',')
+                        x = k.split(",")
                         kstp = int(x[0][1:])
                         kper = int(x[1][:-1])
                         d[(kstp, kper)] = v
@@ -533,9 +538,8 @@ class _PrmsDefaultRecord(_DefaultRecord):
         str, dict
             name and dict of values associted with the name
         """
-        d = {"dtype": self.dtype,
-             "record": self.data}
+        d = {"dtype": self.dtype, "record": self.data}
         if self.dimension is not None:
-            d['dimension'] = self.dimension
+            d["dimension"] = self.dimension
 
         return self.name, d

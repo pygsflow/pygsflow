@@ -58,14 +58,30 @@ class CRT(object):
         Required parameter when visflg=True
 
     """
-    def __init__(self, hru_type, elev, outflow_hrus, stream_cells,
-                 hruflg=False, strmflg=True, flowflg=True, visflg=False,
-                 iprn=True, ifill=True, dpit=0.1, outitmax=10000, model_ws=".",
-                 hru_ids=None, x_loc=None, y_loc=None):
+
+    def __init__(
+        self,
+        hru_type,
+        elev,
+        outflow_hrus,
+        stream_cells,
+        hruflg=False,
+        strmflg=True,
+        flowflg=True,
+        visflg=False,
+        iprn=True,
+        ifill=True,
+        dpit=0.1,
+        outitmax=10000,
+        model_ws=".",
+        hru_ids=None,
+        x_loc=None,
+        y_loc=None,
+    ):
 
         self.__sws = os.path.abspath(os.path.dirname(__file__))
         self.__exe_name = os.path.join(
-            self.__sws, "..", "..", 'bin', "CRT_1.3.1"
+            self.__sws, "..", "..", "bin", "CRT_1.3.1"
         )
         self.hru_type = np.array(hru_type, dtype=int)
         self._numactive = np.count_nonzero(self.hru_type)
@@ -77,7 +93,7 @@ class CRT(object):
         self.ifill = ifill
         self.dpit = dpit
         self.outitmax = outitmax
-        self.elev = self._check_shape(elev, 'elev')
+        self.elev = self._check_shape(elev, "elev")
         self.outflow_hrus = self._check_and_expand(outflow_hrus)
         self.stream_cells = self._check_and_expand(stream_cells)
         self.hru_ids = hru_ids
@@ -85,7 +101,9 @@ class CRT(object):
             if not isinstance(hru_ids, dict):
                 raise TypeError("hru_ids must be a dictionary of pairs")
             elif len(hru_ids) != self._numactive:
-                raise AssertionError("hru_ids not same size as number of active cells")
+                raise AssertionError(
+                    "hru_ids not same size as number of active cells"
+                )
             else:
                 pass
 
@@ -156,7 +174,9 @@ class CRT(object):
         """
         array = np.array(array, dtype=float)
         if array.shape != self.shape:
-            raise AssertionError("{} shape does not match hru_type shape".format(name))
+            raise AssertionError(
+                "{} shape does not match hru_type shape".format(name)
+            )
 
         return array
 
@@ -190,12 +210,17 @@ class CRT(object):
             optional path to write model files to
 
         """
-        with open(os.path.join(model_ws, "HRU_CASC.DAT"), 'w') as foo:
+        with open(os.path.join(model_ws, "HRU_CASC.DAT"), "w") as foo:
             foo.write(
                 "{:d} {:d} {:d} {:d} {:d} {:d} {} {:d}\n".format(
-                    int(self.hruflg), int(self.strmflg), int(self.flowflg),
-                    int(self.visflg), int(self.iprn), int(self.ifill),
-                    self.dpit, int(self.outitmax)
+                    int(self.hruflg),
+                    int(self.strmflg),
+                    int(self.flowflg),
+                    int(self.visflg),
+                    int(self.iprn),
+                    int(self.ifill),
+                    self.dpit,
+                    int(self.outitmax),
                 )
             )
             np.savetxt(foo, self.hru_type, fmt="%d", delimiter=" ")
@@ -216,7 +241,7 @@ class CRT(object):
             )
             return
 
-        with open(os.path.join(model_ws, "LAND_ELEV.DAT"), 'w') as foo:
+        with open(os.path.join(model_ws, "LAND_ELEV.DAT"), "w") as foo:
             foo.write("{} {}\n".format(self.nrow, self.ncol))
             np.savetxt(foo, self.elev, fmt="%d", delimiter=" ")
 
@@ -236,10 +261,12 @@ class CRT(object):
             )
             return
 
-        with open(os.path.join(model_ws, "OUTFLOW_HRU.DAT"), 'w') as foo:
+        with open(os.path.join(model_ws, "OUTFLOW_HRU.DAT"), "w") as foo:
             foo.write("{:d}\n".format(self.numoutflowhrus))
             for ix, loc in enumerate(self.outflow_hrus):
-                foo.write("{:d} {:d} {:d}\n".format(ix + 1, int(loc[0]), int(loc[1])))
+                foo.write(
+                    "{:d} {:d} {:d}\n".format(ix + 1, int(loc[0]), int(loc[1]))
+                )
 
     def _write_stream_cells(self, model_ws):
         """
@@ -257,7 +284,7 @@ class CRT(object):
             )
             return
 
-        with open(os.path.join(model_ws, "STREAM_CELLS.DAT"), 'w') as foo:
+        with open(os.path.join(model_ws, "STREAM_CELLS.DAT"), "w") as foo:
             foo.write("{:d}\n".format(self.nreach))
             for row in self.stream_cells:
                 foo.write("{:d} {:d} {:d} {:d} {:d}\n".format(*row))
@@ -350,6 +377,7 @@ class CRT(object):
         success, buff
         """
         from flopy.mbase import run_model
+
         if exe_name is None:
             exe_name = self.__exe_name
 
@@ -364,7 +392,7 @@ class CRT(object):
             exe_name,
             None,
             model_ws,
-            normal_msg="cascades successfully generated"
+            normal_msg="cascades successfully generated",
         )
 
     @staticmethod
@@ -392,7 +420,9 @@ class CRT(object):
         with open(os.path.join(model_ws, "HRU_CASC.DAT")) as foo:
             line = multi_line_strip(foo)
             t = line.strip().split()
-            hruflg, strmflg, flowflg, visflg, iprn, ifill = [bool(int(i)) for i in t[:6]]
+            hruflg, strmflg, flowflg, visflg, iprn, ifill = [
+                bool(int(i)) for i in t[:6]
+            ]
             dpit = float(t[6])
             outitmax = int(t[7])
             hru_type = np.genfromtxt(foo, dtype=int)
@@ -472,7 +502,21 @@ class CRT(object):
             x_loc.shape = hru_type.shape
             y_loc.shape = hru_type.shape
 
-        return CRT(hru_type, elev, outflow_hrus, stream_cells,
-                   hruflg=hruflg, strmflg=strmflg, flowflg=flowflg, visflg=visflg,
-                   iprn=iprn, ifill=ifill, dpit=dpit, outitmax=outitmax, model_ws=model_ws,
-                   hru_ids=hru_ids, x_loc=x_loc, y_loc=y_loc)
+        return CRT(
+            hru_type,
+            elev,
+            outflow_hrus,
+            stream_cells,
+            hruflg=hruflg,
+            strmflg=strmflg,
+            flowflg=flowflg,
+            visflg=visflg,
+            iprn=iprn,
+            ifill=ifill,
+            dpit=dpit,
+            outitmax=outitmax,
+            model_ws=model_ws,
+            hru_ids=hru_ids,
+            x_loc=x_loc,
+            y_loc=y_loc,
+        )
