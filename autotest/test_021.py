@@ -1,5 +1,5 @@
 import os
-
+import platform
 
 ws = os.path.abspath(os.path.dirname(__file__))
 
@@ -11,6 +11,8 @@ def test_import_crt():
 def test_read_write_crt():
     from gsflow.crt import CRT
     exe_name = os.path.join(ws, "..", "bin", "CRT_1.3.1")
+    if platform.system().lower() == "windows":
+        exe_name += ".exe"
     model_ws = os.path.join(ws, "..", "examples", "data", "crt")
     out_ws = os.path.join(ws, "temp")
 
