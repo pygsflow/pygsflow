@@ -40,7 +40,7 @@ class GenerateFishnet(StructuredGrid):
         self._buffer = buffer
         # get the geometry extent
         self._extent = self._get_extent()
-        self._xmin, self._ymin, self._xmax, self._ymax = self._extent
+        self._xmin, self._xmax, self._ymin, self._ymax = self._extent
         # calculate x and y lengths
         self._lx = self._xmax - self._xmin
         self._ly = self._ymax - self._ymin
@@ -70,11 +70,11 @@ class GenerateFishnet(StructuredGrid):
                 # is shapefile
                 shp = shapefile.Reader(self._bbox)
                 extent = shp.bbox
+                extent = [extent[0], extent[2], extent[1], extent[3]]
             else:
                 # assumes the path is for a raster
                 raster = Raster.load(self._bbox)
                 extent = raster.bounds
-                extent = [extent[0], extent[2], extent[1], extent[3]]
 
         elif isinstance(self._bbox, (list, tuple, np.ndarray)):
             if len(self._bbox) != 4:
@@ -91,12 +91,12 @@ class GenerateFishnet(StructuredGrid):
         if self._buffer is not None:
             xbuffer_len = self.xcs * self._buffer
             ybuffer_len = self.ycs * self._buffer
-            xmin, ymin, xmax, ymax = extent
+            xmin, xmax, ymin, ymax = extent
             xmin -= xbuffer_len
             ymin -= ybuffer_len
             xmax += xbuffer_len
             ymax += ybuffer_len
-            extent = [xmin, ymin, xmax, ymax]
+            extent = [xmin, xmax, ymin, ymax]
 
         return extent
 
