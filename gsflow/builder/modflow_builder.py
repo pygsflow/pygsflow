@@ -1,5 +1,5 @@
 from . import Defaults, ModflowDefaults
-import gsflow
+from ..modflow import Modflow
 import numpy as np
 import flopy
 
@@ -33,7 +33,7 @@ class ModflowBuilder(object):
 
     def __init__(self, modelgrid, dem_data, model_name, defaults=None):
         exe_name = "mfnwt.exe"
-        self._ml = gsflow.modflow.Modflow(model_name, exe_name=exe_name)
+        self._ml = Modflow(model_name, exe_name=exe_name)
 
         assert (modelgrid.nrow, modelgrid.ncol) == dem_data.shape
         self._modelgrid = modelgrid
