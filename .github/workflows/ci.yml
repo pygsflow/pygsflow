@@ -59,7 +59,7 @@ jobs:
     - name: Install flopy and pygsflow
       shell: bash -l {0}
       run: |
-        pip install https://github.com/modflowpy/flopy/zipball/develop
+        pip install flopy==3.3.4
         pip install .
 
     - name: Setup symbolic link to gfortran on Linux
