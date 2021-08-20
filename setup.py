@@ -14,7 +14,7 @@ with open('README.md') as readme_file:
 if sys.version_info >= (3, 0):
     requirements = ["pandas",
                     "numpy",
-                    "flopy >= 3.3.1",
+                    "flopy == 3.3.4",
                     "pyshp",
                     "pycrs",
                     "matplotlib"]
