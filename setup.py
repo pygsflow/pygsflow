@@ -11,15 +11,15 @@ import os
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-if sys.version_info >= (3, 0):
+if sys.version_info >= (3, 7):
     requirements = ["pandas",
                     "numpy",
-                    "flopy >= 3.3.1",
+                    "flopy >= 3.3.5",
                     "pyshp",
                     "pycrs",
                     "matplotlib"]
 else:
-    raise EnvironmentError("pyGSFLOW is only supported with python 3")
+    raise EnvironmentError("pyGSFLOW is only supported with python 3.7 and above")
 
 setup_requirements = []
 

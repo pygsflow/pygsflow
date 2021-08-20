@@ -3,7 +3,6 @@ import inspect
 import flopy
 import platform
 from flopy.utils import TemporalReference
-from flopy.utils.reference import SpatialReference
 from flopy.modflow.mf import Modflow as fpModflow
 from ..utils import mfreadnam
 
@@ -95,9 +94,9 @@ class Modflow(fpModflow):
             **kwargs
         )
 
-        self.version2 = version2
+        self._version2 = version2
 
-        # Using a local gsflow import to avoid circular imports with python 2.7
+        # Using a local gsflow import to avoid circular imports
         import gsflow
 
         # we can override packages here by setting the package object
@@ -150,6 +149,10 @@ class Modflow(fpModflow):
             "vsc": flopy.seawat.SeawatVsc,
             "ag": gsflow.modflow.ModflowAg,
         }
+
+    @property
+    def version2(self):
+        return self._version2
 
     @property
     def model_ws(self):

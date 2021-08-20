@@ -3,7 +3,6 @@ from .utils import gsflow_io
 import copy
 import warnings
 
-warnings.simplefilter("always", PendingDeprecationWarning)
 warnings.simplefilter("always", UserWarning)
 
 
