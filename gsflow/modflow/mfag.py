@@ -329,6 +329,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
             name = self.file_name[0]
             with open(os.path.join(ws, name), "w") as foo:
                 foo.write(self.heading)
+                if not self.heading.endswith("\n"):
+                    foo.write("\n")
 
                 # update options
                 self.options.update_from_package(self)
