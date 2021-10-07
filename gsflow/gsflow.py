@@ -626,7 +626,7 @@ class GsflowModel(object):
                 print("Writing MODSIM shapefile")
                 self.modsim.write_modsim_shapefile()
 
-    def run_model(self, model_ws=".", forgive=False):
+    def run_model(self, model_ws=".", forgive=False, gsflow_exe=None):
         """
         Method to run a gsflow model
 
@@ -636,6 +636,10 @@ class GsflowModel(object):
             parameter to specify the model directory
         forgive : bool
             forgives convergence issues
+        gslfow_exe : str or None
+            path to gsflow_exe, if gsflow_exe is None it will use
+            the previously defined gsflow_exe variable or the default
+            gsflow.exe.
 
         Returns
         -------
@@ -649,10 +653,14 @@ class GsflowModel(object):
 
         """
         fn = self.control_file
-        if not os.path.isfile(self.gsflow_exe):
+
+        if gsflow_exe is None:
+            gsflow_exe = self.gsflow_exe
+
+        if not os.path.isfile(gsflow_exe):
             print(
-                "Warning : The executable of the model is not specified. Use .gsflow_exe "
-                "to define its path... "
+                "Warning : The executable of the model could not be found. "
+                "Use the gsflow_exe= parameter to define its path... "
             )
             return None
 
@@ -663,7 +671,7 @@ class GsflowModel(object):
             normal_msg.append("failed to meet solver convergence criteria")
 
         return self.__run(
-            exe_name=self.gsflow_exe,
+            exe_name=gsflow_exe,
             namefile=fn,
             normal_msg=normal_msg,
             model_ws=model_ws,
@@ -796,11 +804,11 @@ class GsflowModel(object):
                 argv.append(t)
 
         # run the model with Popen
-        if platform.system().lower() == "windows":
-            self._generate_batch_file()
-            argv = self.__bat_file
-        else:
-            pass
+        # if platform.system().lower() == "windows":
+        #     self._generate_batch_file()
+        #     cargv = self.__bat_file
+        # else:
+        #     pass
 
         model_ws = os.path.dirname(self.control_file)
         proc = sp.Popen(argv, stdout=sp.PIPE, stderr=sp.STDOUT, cwd=model_ws)
