@@ -167,7 +167,11 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     OptionBlock.nested: True,
                     OptionBlock.n_nested: 1,
                     OptionBlock.vars: OrderedDict(
-                        [("accel", OptionBlock.simple_float)]
+                        [
+                            ("accel", {OptionBlock.dtype: float,
+                                       OptionBlock.nested: False,
+                                       OptionBlock.optional: True},)
+                        ]
                     ),
                 },
             ),
