@@ -1000,7 +1000,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     nrec = len(t)
 
                     # check if this is block 16a
-                    if isinstance(options.tabfileswell, np.recarray):
+                    if isinstance(options.tabfileswell, np.recarray) or \
+                            isinstance(options.tabfiles, np.recarray):
                         tf = True
                         well = ModflowAg.get_empty(nrec, block="tabfile_well")
                     else:
