@@ -48,7 +48,7 @@ simulates surface and subsurface hydrologic processes by integrating the
 Precipitation Runoff Modeling System (PRMS) [@Markstrom:2015] and 
 MODFLOW [@Harbaugh:2005; @Niswonger:2011] into a single code that 
 simulates feedbacks between the two processes. Because modelers are moving 
-toward simulating greater portions   of the hydrologic cycle, larger datasets, 
+toward simulating greater portions of the hydrologic cycle, larger datasets, 
 from multiple sources are used to parameterize these models. Beyond the scope 
 of example problems, most applied problems require custom workflows and code 
 to process large datasets related to model inputs and outputs. Scripting languages 
@@ -152,7 +152,7 @@ interface.
 # Package architecture
 The pyGSFLOW package includes the gsflow module and 5 sub-packages (figure 3):
 
-   - •	gsflow: the gsflow module contains the integrated modeling object 
+   - gsflow: the gsflow module contains the integrated modeling object 
    GsFlowModel which allows the user to build new GSFLOW models and import 
    existing models. This module calls classes and methods from the following 
    5 sub-packages within pyGSFLOW.
