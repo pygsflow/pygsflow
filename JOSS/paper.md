@@ -121,8 +121,8 @@ California.](calibration_example.png)
 
 
 The pyGSFLOW package also includes features to visualize input and output data 
-spatially using matplotlib plots and by exporting datasets to shapefile or the 
-visualization toolkit (VTK) format. By providing pyGSFLOW a shapefile or list 
+spatially using Matplotlib [@Hunter:2007] plots and by exporting datasets to shapefile or the 
+visualization toolkit (VTK) format [@Schroeder:2006]. By providing pyGSFLOW a shapefile or list 
 of hydrologic response unit (HRU) geometries, the code is able to plot arrays 
 and contour arrays of unique parameter values and is fully compatible with the 
 FloPy plotting routines for MODFLOW. PRMS input parameter values can be layered 
@@ -149,7 +149,7 @@ Truckee, California.](sagehen_plot.png)
 The online documentation for pyGSFLOW (https://pygsflow.github.io/pygsflowdocs/) 
 contains API information for all major classes and methods and is updated with 
 each new major release. In addition to the online documentation, sample Jupyter 
-notebooks are included in the repository to help users become familiar with the 
+notebooks [@Kluyver:2016] are included in the repository to help users become familiar with the 
 interface.
 
 # Package architecture
