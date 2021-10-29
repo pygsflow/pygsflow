@@ -174,6 +174,9 @@ class PrmsDay(object):
         out_path = os.path.join(self.__ws, self.__name)
         in_path = os.path.join(self.__init_ws, self.__init_name)
 
+        if not os.path.exists(self.__ws):
+            os.mkdir(self.__ws)
+        
         if out_path == in_path:
             df = self.dataframe
 
