@@ -18,19 +18,15 @@ class PrmsDay(object):
         optional dataframe of cell by hru data if not loading from file
 
     """
-    date_header = ['year',
-                   'month',
-                   'day',
-                   'hh',
-                   'mm',
-                   'sec']
+
+    date_header = ["year", "month", "day", "hh", "mm", "sec"]
 
     nhru_declaration = None
 
     def __init__(self, f, variable_name=None, dataframe=None):
 
         self.__day_file = f
-        self.__header = ''
+        self.__header = ""
         self.__name, self.__ws = self.__get_fname_and_ws(f)
         self.__init_ws = self.__get_fname_and_ws(f)[-1]
         self.__init_name = self.__get_fname_and_ws(f)[0]
@@ -63,7 +59,7 @@ class PrmsDay(object):
         if isinstance(output_file_name, str):
             self.__name = output_file_name
         else:
-            raise TypeError('Filename must be a string')
+            raise TypeError("Filename must be a string")
 
     def __load_metadata(self):
         """
@@ -82,13 +78,15 @@ class PrmsDay(object):
                     self.__header = "{} {}\n".format(l.rstrip(), prms_header)
 
                 elif l.startswith(GsConstant.DAY_FILE_VARIABLES):
-                    h = l.rstrip().split(' ')
+                    h = l.rstrip().split(" ")
                     self.__day_variable_declaration = h[0]
                     self._nhru_declaration = int(h[-1])
 
-                elif self.__day_variable_declaration is not None\
-                        and l.startswith('orad'):
-                    s = l.rstrip().split(' ')
+                elif (
+                    self.__day_variable_declaration is not None
+                    and l.startswith("orad")
+                ):
+                    s = l.rstrip().split(" ")
                     orad = int(s[-1])
                     if orad == 1:
                         self.__orad_flag = True
@@ -107,30 +105,38 @@ class PrmsDay(object):
 
         if self.__day_variable_declaration is None:
             raise NotImplementedError(
-                f'PrmsDay variable type not implemented for {self.__name}'
+                f"PrmsDay variable type not implemented for {self.__name}"
             )
 
-        self.__pd_hru_header = [str(i + 1) for i in range(self._nhru_declaration)]
+        self.__pd_hru_header = [
+            str(i + 1) for i in range(self._nhru_declaration)
+        ]
 
         if self.__orad_flag:
-            self.__pd_hru_header.append('orad')
+            self.__pd_hru_header.append("orad")
 
-        missing_value = -999.
-        df = pd.read_csv(self.__day_file, header=None,
-                         skiprows=self.__data_startline,
-                         delim_whitespace=True,
-                         na_values=[missing_value])
+        missing_value = -999.0
+        df = pd.read_csv(
+            self.__day_file,
+            header=None,
+            skiprows=self.__data_startline,
+            delim_whitespace=True,
+            na_values=[missing_value],
+        )
 
         df.columns = PrmsDay.date_header + self.__pd_hru_header
 
-        date = pd.Series(pd.to_datetime(df.year * 10000 + df.month * 100
-                                        + df.day, format='%Y%m%d'),
-                         index=df.index)
+        date = pd.Series(
+            pd.to_datetime(
+                df.year * 10000 + df.month * 100 + df.day, format="%Y%m%d"
+            ),
+            index=df.index,
+        )
 
         df.index = pd.to_datetime(date)
         df.drop(PrmsDay.date_header, axis=1, inplace=True)
-        df.columns.name = 'input variables'
-        df.index.name = 'date'
+        df.columns.name = "input variables"
+        df.index.name = "date"
 
         return df
 
@@ -176,14 +182,14 @@ class PrmsDay(object):
 
         if not os.path.exists(self.__ws):
             os.mkdir(self.__ws)
-        
+
         if out_path == in_path:
             df = self.dataframe
 
         if self.__dataframe is None:
             # No modifications were made, therefore we can directly write
             # from input file to the output file.
-            with open(out_path, 'w') as f_out:
+            with open(out_path, "w") as f_out:
                 with open(in_path) as f_in:
                     for line in f_in:
                         f_out.write(line)
@@ -191,23 +197,26 @@ class PrmsDay(object):
         else:
             # reconstruct original datafile format
             df = self.dataframe
-            df['year'] = df.index.year
-            df['month'] = df.index.month
-            df['day'] = df.index.day
-            df['hh'] = df['mm'] = df['sec'] = 0
+            df["year"] = df.index.year
+            df["month"] = df.index.month
+            df["day"] = df.index.day
+            df["hh"] = df["mm"] = df["sec"] = 0
 
             df = df[PrmsDay.date_header + self.__pd_hru_header]
 
-            with open(out_path, 'w') as f:
+            with open(out_path, "w") as f:
                 f.write(self.__header)
-                f.write("{} {}\n".format(self.__day_variable_declaration,
-                                         self._nhru_declaration))
+                f.write(
+                    "{} {}\n".format(
+                        self.__day_variable_declaration, self._nhru_declaration
+                    )
+                )
                 if self.__orad_flag:
-                    f.write('orad 1\n')
+                    f.write("orad 1\n")
 
                 f.write("#" * 40 + "\n")
 
-                df.to_csv(f, sep=' ', header=None, index=False, na_rep=-999)
+                df.to_csv(f, sep=" ", header=None, index=False, na_rep=-999)
 
             del df
             self.__dataframe = None

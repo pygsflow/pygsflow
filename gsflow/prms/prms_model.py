@@ -103,9 +103,13 @@ class PrmsModel(object):
             data_file = control.get_values("data_file")[0]
             data_file = gsflow_io.get_file_abs(model_ws=model_ws, fn=data_file)
 
-            day_files = [gsflow_io.get_file_abs(model_ws=model_ws,
-                                                fn=control.get_values(dfn)[0])
-                for dfn in control.record_names if dfn.endswith("_day")]
+            day_files = [
+                gsflow_io.get_file_abs(
+                    model_ws=model_ws, fn=control.get_values(dfn)[0]
+                )
+                for dfn in control.record_names
+                if dfn.endswith("_day")
+            ]
 
             # todo: check for Day files
         else:
@@ -118,10 +122,13 @@ class PrmsModel(object):
             data_file = control.get_values("data_file")[0]
             data_file = gsflow_io.get_file_abs(control_file, data_file)
 
-            day_files = [gsflow_io.get_file_abs(control_file,
-                                                fn=control.get_values(dfn)[0])
-                         for dfn in control.record_names if
-                         dfn.endswith("_day")]
+            day_files = [
+                gsflow_io.get_file_abs(
+                    control_file, fn=control.get_values(dfn)[0]
+                )
+                for dfn in control.record_names
+                if dfn.endswith("_day")
+            ]
 
         parameters = PrmsModel._load_parameters(parameter_files)
         data = PrmsModel._load_data(data_file)
@@ -133,7 +140,9 @@ class PrmsModel(object):
         else:
             day_files = None
         print("PRMS model loaded ...")
-        return PrmsModel(control=control, parameters=parameters, data=data, day=day_files)
+        return PrmsModel(
+            control=control, parameters=parameters, data=data, day=day_files
+        )
 
     @staticmethod
     def _load_parameters(parameter_files):
