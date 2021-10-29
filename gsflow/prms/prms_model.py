@@ -1,5 +1,6 @@
 from ..control import ControlFile
 from .prms_parameter import PrmsParameters
+from .prms_day import PrmsDay
 from .prms_data import PrmsData
 from ..output import StatVar
 from ..utils import gsflow_io
@@ -18,6 +19,8 @@ class PrmsModel(object):
     control : ControlFile object
     parameters : PrmsParameters object
     data : PrmsData object
+    day : dict
+        dictionary of PrmsDay objects
 
     Examples
     --------
@@ -33,7 +36,7 @@ class PrmsModel(object):
 
     """
 
-    def __init__(self, control, parameters=None, data=None):
+    def __init__(self, control, parameters=None, data=None, day=None):
         self.control = control
         self._control_file = control.control_file
 
@@ -46,6 +49,8 @@ class PrmsModel(object):
         if data is None:
             data_file = control.get_values("data_file")
             self.data = PrmsModel._load_data(data_file)
+
+        self.day = day
 
     def export_nc(self, f, modflow, **kwargs):
         """
@@ -97,6 +102,12 @@ class PrmsModel(object):
             ]
             data_file = control.get_values("data_file")[0]
             data_file = gsflow_io.get_file_abs(model_ws=model_ws, fn=data_file)
+
+            day_files = [gsflow_io.get_file_abs(model_ws=model_ws,
+                                                fn=control.get_values(dfn)[0])
+                for dfn in control.record_names if dfn.endswith("_day")]
+
+            # todo: check for Day files
         else:
             control = ControlFile.load_from_file(control_file)
             parameter_files = control.get_values("param_file")
@@ -107,10 +118,22 @@ class PrmsModel(object):
             data_file = control.get_values("data_file")[0]
             data_file = gsflow_io.get_file_abs(control_file, data_file)
 
+            day_files = [gsflow_io.get_file_abs(control_file,
+                                                fn=control.get_values(dfn)[0])
+                         for dfn in control.record_names if
+                         dfn.endswith("_day")]
+
         parameters = PrmsModel._load_parameters(parameter_files)
         data = PrmsModel._load_data(data_file)
+        if day_files:
+            day_files = {}
+            for f in day_files:
+                day = PrmsDay(f)
+                day_files[day.variable_name] = day
+        else:
+            day_files = None
         print("PRMS model loaded ...")
-        return PrmsModel(control=control, parameters=parameters, data=data)
+        return PrmsModel(control=control, parameters=parameters, data=data, day=day_files)
 
     @staticmethod
     def _load_parameters(parameter_files):

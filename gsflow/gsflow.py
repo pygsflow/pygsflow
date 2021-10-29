@@ -356,6 +356,11 @@ class GsflowModel(object):
                 self.prms.data.model_dir = workspace
                 self.control.set_values("data_file", [curr_file])
 
+                # change day files
+                if self.prms.day is not None:
+                    for dvar, day in self.prms.day.items():
+                        day.change_file_ws(workspace)
+
             # change mf
             if self.mf is not None:
                 self.mf.change_model_ws(workspace, reset_external=True)
@@ -447,6 +452,11 @@ class GsflowModel(object):
             self.prms.data.name = dfile
             self.control.set_values("data_file", [curr_file])
 
+            # change day files
+            if self.prms.day is not None:
+                for dvar, day in self.prms.day.items():
+                    day.change_file_ws(workspace)
+
             # flatten mf
             if self.mf is not None:
                 self.mf.change_model_ws(workspace)
@@ -504,7 +514,7 @@ class GsflowModel(object):
                         "modflow_name",
                         "param_file",
                         "data_file",
-                    ):
+                    ) or rec_name.endswith("_day"):
                         file_values = self.control.get_values(rec_name)
                         file_value = []
                         for fil in file_values:
@@ -580,6 +590,7 @@ class GsflowModel(object):
             "control",
             "parameters",
             "prms_data",
+            "prms_day",
             "mf",
             "modsim",
         )
@@ -614,6 +625,13 @@ class GsflowModel(object):
             if len(write_only) == 0 or "prms_data" in write_only:
                 print("Writing Data file ...")
                 self.prms.data.write()
+
+            # write day
+            if len(write_only) == 0 or "prms_day" in write_only:
+                print("Writing Day files ...")
+                if self.prms.day is not None:
+                    for dvar, day in self.prms.day.items():
+                        day.write()
 
         # write mf
         if self.mf is not None:
