@@ -648,7 +648,7 @@ class GsflowModel(object):
                 print("Writing MODSIM shapefile")
                 self.modsim.write_modsim_shapefile()
 
-    def run_model(self, model_ws=".", forgive=False, gsflow_exe=None):
+    def run_model(self, model_ws=".", forgive=False, gsflow_exe=None, silent=False):
         """
         Method to run a gsflow model
 
@@ -662,6 +662,8 @@ class GsflowModel(object):
             path to gsflow_exe, if gsflow_exe is None it will use
             the previously defined gsflow_exe variable or the default
             gsflow.exe.
+        silent : bool
+            flag to supress output printing to terminal during model run
 
         Returns
         -------
@@ -697,6 +699,7 @@ class GsflowModel(object):
             namefile=fn,
             normal_msg=normal_msg,
             model_ws=model_ws,
+            silent=silent
         )
 
     def _generate_batch_file(self):
