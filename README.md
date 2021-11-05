@@ -20,7 +20,7 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
 
 ## Installation
 The pygsflow repository can be installed using pip.
-To install the version 1.0.0 release open a command prompt or anaconda prompt terminal and type:
+To install the most recent release version, open a command prompt or anaconda prompt terminal and type:
 
 `pip install pygsflow`
 
