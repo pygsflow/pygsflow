@@ -78,8 +78,7 @@ Application Programming Interface (API)  allows the user to work with class-base
 methods to create GSFLOW [@Markstrom:2008], PRMS [@Markstrom:2015], MODSIM 
 [@Labadie:2006] vectorized surface water operations networks, and 
 MODFLOW [@Harbaugh:2005] model packages and binds them into a single integrated 
-model instance. model packages and binds them into a single integrated model 
-instance. pyGSFLOW leverages features from FloPy, an existing Python package 
+model instance. pyGSFLOW leverages features from FloPy, an existing Python package 
 for the MODFLOW suite of groundwater modeling software
 [@Harbaugh:2005; @Niswonger:2011; @Panday:2013; @Langevin:2017] 
 and extends the capabilities for integrated hydrologic models. pyGSFLOW 
