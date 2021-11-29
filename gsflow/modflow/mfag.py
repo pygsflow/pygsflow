@@ -321,6 +321,27 @@ class ModflowAg(flopy.modflow.ModflowAg):
             nper=nper,
         )
 
+    @property
+    def segment_list(self):
+        segments = []
+        if self.irrdiversion is not None:
+            for _, recarray in self.irrdiversion.items():
+                if np.isscalar(recarray):
+                    continue
+                t = np.unique(recarray["segid"])
+                for seg in t:
+                    segments.append(seg)
+
+            segments = list(set(segments))
+
+        # if pond list exists pop off segments that are routed to ponds
+        if self.pond_list is not None:
+            for seg in self.pond_list['segid']:
+                if seg in segments:
+                    segments.pop(segments.index(seg))
+
+        return segments
+
     def write_file(self, check=False):
         """
         Write method for ModflowAwu
