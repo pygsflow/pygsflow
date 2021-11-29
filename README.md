@@ -5,6 +5,7 @@
 [![pygsflow continuous integration](https://github.com/pygsflow/pygsflow/actions/workflows/ci.yml/badge.svg)](https://github.com/pygsflow/pygsflow/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/pygsflow/pygsflow/branch/master/graph/badge.svg?token=UC4KRJAHUS)](https://codecov.io/gh/pygsflow/pygsflow)
 [![PyPI](https://img.shields.io/pypi/v/pygsflow?style=plastic)](https://pypi.org/project/pygsflow/)
+[![JOSS](https://joss.theoj.org/papers/d3989e65aedcc241930001cd32ba3a92/status.svg)](https://joss.theoj.org/papers/d3989e65aedcc241930001cd32ba3a92)
 
 # pygsflow
 pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW models
