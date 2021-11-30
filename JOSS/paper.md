@@ -20,9 +20,9 @@ authors:
     ocrid: 0000-0001-6397-2403
     affiliation: 2  
 affiliations:
-  - name: U.S. Geological Survey, California Water Science Center, United States Geological Survey, Sacramento, CA
+  - name: California Water Science Center, United States Geological Survey, Sacramento, CA
     index: 1
-  - name: U.S. Geological Survey, Integrated Modeling and Prediction Division, Water Mission Area, United States Geological Survey, Menlo Park, CA
+  - name: Integrated Modeling and Prediction Division, Water Mission Area, United States Geological Survey, Menlo Park, CA
     index: 2  
 date: 19 March 2021
 bibliography: paper.bib
