@@ -22,6 +22,10 @@ Ipython notebook example problems can be found in the examples directory.
 https://github.com/pygsflow/pygsflow/tree/master/examples
 
 ## Installation
+*Requirements*  
+   1) Python 3.6 or greater
+   2) FloPy 3.3.4  
+    
 The pygsflow repository can be installed using pip.
 To install the most recent release version, open a command prompt or anaconda prompt terminal and type:
 
@@ -31,7 +35,10 @@ or
 
 `pip install https://github.com/pygsflow/pygsflow/zipball/master`
 
-Or to install the development version with the most recent updates
+Or to install the development version with the most recent updates:  
+*Requirements*
+   1) Python 3.7 or greater
+   2) FloPy 3.3.5 ([develop](https://github.com/modflowpy/flopy/tree/develop))
 
 `pip install https://github.com/pygsflow/pygsflow/zipball/develop`
 
