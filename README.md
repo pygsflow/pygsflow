@@ -17,6 +17,17 @@ pyGSFLOW API documentation can be found @
 
 https://pygsflow.github.io/pygsflowdocs/
 
+## Requirements
+Version 1.0.1 (Master branch and from pypi)
+   1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
+   2) Python 3.6 or greater  
+   3) FloPy 3.3.4 (`pip install flopy==3.3.4`)
+
+Version 1.1.0 (Develop branch)
+   1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
+   2) Python 3.7 or greater  
+   3) FloPy 3.3.5 (`pip install -U https://github.com/modflowpy/flopy/zipball/develop`)
+
 ## Examples
 Ipython notebook example problems can be found in the examples directory.  
 https://github.com/pygsflow/pygsflow/tree/master/examples
@@ -38,7 +49,7 @@ or
 Or to install the development version with the most recent updates:  
 *Requirements*
    1) Python 3.7 or greater
-   2) FloPy 3.3.5 ([develop](https://github.com/modflowpy/flopy/tree/develop))
+   2) FloPy 3.3.5 ([develop](https://github.com/modflowpy/flopy/tree/develop)) (`pip install -U https://github.com/modflowpy/flopy/zipball/develop`)
 
 `pip install https://github.com/pygsflow/pygsflow/zipball/develop`
 
