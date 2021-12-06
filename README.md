@@ -58,7 +58,7 @@ Survey Software Release, 2 July 2021, https://doi.org/10.5066/P9NPZ5AD](https://
 The code is in active development and although there is a testing infrastructure set up we cannot catch all the software bugs without the help of users. If you find a bug or have an issue, please report it by opening a new issue. You can open a new issue by clicking the issues tab near the top of the page.
 
 ## Contributing
-Please see [Contribting.md](https://github.com/modflowpy/flopy/blob/develop/CONTRIBUTING.md)
+Please see [Contribting.md](https://github.com/pygsflow/pygsflow/blob/develop/CONTRIBUTING.md)
 
 ## Running Autotests Locally
 pyGSFLOW uses github actions CI to automatically test code for each commit and pull request. These tests can also be run locally.
