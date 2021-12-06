@@ -11,7 +11,14 @@ import os
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-if sys.version_info >= (3, 6):
+if sys.version_info == (3, 6):
+    requirements = ["pandas",
+                    "numpy",
+                    "flopy == 3.3.4",
+                    "pyshp",
+                    "pycrs",
+                    "matplotlib"]
+elif sys.version_info >= (3, 7):
     requirements = ["pandas",
                     "numpy",
                     "flopy >= 3.3.4",
@@ -19,7 +26,7 @@ if sys.version_info >= (3, 6):
                     "pycrs",
                     "matplotlib"]
 else:
-    raise EnvironmentError("pyGSFLOW is only supported with python 3.7 and above")
+    raise EnvironmentError("pyGSFLOW is only supported with python 3.6 and above")
 
 setup_requirements = []
 
@@ -44,7 +51,7 @@ setup(
         'Topic :: Scientific/Engineering :: Hydrology',
         "Operating System :: OS Independent"
     ],
-    python_requires=">=3.4",
+    python_requires=">=3.6",
     description="pyGSFLOW is a python package to create, run, and " +
                 "post-process GSFLOW-based models",
     install_requires=requirements,
