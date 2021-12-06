@@ -11,7 +11,7 @@ import os
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 6):
     requirements = ["pandas",
                     "numpy",
                     "flopy >= 3.3.4",
