@@ -59,7 +59,11 @@ jobs:
     - name: Install flopy and pygsflow
       shell: bash -l {0}
       run: |
-        pip install https://github.com/modflowpy/flopy/zipball/develop
+        if [ ${{ matrix.python-version }} == 3.6 ]; then
+          pip install flopy
+        else
+          pip install https://github.com/modflowpy/flopy/zipball/develop
+        fi
         pip install .
 
     - name: Setup symbolic link to gfortran on Linux
@@ -86,7 +90,11 @@ jobs:
         cd ..
         pip install pytest
         pip install pytest-cov
-        pip install https://github.com/modflowpy/flopy/zipball/develop
+        if [ ${{ matrix.python-version }} == 3.6 ]; then
+          pip install flopy
+        else
+          pip install https://github.com/modflowpy/flopy/zipball/develop
+        fi
         pip install .
         pytest ./autotest/ --cov=gsflow --cov-report=xml
 
