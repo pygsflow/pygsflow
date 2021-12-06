@@ -45,6 +45,7 @@ or
 `pip install https://github.com/pygsflow/pygsflow/zipball/master`
 
 **Version 1.1.0** (Develop version with most recent updates)
+
 To install the development version, open a terminal, command prompt or anaconda promt and type:  
 
 `pip install https://github.com/pygsflow/pygsflow/zipball/develop`
