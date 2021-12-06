@@ -22,20 +22,18 @@ Ipython notebook example problems can be found in the examples directory.
 https://github.com/pygsflow/pygsflow/tree/master/examples
 
 ## Requirements
-Version 1.0.1 (Master branch and from pypi)
+**Version 1.0.1** (Master branch and from pypi)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.6 or greater  
    3) FloPy 3.3.4 (`pip install flopy==3.3.4`)
 
-Version 1.1.0 (Develop branch)
+**Version 1.1.0** (Develop branch)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.7 or greater  
-   3) FloPy 3.3.5 (`pip install -U https://github.com/modflowpy/flopy/zipball/develop`)
+   3) [FloPy 3.3.5](https://github.com/modflowpy/flopy/tree/develop) (`pip install -U https://github.com/modflowpy/flopy/zipball/develop`)
 
 ## Installation
-*Requirements*  
-   1) Python 3.6 or greater
-   2) FloPy 3.3.4  
+**Version 1.0.1** (Master branch and from pypi)
     
 The pygsflow repository can be installed using pip.
 To install the most recent release version, open a command prompt or anaconda prompt terminal and type:
@@ -46,10 +44,8 @@ or
 
 `pip install https://github.com/pygsflow/pygsflow/zipball/master`
 
+**Version 1.1.0** (Develop version with most recent updates)
 Or to install the development version with the most recent updates:  
-*Requirements*
-   1) Python 3.7 or greater
-   2) FloPy 3.3.5 ([develop](https://github.com/modflowpy/flopy/tree/develop)) (`pip install -U https://github.com/modflowpy/flopy/zipball/develop`)
 
 `pip install https://github.com/pygsflow/pygsflow/zipball/develop`
 
@@ -73,7 +69,7 @@ Please see [Contribting.md](https://github.com/pygsflow/pygsflow/blob/develop/CO
 
 ## Running Autotests Locally
 pyGSFLOW uses github actions CI to automatically test code for each commit and pull request. These tests can also be run locally.
-To run tests locally from the pygsflow root directory, open a command prompt, anaconda prompt, or terminal window:
+To run tests locally, navigate to pygsflow's root directory, open a command prompt, anaconda prompt, or terminal window:
 
 with nosetests:
 ```
@@ -85,6 +81,14 @@ with pytest:
 ```
 cd autotest
 pytest
+```
+
+*How to find pygsflow's root directory:*
+
+Open a python terminal and type:
+```python
+import gsflow
+print(gsflow.__file__)
 ```
 
 ## Project History
