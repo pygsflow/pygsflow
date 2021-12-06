@@ -156,6 +156,34 @@ class Modflow(fpModflow):
     def model_ws(self):
         return super(Modflow, self).model_ws
 
+    @property
+    def nper(self):
+        try:
+            return self.dis.nper
+        except AttributeError:
+            return 0
+
+    @property
+    def nrow(self):
+        try:
+            return self.modelgrid.nrow
+        except AttributeError:
+            return 0
+
+    @property
+    def ncol(self):
+        try:
+            return self.modelgrid.ncol
+        except AttributeError:
+            return 0
+
+    @property
+    def ncpl(self):
+        try:
+            return self.modelgrid.ncpl
+        except AttributeError:
+            return 0
+
     def change_model_ws(self, new_pth=None, reset_external=False):
         """
         Change the model work space.

@@ -30,7 +30,7 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
 **Version 1.1.0** (Develop branch)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.7 or greater  
-   3) [FloPy 3.3.5](https://github.com/modflowpy/flopy/tree/develop) (`pip install -U https://github.com/modflowpy/flopy/zipball/develop`)
+   3) Flopy 3.3.4 or greater (`pip install flopy`)
 
 ## Installation
 **Version 1.0.1** (Master branch and from pypi)
