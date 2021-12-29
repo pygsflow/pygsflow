@@ -18,7 +18,10 @@ pyGSFLOW API documentation can be found @
 https://pygsflow.github.io/pygsflowdocs/
 
 ## Examples
-Ipython notebook example problems can be found in the examples directory.  
+Basic examples can be found in the Tutorial Examples tab of the pyGSFLOW API
+documentation at https://pygsflow.github.io/pygsflowdocs/tutorials.html#
+
+Interactive jupyter notebook example problems can be found in the examples directory.  
 https://github.com/pygsflow/pygsflow/tree/master/examples
 
 ## Requirements
@@ -54,6 +57,17 @@ Alternatively the user can download a copy of the repository, open a command pro
 
 `pip install . `
 
+**Additional Linux installation instructions**
+
+To use the default version of GSFLOW for Linux that is distributed with pyGSFLOW the user
+needs to set the permissions of the GSFLOW binary program to execute. From
+a terminal window cd into the trunk/bin directory of the pyGSFLOW repository and
+write:
+```
+chmod u+x gsflow
+chmod u+x CRT_1.3.1
+```
+
 ## Authors
 Ayman Alzraiee, Joshua Larsen, Donald Martin, Rich Niswonger
 
@@ -66,7 +80,7 @@ Survey Software Release, 2 July 2021, https://doi.org/10.5066/P9NPZ5AD](https://
 The code is in active development and although there is a testing infrastructure set up we cannot catch all the software bugs without the help of users. If you find a bug or have an issue, please report it by opening a new issue. You can open a new issue by clicking the issues tab near the top of the page.
 
 ## Contributing
-Please see [Contribting.md](https://github.com/pygsflow/pygsflow/blob/develop/CONTRIBUTING.md)
+Please see [Contributing.md](https://github.com/pygsflow/pygsflow/blob/develop/CONTRIBUTING.md)
 
 ## Running Autotests Locally
 pyGSFLOW uses github actions CI to automatically test code for each commit and pull request. These tests can also be run locally.
