@@ -19,24 +19,25 @@ def is_number(s):
 
 class PrmsParameters(ParameterBase):
     """
-    Class to hold parameters information.
+    Class to hold PRMS parameter information.
+    This class enables reading, writing, and editing PRMS parameter files.
 
     Parameters
     ----------
     parameters_list : list
         list of ParameterRecord objects
-
     headers : str, optional
         file header
 
     Examples
     --------
 
-    load from file
+    Load parameters from file
 
+    >>> import gsflow
     >>> params = gsflow.prms.PrmsParameters.load_from_file(["myparams1.txt", "myparams2.txt"])
 
-    create new object
+    create a new PrmsParameters object
 
     >>> params = gsflow.prms.PrmsParameters([parameter_record1, parameter_record2,])
 
@@ -56,9 +57,7 @@ class PrmsParameters(ParameterBase):
     @property
     def parameters_list(self):
         """
-        Returns
-        -------
-            list of parameter records
+        Returns a list of parameter records
 
         """
         return self._records_list
@@ -66,10 +65,7 @@ class PrmsParameters(ParameterBase):
     @property
     def parameter_files(self):
         """
-
-        Returns
-        -------
-            list of parameter file names
+        Returns a list of parameter file names
 
         """
         all_files = []
@@ -311,6 +307,7 @@ class PrmsParameters(ParameterBase):
         after=None,
     ):
         """
+        Method to add a new parameter record to the PrmsParameters object
 
         Parameters
         ----------
@@ -504,9 +501,7 @@ class ParameterRecord(RecordBase):
     @property
     def values(self):
         """
-        Returns
-        -------
-            np.ndarray of record values
+        np.ndarray of record values
         """
         return self._values
 
@@ -536,7 +531,7 @@ class ParameterRecord(RecordBase):
         modflow : object
             fp.modflow.Modflow or gsflow.modflow.Modflow object
 
-        kwargs : **
+        kwargs : dict
             keyword arguments
 
         Notes

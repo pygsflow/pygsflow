@@ -23,12 +23,13 @@ class StatVar(object):
     Examples
     --------
 
-    load from control file
+    load from a control file
 
+    >>> import gsflow
     >>> control = gsflow.ControlFile.load_from_file("gsflow.gsflow")
     >>> stats = StatVar.load_from_control_object(control)
 
-    load from statistics file
+    load from a statistics file
 
     >>> stats = StatVar("mystatvar.txt")
 
@@ -48,7 +49,7 @@ class StatVar(object):
     @staticmethod
     def load_from_control_object(control):
         """
-        Load the stats var from a ControlFile object
+        Load the statvar from a ControlFile object
 
         Parameters
         ----------
@@ -56,7 +57,7 @@ class StatVar(object):
 
         Returns
         -------
-            Statistics object
+            StatVar object
 
         """
         statvar_file = control.get_values("stat_var_file")[0]

@@ -3,10 +3,11 @@ import os
 
 class Helper(object):
     """
-    Basic Help class
-    The function has two goals:
-    1) allow the user to get help on a parameter or a variable
-    2) allow pyGSFLOW to run error checkers on parameters values and sizes
+    Basic Help class for PRMS parameter variables
+
+    The function has two goals, 1) to allow the user to get help on a parameter
+    or a variable and 2) allow pyGSFLOW to run error checkers on parameters
+    values and sizes
 
     """
 
@@ -19,14 +20,29 @@ class Helper(object):
 
     @property
     def prms_parameter_names(self):
+        """
+        Returns a dictionary of prms parameter names that contains
+        user information about the specific parameter
+
+        """
         return self.__prms_parameter_names
 
     @property
     def prms_dimension_names(self):
+        """
+        Returns a dictionary of prms dimension names that contains
+        user information about the specific parameter
+
+        """
         return self.__prms_dimension_names
 
     @property
     def prms_output_variables(self):
+        """
+        Returns a dictionary of prms output variable names that contains
+        user information about the specific parameter
+
+        """
         return self.__prms_output_variables
 
     def _read_param_doc(self):

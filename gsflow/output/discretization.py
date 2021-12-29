@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 class PrmsDiscretization(object):
     """
-    The PrmsDiscretization object is for plotting hru's and
+    The PrmsDiscretization object is used for plotting hru's and
     hru data from Prms on matplotlib plots.
 
     Could also be used for exporting shape files of data
@@ -15,20 +15,20 @@ class PrmsDiscretization(object):
     Parameters
     ----------
     xypts : list
-        list of hru [(x1, y1)....(xn, yn)] points
-        3 dimensional
+        3 dimensional list of hru [(x1, y1)....(xn, yn)] points
 
     Examples
     --------
 
     load from shapefile
 
+    >>> import gsflow
     >>> dis = gsflow.output.PrmsDiscretization.load_from_shapefile("myshape.shp")
 
     load from flopy grid
 
     >>> gsf = gsflow.GsflowModel.load_from_file("mycontrol.control")
-    >>> ml = gsflow.mf
+    >>> ml = gsf.mf
     >>> dis = gsflow.output.PrmsDiscretization.load_from_flopy(model=ml)
 
     """
@@ -63,9 +63,7 @@ class PrmsDiscretization(object):
     @property
     def x_hru_centers(self):
         """
-        Returns
-        -------
-            np.ndarray of x-centers for each hru
+        Returns a np.ndarray of x-centers for each hru
 
         """
         if self._xcenters is None:
@@ -76,9 +74,7 @@ class PrmsDiscretization(object):
     @property
     def y_hru_centers(self):
         """
-        Returns
-        -------
-            np.ndarray of y-centers for each hru
+        Returns a np.ndarray of y-centers for each hru
 
         """
         if self._ycenters is None:
@@ -89,9 +85,7 @@ class PrmsDiscretization(object):
     @property
     def nhru(self):
         """
-        Returns
-        -------
-            number of hrus
+        Returns the number of hrus
 
         """
         return self._nhru
@@ -99,9 +93,7 @@ class PrmsDiscretization(object):
     @property
     def xypts(self):
         """
-        Returns
-        -------
-            np.ndarray of xy-points for each hru
+        Returns a np.ndarray of xy-points for each hru
 
         """
         return self._xypts
@@ -109,9 +101,7 @@ class PrmsDiscretization(object):
     @property
     def extent(self):
         """
-        Returns
-        -------
-            tuple (xmin, xmax, ymin, ymax)
+        Returns a tuple of (xmin, xmax, ymin, ymax)
         """
         return self._extent
 

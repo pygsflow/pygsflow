@@ -79,10 +79,18 @@ class RecordBase(object):
 
     @property
     def values(self):
+        """
+        Returns the record's values
+
+        """
         return self._values
 
     @property
     def nvalues(self):
+        """
+        Returns the number of values in the record
+
+        """
         if isinstance(self._values, np.ndarray):
             return self._values.size
         elif isinstance(self._values, list):

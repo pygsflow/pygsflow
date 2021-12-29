@@ -19,7 +19,7 @@ class GsflowModel(object):
     """
     GsflowModel is the GSFLOW model object. This class can be used
     to build a GSFLOW model, to load a GSFLOW model from it's control file,
-    to write input files for GSFLOW and to run GSFLOW.
+    to write input files for GSFLOW, and to run GSFLOW.
 
     Parameters
     ----------
@@ -36,8 +36,8 @@ class GsflowModel(object):
     gsflow_exe : str
         GSFLOW executable path and name
     modsim : bool
-        boolean flag to indicate that modsim is active
-        this creates a gsflow.modsim.Modsim object
+        boolean flag to indicate that modsim is active. This
+        creates a gsflow.modsim.Modsim object
     model_ws : str, None
         override method to set the base model directory when the
         GSFLOW control file is not located in the same directory as
@@ -46,12 +46,12 @@ class GsflowModel(object):
     Examples
     --------
 
-    load from control file
+    Load model from a control file
 
     >>> import gsflow
     >>> gsf = gsflow.GsflowModel.load_from_file("gsflow.control")
 
-    create new, empty gsflow object
+    Create a new, empty gsflow object
 
     >>> control = gsflow.ControlFile(records_list=[])
     >>> gsf = gsflow.GsflowModel(control=control)
@@ -117,25 +117,22 @@ class GsflowModel(object):
     @property
     def modflow_only(self):
         """
-        Returns
-        -------
-            bool
+        Returns boolean value indicating if the model is a modflow only model
+
         """
         return self._modflow_only
 
     @property
     def prms_only(self):
         """
-        Returns
-        -------
-            bool
+        Returns a boolean value indicating if the model is a prms only model
         """
         return self._prms_only
 
     def export_nc(self, f, **kwargs):
         """
         Method to export the GSFLOW model as a netcdf
-        file. This method only works if nhru is equivalent
+        file. Note: This method only works if nhru is equivalent
         to nrow * ncol in modflow.
 
         Parameters
@@ -174,7 +171,7 @@ class GsflowModel(object):
         Parameters
         ----------
         control_file : str
-            control file path & name, GSFLOW
+            control file path & name
         gsflow_exe : str
             gsflow executable path & name
         modflow_only : bool
@@ -298,10 +295,13 @@ class GsflowModel(object):
     def write_input(self, basename=None, workspace=None, write_only=None):
         """
          Write input files for gsflow. Four cases are possible:
-            (1) if basename and workspace are None,then the exisiting files will be overwritten
-            (2) if basename is specified, only file names will be changes
-            (3) if only workspace is specified, only folder will be changed
-            (4) when both basename and workspace are specifed both files are changed
+            - if basename and workspace are None,then the exisiting files
+            will be overwritten
+            - if basename is specified, only file names will be changes
+            - if only workspace is specified, only the directory will be
+            changed
+            - when both basename and workspace are specifed both files and
+            the directory they are written to are changed
 
         Parameters
         ----------

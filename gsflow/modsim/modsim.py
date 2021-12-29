@@ -24,14 +24,15 @@ class Modsim(object):
 
     Parameters
     ----------
-        model : gsflow.GsflowModel instance or gsflow.modflow.Modflow instance
-        other : str or None
-            include can be used to add an optional sfr field (ex. strhc1) to the
-            stream vector shapefile.
+    model : gsflow.GsflowModel instance or gsflow.modflow.Modflow instance
+    other : str or None
+        include can be used to add an optional sfr field (ex. strhc1) to the
+        stream vector shapefile.
 
     Examples
     --------
 
+    >>> import gsflow
     >>> gsf = gsflow.GsflowModel.load_from_file("gsflow.control")
     >>> modsim = gsflow.modsim.Modsim(gsf)
     >>> modsim.write_modsim_shapefile("myshp.shp")
@@ -67,11 +68,7 @@ class Modsim(object):
     @property
     def sfr_segs(self):
         """
-        Get all of the SFR segments
-
-        Returns
-        -------
-            list of sfr segments
+        Returns a list of the SFR segments
 
         """
         if not self._ready:
@@ -88,11 +85,7 @@ class Modsim(object):
     @property
     def lake_segs(self):
         """
-        Get all of the lake numbers connected to SFR segments
-
-        Returns
-        -------
-            list of all lakes in the sfr network
+        Returns a list of the lake numbers connected to SFR segments
 
         """
         if not self._ready:
@@ -115,12 +108,7 @@ class Modsim(object):
     @property
     def sfr_topology(self):
         """
-        Creates a list of SFR topology objects
-
-        Returns
-        -------
-            list of _SfrTopology objects for writing
-            to shapefile
+        Returns a list of SFR topology objects for writing to shapefile
 
         """
         sfr_topo = []
@@ -136,12 +124,7 @@ class Modsim(object):
     @property
     def lake_topology(self):
         """
-        Creates a list of LAK topology objects
-
-        Returns
-        -------
-            list of _LakTopology objects for writing
-            to shapefile
+        Returns a list of LAK topology objects for writing to shapefile
 
         """
         lake_topo = []

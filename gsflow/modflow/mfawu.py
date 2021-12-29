@@ -6,6 +6,8 @@ warnings.simplefilter("always", PendingDeprecationWarning)
 
 class ModflowAwu(ModflowAg):
     """
+    DEPRECATED and will be removed in version 1.1.0
+
     The ModflowAwu class is used to build read, write, and edit data
     from the MODFLOW-NWT AG package.
 
@@ -60,8 +62,8 @@ class ModflowAwu(ModflowAg):
     ):
 
         err = (
-            "ModflowAwu is deprecated and will be removed, please use"
-            " ModflowAg in the future"
+            "ModflowAwu is deprecated and will be removed for version 1.1.0, "
+            "please use ModflowAg"
         )
         warnings.warn(err, PendingDeprecationWarning)
 

@@ -27,6 +27,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
         dictionary of the irrdiversion block
     irrwell : dict {per: np.recarray}
         dictionary of the irrwell block
+    irrpond : dict {per: np.recarray}
+        dictionary of the irrpond block
     supwell : dict {per: np.recarray}
         dictionary of the supwell block
     extension : str, optional
@@ -44,8 +46,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
     load a ModflowAg file
 
     >>> import gsflow
-    >>> ml = gsflow.modflow.Modflow('awutest')
-    >>> ag = gsflow.modflow.ModflowAg.load('test.awu', ml, nper=2)
+    >>> ml = gsflow.modflow.Modflow('agtest')
+    >>> ag = gsflow.modflow.ModflowAg.load('test.g', ml, nper=2)
 
     """
 
@@ -323,6 +325,10 @@ class ModflowAg(flopy.modflow.ModflowAg):
 
     @property
     def segment_list(self):
+        """
+        Method to get a unique list of segments from irrdiversion and irrpond
+
+        """
         segments = []
         if self.irrdiversion is not None:
             for _, recarray in self.irrdiversion.items():
@@ -344,7 +350,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
 
     def write_file(self, check=False):
         """
-        Write method for ModflowAwu
+        Write method for ModflowAg
 
         Parameters
         ----------
@@ -1199,6 +1205,80 @@ class ModflowAg(flopy.modflow.ModflowAg):
             nper=nper,
         )
 
+    def plot(self, **kwargs):
+        """
+        Plot 2-D, 3-D, transient 2-D, and stress period list (MfList)
+        package input data
+
+        Parameters
+        ----------
+        **kwargs : dict
+            filename_base : str
+                Base file name that will be used to automatically generate file
+                names for output image files. Plots will be exported as image
+                files if file_name_base is not None. (default is None)
+            file_extension : str
+                Valid matplotlib.pyplot file extension for savefig(). Only used
+                if filename_base is not None. (default is 'png')
+            mflay : int
+                MODFLOW zero-based layer number to return.  If None, then all
+                all layers will be included. (default is None)
+            kper : int
+                MODFLOW zero-based stress period number to return. (default is
+                zero)
+            key : str
+                MfList dictionary key. (default is None)
+
+        Returns
+        ----------
+        axes : list
+            Empty list is returned if filename_base is not None. Otherwise
+            a list of matplotlib.pyplot.axis are returned.
+
+        See Also
+        --------
+
+        Notes
+        -----
+
+        Examples
+        --------
+        >>> import gsflow
+        >>> ml = gsflow.modflow.Modflow.load('test.nam')
+        >>> ml.ag.plot()
+
+        """
+        return super(ModflowAg, self).plot(**kwargs)
+
+    def to_shapefile(self, filename, **kwargs):
+        """
+        Export 2-D, 3-D, and transient 2-D model data to shapefile (polygons).
+        Adds an attribute for each layer in each data array
+
+        Parameters
+        ----------
+        filename : str
+            Shapefile name to write
+
+        Returns
+        ----------
+        None
+
+        See Also
+        --------
+
+        Notes
+        -----
+
+        Examples
+        --------
+        >>> import gsflow
+        >>> ml = gsflow.modflow.Modflow.load('test.nam')
+        >>> ml.ag.to_shapefile('test_hk.shp')
+
+        """
+        return super(ModflowAg, self).to_shapefile(filename, **kwargs)
+
 
 def _read_irrpond_block(fobj, nrec, recarray, trigger):
     """
@@ -1249,3 +1329,5 @@ def _read_irrpond_block(fobj, nrec, recarray, trigger):
                     recarray[name][ix] = rec[ix2]
 
     return recarray
+
+

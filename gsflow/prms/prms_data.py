@@ -24,6 +24,7 @@ class PrmsData(object):
     Examples
     --------
 
+    >>> import gsflow
     >>> data = gsflow.prms.PrmsData.load_from_file("mydatafile")
 
     """
@@ -48,9 +49,8 @@ class PrmsData(object):
     @property
     def file_name(self):
         """
-        Returns
-        -------
-            the data file path
+        Returns the data file path
+
         """
         return os.path.join(self.model_dir, self.name)
 

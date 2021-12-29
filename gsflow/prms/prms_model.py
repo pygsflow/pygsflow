@@ -27,6 +27,7 @@ class PrmsModel(object):
 
     load from file
 
+    >>> import gsflow
     >>> prms = gsflow.prms.PrmsModel.load_from_file("gsflow.control")
 
     create new object
@@ -65,7 +66,7 @@ class PrmsModel(object):
 
         Notes
         -----
-        NetCdf export relies on flopy, so at the moment will
+        NetCdf export relies on flopy, so and will
         only work for GSFLOW models where PRMS has the same
         discretization as the modflow grid
 
@@ -111,7 +112,6 @@ class PrmsModel(object):
                 if dfn.endswith("_day")
             ]
 
-            # todo: check for Day files
         else:
             control = ControlFile.load_from_file(control_file)
             parameter_files = control.get_values("param_file")
@@ -198,9 +198,7 @@ class PrmsModel(object):
     @property
     def control_file(self):
         """
-        Returns
-        -------
-            control file path
+        Returns the control file path
         """
         return self._control_file
 
