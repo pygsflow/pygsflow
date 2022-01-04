@@ -174,7 +174,7 @@
             "basin_tsta": {
                 "dimension": "one",
                 "dtype": 1,
-                "record": 0
+                "record": 1
             },
             "carea_max": {
                 "dimension": "nhru",
@@ -476,7 +476,9 @@
             "hru_tsta": {
                 "dimension": "nhru",
                 "dtype": 1,
-                "record": 0
+                "record": [
+                    1
+                ]
             },
             "imperv_stor_max": {
                 "dimension": "nhru",
@@ -881,7 +883,7 @@
                 ]
             },
             "snarea_curve": {
-                "dimension": "ndepval",
+                "dimension": "ndeplval",
                 "dtype": 2,
                 "record": [
                     1.0
@@ -979,7 +981,9 @@
             "soil_moist_init_frac": {
                 "dimension": "nhru",
                 "dtype": 2,
-                "record": []
+                "record": [
+                    0.0
+                ]
             },
             "soil_moist_max": {
                 "dimension": "nhru",

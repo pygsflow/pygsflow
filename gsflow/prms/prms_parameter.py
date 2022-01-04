@@ -305,6 +305,7 @@ class PrmsParameters(ParameterBase):
         file_name=None,
         where=None,
         after=None,
+        replace=False
     ):
         """
         Method to add a new parameter record to the PrmsParameters object
@@ -326,10 +327,16 @@ class PrmsParameters(ParameterBase):
             index location to insert parameter
         after : int, optional
             index location - 1 to insert parameter
+        replace : bool
+            replace an existing parameter when True, default is False
 
         """
 
-        add = self._check_before_add(name, values)
+        add = self._check_before_add(name, values, replace)
+
+        if not add and replace:
+            self.remove_record(name)
+            add = True
 
         if add:
 
@@ -357,6 +364,26 @@ class PrmsParameters(ParameterBase):
 
         """
         super(PrmsParameters, self).remove_record(name)
+
+    def add_record_object(self, record_obj, replace=False):
+        """
+        Method to add a ParameterRecord object
+
+        record_obj : ParameterRecord object
+            ParameterRecord object
+        replace : bool
+            boolean flag that allows record replacement, default is False
+        """
+        add = self._check_before_add(
+            record_obj.name, record_obj.values, replace
+        )
+
+        if not add and replace:
+            self.remove_record(record_obj.name)
+            add = True
+
+        if add:
+            super(PrmsParameters, self).add_record(record_obj)
 
     def write(self, name=None):
         """

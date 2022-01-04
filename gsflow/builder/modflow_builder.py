@@ -47,7 +47,7 @@ class ModflowBuilder(object):
             self._defaults = defaults.to_dict()
         else:
             raise TypeError(
-                "Defaults must be Default or ModflowDefault object"
+                "Defaults must be Defaults or ModflowDefaults object"
             )
 
     @property

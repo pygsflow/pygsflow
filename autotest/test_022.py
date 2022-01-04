@@ -119,8 +119,35 @@ def test_modflow_builder():
         raise AssertionError("Model was not built properly")
 
 
+def test_controlfile_builder():
+    from gsflow.builder import ControlFileDefaults
+    from gsflow.builder import ControlFileBuilder
+    from gsflow import ControlFile
+
+    cfdict = ControlFileDefaults().to_dict()
+    cfdict = cfdict['control']
+
+    cfb = ControlFileBuilder()
+    control = cfb.build()
+
+    if not isinstance(control, ControlFile):
+        raise TypeError()
+
+    for k, d in cfdict.items():
+        record = d['record']
+        if isinstance(record, (int, float, str)):
+            record = [record, ]
+        cfbrecord = control.get_values(k)
+
+        if list(cfbrecord) != record:
+            raise AssertionError("ControlFile Builder failed on {}".format(k))
+
+
+
+
 if __name__ == "__main__":
     test_fishnet_import()
     test_fishnet_generation()
     test_import_modflow_builder()
     test_modflow_builder()
+    test_controlfile_builder()

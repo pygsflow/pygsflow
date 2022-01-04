@@ -242,7 +242,7 @@ class ControlFileDefaults(_DefaultsBase):
 
     """
 
-    def __init__(self, f):
+    def __init__(self, f=None):
         super().__init__(f)
         self._create_records()
 

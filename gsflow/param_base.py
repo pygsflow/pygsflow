@@ -130,7 +130,7 @@ class ParameterBase(object):
             warnings.warn(err, UserWarning)
             return None
 
-    def _check_before_add(self, name, values):
+    def _check_before_add(self, name, values, replace=False):
         """
         Internal method to check a record before adding to _records_list
 
@@ -140,6 +140,8 @@ class ParameterBase(object):
             record name
         values : list
             list of values
+        replace : bool
+            boolean flag to indicate if record should be replaced
 
         """
         if isinstance(name, str):
@@ -157,7 +159,8 @@ class ParameterBase(object):
                     name
                 )
             )
-            warnings.warn(err, UserWarning)
+            if not replace:
+                warnings.warn(err, UserWarning)
             return False
 
         return True
