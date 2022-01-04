@@ -12,9 +12,21 @@
             "dtype": 1,
             "record": 1
         },
+        "csv_output_file": {
+            "dtype": 4,
+            "record": "gsflow.csv"
+        },
         "et_module": {
             "dtype": 4,
             "record": "potet_jh"
+        },
+        "gsflow_output_file": {
+            "dtype": 4,
+            "record": "gsflow.out"
+        },
+        "model_mode": {
+            "dtype": 4,
+            "record": "GSFLOW"
         },
         "parameter_check_flag": {
             "dtype": 1,
@@ -102,8 +114,13 @@
     },
     "parameter": {
         "dimensions": {
+            "ndays": 366,
             "ndepl": 1,
-            "ndeplval": 11
+            "nlake": 0,
+            "nmonths": 12,
+            "nrain": 1,
+            "ntemp": 1,
+            "one": 1
         },
         "parameters": {
             "adjmix_rain": {

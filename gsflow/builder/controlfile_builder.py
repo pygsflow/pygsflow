@@ -1,4 +1,4 @@
-from .. import ControlFile, ControlRecord
+from .. import ControlFile
 from . import Defaults, ControlFileDefaults
 
 
@@ -19,6 +19,7 @@ class ControlFileBuilder(object):
         to the ControlFileBuilder to use a custom set of parameters
 
     """
+
     def __init__(self, defaults=None):
         if defaults is None:
             self._defaults = Defaults().control.to_dict()
@@ -31,7 +32,9 @@ class ControlFileBuilder(object):
                 "Defaults must be Defaults or ControlFileDefaults object"
             )
 
-    def build(self, name="gsflow_builder"):
+    def build(
+        self, name="gsflow_builder", parameter_obj=None, modflow_obj=None
+    ):
         """
         Method to build a pyGSFLOW ControlFile object
 
@@ -39,21 +42,43 @@ class ControlFileBuilder(object):
         ----------
         name : str, optional
             name of the control file/model
+        parameter_obj : gsflow.prms.parameters.PrmsParameters
+            optional parameter object, if supplied this adds parameter
+            file names to the gsflow control file
+        modflow_obj : gsflow.modflow.Modflow object
+            optional modflow object, if supplied this adds the modflow
+            nam file to the control file.
 
         Returns
         -------
             gsflow.control.ControlFile
         """
-        control = ControlFile(
-            records_list=[],
-            name=name
-        )
+        from ..prms import PrmsParameters
+        from ..modflow import Modflow
 
-        defaults = self._defaults['control']
+        control = ControlFile(records_list=[], name=name)
+
+        defaults = self._defaults["control"]
         for key, value in defaults.items():
-            record = value['record']
+            record = value["record"]
             if isinstance(record, (float, str, int)):
                 record = [record]
             control.add_record(key, record)
+
+        if isinstance(parameter_obj, PrmsParameters):
+            parameter_files = parameter_obj.parameter_files
+            record = []
+            for f in parameter_files:
+                if f is None:
+                    record.append(f"{name}.param")
+                else:
+                    record.append(f)
+            control.add_record("param_file", record)
+
+        if isinstance(modflow_obj, Modflow):
+            record = [
+                modflow_obj.namefile,
+            ]
+            control.add_record("modflow_name", record)
 
         return control

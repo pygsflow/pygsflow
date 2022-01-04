@@ -7,3 +7,4 @@ from .builder_defaults import (
 from .fishnet import GenerateFishnet
 from .modflow_builder import ModflowBuilder
 from .controlfile_builder import ControlFileBuilder
+from .prms_builder import PrmsBuilder

@@ -305,7 +305,7 @@ class PrmsParameters(ParameterBase):
         file_name=None,
         where=None,
         after=None,
-        replace=False
+        replace=False,
     ):
         """
         Method to add a new parameter record to the PrmsParameters object

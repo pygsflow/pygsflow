@@ -143,6 +143,8 @@ def test_controlfile_builder():
             raise AssertionError("ControlFile Builder failed on {}".format(k))
 
 
+def test_import_prms_builder():
+    from gsflow.builder import PrmsBuilder
 
 
 if __name__ == "__main__":
@@ -151,3 +153,4 @@ if __name__ == "__main__":
     test_import_modflow_builder()
     test_modflow_builder()
     test_controlfile_builder()
+    test_import_prms_builder()

@@ -342,7 +342,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
 
         # if pond list exists pop off segments that are routed to ponds
         if self.pond_list is not None:
-            for seg in self.pond_list['segid']:
+            for seg in self.pond_list["segid"]:
                 if seg in segments:
                     segments.pop(segments.index(seg))
 
@@ -1329,5 +1329,3 @@ def _read_irrpond_block(fobj, nrec, recarray, trigger):
                     recarray[name][ix] = rec[ix2]
 
     return recarray
-
-
