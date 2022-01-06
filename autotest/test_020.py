@@ -18,7 +18,7 @@ def test_defaults():
 
     defaults = Defaults()
 
-    if len(defaults.record_names) != 176:
+    if len(defaults.record_names) != 178:
         raise AssertionError("record_names failed")
 
     control = defaults.control
@@ -66,7 +66,7 @@ def test_defaults():
 
     defaults2 = Defaults(outfile)
 
-    if len(defaults2.record_names) != 173:
+    if len(defaults2.record_names) != 175:
         raise AssertionError("write or read custom file function failed")
 
     r = defaults2.prms.get_default("elev_units")

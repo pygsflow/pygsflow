@@ -16,9 +16,9 @@ class PrmsBuilder(object):
     Parameters
     ----------
     stream_data_obj : gsflow.builder._StreamsObj
-        stream data from the flow accumulation stream creation method
-    crt_param_obj : gsflow.prms.PrmsParameters object
-        PrmsParameters object loaded from Crt() output
+        stream data from the flow accumulation make_streams() method
+    cascade_obj : gsflow.builder._Cascades object
+        cascade data object from the flow accumulation get_cascades() method
     modelgrid : flopy.discretization.StructuredGrid object
     hru_type : np.ndarray
         hru_type array
@@ -31,9 +31,11 @@ class PrmsBuilder(object):
     def __init__(
         self,
         stream_data_obj,
-        crt_param_obj,
+        cascades_obj,
         modelgrid,
+        dem,
         hru_type=None,
+        hru_subbasin=None,
         defaults=None,
     ):
         if defaults is None:
@@ -46,11 +48,13 @@ class PrmsBuilder(object):
             raise TypeError("Defaults must be Default or PrmsDefault object")
 
         self.stream_data_obj = stream_data_obj
-        self.crt_param_obj = crt_param_obj
+        self.cascades_obj = cascades_obj
         self.modelgrid = modelgrid
+        self.dem = dem
         self.hru_type = hru_type
+        self.hru_subbasin = hru_subbasin
 
-    def build(self, name=None):
+    def build(self, name=None, area_conv=2.47105e-4):
         """
         Method to build a PrmsParameters object that can be used to build
         a GSFLOW or PRMS model
@@ -59,6 +63,8 @@ class PrmsBuilder(object):
         ----------
         name : str
             name of the parameter file
+        area_conv : float
+            conversion factor from model units sq. to arces
 
         Returns
         -------
@@ -73,31 +79,30 @@ class PrmsBuilder(object):
         # load dimension defaluts
         dimension_defaults = paramfile_defaults["dimensions"]
 
-        # get crt parameters??
-        crt_params = PrmsParameters(self.crt_param_obj)  # update this
-
         # get the nhru from the model grid
         nhru = self.modelgrid.nrow * self.modelgrid.ncol
 
-        # set segment
-        dimension_defaults[
-            "nsegment"
-        ] = (
-            self.stream_data_obj.iseg.max()
-        )  # I think this needs to be number of reaches!!!
+        # set segment and reach
+        dimension_defaults["nsegment"] = self.stream_data_obj.iseg.max()
+        dimension_defaults["nreach"] = self.stream_data_obj.reach_data.size
+
         dimension_defaults["ngw"] = nhru
-        dimension_defaults["nhru"] = nhru  # may change this
+        dimension_defaults["ngwcell"] = nhru
+        dimension_defaults["nhru"] = nhru
+        dimension_defaults["nhrucell"] = nhru
         dimension_defaults["nssr"] = nhru
-        dimension_defaults[
-            "ncascade"
-        ] = nhru  # is this right??? I'm not so sure that this is. We should be able to get this from CRT...
-        dimension_defaults["ncascadegw"] = crt_params.get_values("ncascdgw")[0]
+        dimension_defaults["ncascade"] = self.cascades_obj.ncascade
+        dimension_defaults["ncascadgw"] = self.cascades_obj.ncascade
         dimension_defaults["ndeplval"] = dimension_defaults["ndepl"] * 11
         dimension_defaults["nsub"] = np.count_nonzero(np.unique(self.hru_type))
         dimension_defaults["nhrucell"] = nhru
         dimension_defaults["ndeplval"] = paramfile_defaults["dimensions"][
             "ndeplval"
         ]
+        try:
+            dimension_defaults["ngwcell"] = self.modelgrid.nnodes
+        except TypeError:
+            dimension_defaults["ngwcell"] = self.modelgrid.ncpl
 
         for key, value in dimension_defaults.items():
 
@@ -146,7 +151,7 @@ class PrmsBuilder(object):
             param_list.append(param_record)
 
         param_dict = {}
-        cell_area = self.modelgrid.xcs * self.modelgrid.ycs
+        cell_area = (self.modelgrid.xcs * self.modelgrid.ycs) * area_conv
         hru_area = np.full(nhru, cell_area)
         param_dict["hru_area"] = {"record": hru_area, "dtype": 2}
 
@@ -161,16 +166,26 @@ class PrmsBuilder(object):
         # hru type - get it from the FA??? modified ... - nhru
         # @ comment JL: I think we should have an option to return the
         #  FA hru type and then we can
-        hru_type = (
-            self.hru_type.ravel()
-        )  # this may need to come from somewhere else or modify
+        if self.hru_type is None:
+            hru_type = np.ones((nhru,), dtype=int)
+        else:
+            hru_type = self.hru_type.ravel()
         param_dict["hru_type"] = {"record": hru_type, "dtype": 1}
 
         # # hru_elev = dem elev (should it be the sink filled..???). -
-        # passing for now
+        param_dict["hru_elev"] = {
+            "record": self.dem.ravel(), "dtype": 2
+        }
+
         # todo: look at returning a sink filled dem elevation in FlowAcc. for this
         aspect = self.stream_data_obj.aspect.ravel()
-        param_dict["aspect"] = {"record": aspect, "dtype": 2}
+        param_dict["hru_aspect"] = {"record": aspect, "dtype": 2}
+
+        if self.hru_subbasin is None:
+            hru_subbasin = np.ones((nhru,), dtype=int)
+        else:
+            hru_subbasin = self.hru_subbasin.ravel()
+        param_dict["hru_subbasin"] = {"record": hru_subbasin, "dtype": 1}
 
         # hru_aspect - nhru
         dim = [["nhru", nhru]]
@@ -188,4 +203,66 @@ class PrmsBuilder(object):
 
             param_list.append(param_record)
 
-        return PrmsParameters(param_list)
+        params = PrmsParameters(param_list)
+
+        # add cascade parameters
+        for rname in ('hru_up_id', "hru_down_id", "hru_strmseg_down_id"):
+            values = self.cascades_obj.__dict__[rname]
+            params.add_record(
+                name=rname,
+                values=values,
+                dimensions=[["ncascade", self.cascades_obj.ncascade]],
+                datatype=1,
+                file_name=name,
+                replace=True
+            )
+
+            params.add_record(
+                name=rname.replace("hru", "gw"),
+                values=values,
+                dimensions=[["ncascadgw", self.cascades_obj.ncascade]],
+                datatype=1,
+                file_name=name,
+                replace=True
+            )
+
+        params.add_record(
+            name="hru_pct_up",
+            values=self.cascades_obj.hru_pct_up,
+            dimensions=[["ncascade", self.cascades_obj.ncascade]],
+            datatype=2,
+            file_name=name,
+            replace=True
+        )
+
+        params.add_record(
+            name="gw_pct_up",
+            values=self.cascades_obj.hru_pct_up,
+            dimensions=[["ncascadgw", self.cascades_obj.ncascade]],
+            datatype=2,
+            file_name=name,
+            replace=True
+        )
+        # todo: need to calculate the subbasin linkage in flow_accumulation
+        # we should be able to run it through Topology to create a graph of
+        # this...
+        if len(np.unique(self.hru_subbasin)) == 2:
+            params.add_record(
+                "subbasin_down",
+                values=[0,],
+                dimensions=[["nsub", 1]],
+                datatype=1,
+                file_name=name,
+            )
+
+        # add gvr linkage
+        for t in ("cell", "hru"):
+            params.add_record(
+                f"gvr_{t}_id",
+                values=list(range(1, nhru + 1)),
+                dimensions=[["nhrucell", nhru]],
+                datatype=1,
+                file_name=name
+            )
+
+        return params
