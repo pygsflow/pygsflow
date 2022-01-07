@@ -161,6 +161,7 @@ class PrmsBuilder(object):
         param_dict["hru_lon"] = {"record": hru_lon, "dtype": 2}
 
         hru_slope = self.stream_data_obj.slope.ravel()
+        hru_slope[hru_slope < 1e-04] = 0
         param_dict["hru_slope"] = {"record": hru_slope, "dtype": 2}
 
         # hru type - get it from the FA??? modified ... - nhru
