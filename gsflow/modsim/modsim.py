@@ -355,8 +355,8 @@ class Modsim(object):
 
         if crs is None:
             err = (
-                "Please provide a valid proj4 or epsg code to "
-                "flopy's model grid: Skipping writing {}".format(prj)
+                "Please provide a valid proj4 or epsg code to flopy's"
+                f"model grid: Skipping writing {os.path.split(prj)[-1]}"
             )
             warnings.warn_explicit(err, UserWarning, "modsim.py", 361)
             return
