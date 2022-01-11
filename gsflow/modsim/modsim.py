@@ -249,8 +249,8 @@ class Modsim(object):
             return
 
         if shapefile is None:
-            warn = "Pyshp must be installed to write MODSIM shapefile"
-            warnings.warn(warn)
+            err = "Pyshp must be installed to write MODSIM shapefile"
+            warnings.warn_explicit(err, UserWarning, "modsim.py", 253)
             return
 
         if shp is None:
@@ -323,11 +323,11 @@ class Modsim(object):
             pass
 
         if pycrs is None:
-            warn = (
+            err = (
                 "PyCRS must be installed to add a projection"
                 " to {}".format(shp)
             )
-            warnings.warn(warn)
+            warnings.warn_explicit(err, UserWarning, "modsim.py", 330)
             return
 
         t = shp.split(".")
@@ -354,11 +354,11 @@ class Modsim(object):
                 crs = None
 
         if crs is None:
-            warn = (
+            err = (
                 "Please provide a valid proj4 or epsg code to "
                 "flopy's model grid: Skipping writing {}".format(prj)
             )
-            warnings.warn(warn)
+            warnings.warn_explicit(err, UserWarning, "modsim.py", 361)
             return
 
         with open(prj, "w") as foo:
