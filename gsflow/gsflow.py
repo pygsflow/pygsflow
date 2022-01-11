@@ -94,7 +94,7 @@ class GsflowModel(object):
                 self.prms = prms
             else:
                 err = "prms is not a PrmsModel object, skipping..."
-                warnings.warn(err, UserWarning)
+                warnings.warn_explicit(err, UserWarning, "gsflow.py", 97)
 
         # set flopy modflow object
         if not prms_only:
@@ -107,7 +107,7 @@ class GsflowModel(object):
                     self.mf.namefile = namefile
             else:
                 err = "modflow is not a gsflow.modflow.Modflow object, skipping..."
-                warnings.warn(err, UserWarning)
+                warnings.warn_explicit(err, UserWarning, "gsflow.py", 110)
 
         if modsim:
             self.modsim = Modsim(self)

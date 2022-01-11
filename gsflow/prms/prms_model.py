@@ -180,7 +180,7 @@ class PrmsModel(object):
             return PrmsData.load_from_file(data_file)
         except:
             err = "PrmsData load error, Skipping data files"
-            warnings.warn(err, UserWarning)
+            warnings.warn_explicit(err, UserWarning, "prms_model.py", 184)
             return
 
     def get_StatVar(self):

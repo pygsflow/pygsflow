@@ -110,7 +110,7 @@ class PrmsParameters(ParameterBase):
         parameters_list = []
         for ifile, file in enumerate(param_files):
             print("------------------------------------")
-            print("Reading parameter file : {}".format(file))
+            print("Reading parameter file : {}".format(os.path.split(file)[-1]))
             print("------------------------------------")
             if not (os.path.isfile(file)):
                 raise FileNotFoundError("Invalid file name {}".format(file))
@@ -152,9 +152,6 @@ class PrmsParameters(ParameterBase):
                         elif "** Dimensions **" in record:
                             in_dim_section = True
                             continue
-                            # record = content.next().strip()
-                            # if not (record == "####"):
-                            #     raise ValueError("Error reading Dimensions Section...")
 
                         if "####" in record:
                             continue
