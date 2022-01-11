@@ -73,6 +73,6 @@ setup(
     test_suite='autotest',
     tests_require=test_requirements,
     url='https://github.com/pygsflow/pygsflow',
-    version='1.1.0',
+    version='1.0.2',
     zip_safe=False,
 )

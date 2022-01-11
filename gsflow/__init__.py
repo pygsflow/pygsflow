@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = """Ayman Alzraiee, Josh Larsen, Rich Niswonger"""
 __email__ = """aalzraiee@usgs.gov, jlarsen@usgs.gov, rniswon@usgs.gov"""
-__version__ = "1.0.0"
+__version__ = "1.0.2"
 
 from .control import ControlFile, ControlRecord
 from .prms.prms_model import PrmsModel
