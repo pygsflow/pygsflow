@@ -33,7 +33,7 @@ aniOutON_OFF
 print_debug
 1
 1
-1
+-1
 ####
 aniOutVar_names
 5
@@ -325,13 +325,3 @@ capillary_module
 1
 4
 soilzone_prms
-####
-parameter_check_flag
-1
-1
-0
-####
-print_debug
-1
-1
--1

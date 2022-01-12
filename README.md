@@ -20,7 +20,7 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
 The pygsflow repository can be installed using pip.
 Open a command prompt or anaconda prompt terminal and type:
 
-`pip install https://github.com/pygsflow/pygsflow/zipball/master`
+`pip install pygsflow`
 
 pygsflow is now installed
 
