@@ -1,0 +1,2 @@
+include gsflow/prms/gsflow_prms.control.par_name
+include gsflow/prms/gsflow_prms.control.var_name
