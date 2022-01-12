@@ -31,7 +31,7 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
    3) FloPy 3.3.4 (`pip install flopy==3.3.4`)
    4) NetCdf4 (optional, required for netcdf exporting and autotesting) (`pip install netcdf4`)
 
-**Version 1.1.0** (Develop branch)
+**Version 1.0.2** (Develop branch)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.6 or greater 
    3) Flopy 3.3.4 or greater (`pip install flopy`) *note* for Python 3.6 use (`pip install flopy==3.3.4`)
