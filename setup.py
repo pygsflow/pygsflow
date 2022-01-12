@@ -11,15 +11,22 @@ import os
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-if sys.version_info >= (3, 0):
+if (3, 7) >= sys.version_info >= (3, 6):
     requirements = ["pandas",
                     "numpy",
                     "flopy == 3.3.4",
                     "pyshp",
                     "pycrs",
                     "matplotlib"]
+elif sys.version_info >= (3, 7):
+    requirements = ["pandas",
+                    "numpy",
+                    "flopy >= 3.3.4",
+                    "pyshp",
+                    "pycrs",
+                    "matplotlib"]
 else:
-    raise EnvironmentError("pyGSFLOW is only supported with python 3")
+    raise EnvironmentError("pyGSFLOW is only supported with python 3.6 and above")
 
 setup_requirements = []
 
@@ -29,8 +36,8 @@ with open(os.path.join(".", "README.md")) as foo:
     long_description = foo.read()
 
 setup(
-    author="Ayman Alzraiee, Joshua Larsen, Rich Niswonger",
-    author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov, rniswon@usgs.gov',
+    author="Ayman Alzraiee, Joshua Larsen, Rich Niswonger, Donald Martin",
+    author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov, rniswon@usgs.gov, domartin@usgs.gov',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -44,7 +51,7 @@ setup(
         'Topic :: Scientific/Engineering :: Hydrology',
         "Operating System :: OS Independent"
     ],
-    python_requires=">=3.4",
+    python_requires=">=3.6",
     description="pyGSFLOW is a python package to create, run, and " +
                 "post-process GSFLOW-based models",
     install_requires=requirements,
@@ -59,11 +66,13 @@ setup(
                                     'gsflow.utils',
                                     'gsflow.modflow',
                                     'gsflow.modsim',
-                                    'gsflow.output']),
+                                    'gsflow.output',
+                                    'gsflow.builder',
+                                    'gsflow.crt']),
     setup_requires=setup_requirements,
     test_suite='autotest',
     tests_require=test_requirements,
     url='https://github.com/pygsflow/pygsflow',
-    version='1.0.1',
+    version='1.0.2',
     zip_safe=False,
 )
