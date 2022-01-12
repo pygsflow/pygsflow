@@ -19,24 +19,25 @@ def is_number(s):
 
 class PrmsParameters(ParameterBase):
     """
-    Class to hold parameters information.
+    Class to hold PRMS parameter information.
+    This class enables reading, writing, and editing PRMS parameter files.
 
     Parameters
     ----------
     parameters_list : list
         list of ParameterRecord objects
-
     headers : str, optional
         file header
 
     Examples
     --------
 
-    load from file
+    Load parameters from file
 
+    >>> import gsflow
     >>> params = gsflow.prms.PrmsParameters.load_from_file(["myparams1.txt", "myparams2.txt"])
 
-    create new object
+    create a new PrmsParameters object
 
     >>> params = gsflow.prms.PrmsParameters([parameter_record1, parameter_record2,])
 
@@ -56,9 +57,7 @@ class PrmsParameters(ParameterBase):
     @property
     def parameters_list(self):
         """
-        Returns
-        -------
-            list of parameter records
+        Returns a list of parameter records
 
         """
         return self._records_list
@@ -66,10 +65,7 @@ class PrmsParameters(ParameterBase):
     @property
     def parameter_files(self):
         """
-
-        Returns
-        -------
-            list of parameter file names
+        Returns a list of parameter file names
 
         """
         all_files = []
@@ -114,7 +110,7 @@ class PrmsParameters(ParameterBase):
         parameters_list = []
         for ifile, file in enumerate(param_files):
             print("------------------------------------")
-            print("Reading parameter file : {}".format(file))
+            print("Reading parameter file : {}".format(os.path.split(file)[-1]))
             print("------------------------------------")
             if not (os.path.isfile(file)):
                 raise FileNotFoundError("Invalid file name {}".format(file))
@@ -156,9 +152,6 @@ class PrmsParameters(ParameterBase):
                         elif "** Dimensions **" in record:
                             in_dim_section = True
                             continue
-                            # record = content.next().strip()
-                            # if not (record == "####"):
-                            #     raise ValueError("Error reading Dimensions Section...")
 
                         if "####" in record:
                             continue
@@ -309,8 +302,10 @@ class PrmsParameters(ParameterBase):
         file_name=None,
         where=None,
         after=None,
+        replace=False,
     ):
         """
+        Method to add a new parameter record to the PrmsParameters object
 
         Parameters
         ----------
@@ -329,10 +324,16 @@ class PrmsParameters(ParameterBase):
             index location to insert parameter
         after : int, optional
             index location - 1 to insert parameter
+        replace : bool
+            replace an existing parameter when True, default is False
 
         """
 
-        add = self._check_before_add(name, values)
+        add = self._check_before_add(name, values, replace)
+
+        if not add and replace:
+            self.remove_record(name)
+            add = True
 
         if add:
 
@@ -360,6 +361,26 @@ class PrmsParameters(ParameterBase):
 
         """
         super(PrmsParameters, self).remove_record(name)
+
+    def add_record_object(self, record_obj, replace=False):
+        """
+        Method to add a ParameterRecord object
+
+        record_obj : ParameterRecord object
+            ParameterRecord object
+        replace : bool
+            boolean flag that allows record replacement, default is False
+        """
+        add = self._check_before_add(
+            record_obj.name, record_obj.values, replace
+        )
+
+        if not add and replace:
+            self.remove_record(record_obj.name)
+            add = True
+
+        if add:
+            super(PrmsParameters, self).add_record(record_obj)
 
     def write(self, name=None):
         """
@@ -504,9 +525,7 @@ class ParameterRecord(RecordBase):
     @property
     def values(self):
         """
-        Returns
-        -------
-            np.ndarray of record values
+        np.ndarray of record values
         """
         return self._values
 
@@ -536,7 +555,7 @@ class ParameterRecord(RecordBase):
         modflow : object
             fp.modflow.Modflow or gsflow.modflow.Modflow object
 
-        kwargs : **
+        kwargs : dict
             keyword arguments
 
         Notes

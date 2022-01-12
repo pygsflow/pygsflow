@@ -3,7 +3,6 @@ from .utils import gsflow_io
 import copy
 import warnings
 
-warnings.simplefilter("always", PendingDeprecationWarning)
 warnings.simplefilter("always", UserWarning)
 
 
@@ -70,7 +69,7 @@ class ParameterBase(object):
             return record
         else:
             err = "The record does not exist..."
-            warnings.warn(err, UserWarning)
+            warnings.warn_explicit(err, UserWarning, "param_base.py", 72)
             return None
 
     def get_values(self, name):
@@ -91,7 +90,7 @@ class ParameterBase(object):
 
         if record is None:
             err = "The record does not exist..."
-            warnings.warn(err, UserWarning)
+            warnings.warn_explicit(err, UserWarning, "param_base.py", 93)
             return None
 
         elif isinstance(record.values, np.ndarray):
@@ -99,7 +98,7 @@ class ParameterBase(object):
 
         else:
             err = "The values does not exist..."
-            warnings.warn(err, UserWarning)
+            warnings.warn_explicit(err, UserWarning, "param_base.py", 101)
             return None
 
     def set_values(self, name, values):
@@ -119,7 +118,7 @@ class ParameterBase(object):
 
         if record is None:
             err = "The record does not exist {}".format(name)
-            warnings.warn(err, UserWarning)
+            warnings.warn_explicit(err, UserWarning, "param_base.py", 121)
             return None
 
         elif isinstance(record.values, np.ndarray):
@@ -128,10 +127,10 @@ class ParameterBase(object):
 
         else:
             err = "The record does not exist..."
-            warnings.warn(err, UserWarning)
+            warnings.warn_explicit(err, UserWarning, "param_base.py", 130)
             return None
 
-    def _check_before_add(self, name, values):
+    def _check_before_add(self, name, values, replace=False):
         """
         Internal method to check a record before adding to _records_list
 
@@ -141,6 +140,8 @@ class ParameterBase(object):
             record name
         values : list
             list of values
+        replace : bool
+            boolean flag to indicate if record should be replaced
 
         """
         if isinstance(name, str):
@@ -158,7 +159,8 @@ class ParameterBase(object):
                     name
                 )
             )
-            warnings.warn(err, UserWarning)
+            if not replace:
+                warnings.warn_explicit(err, UserWarning, "param_base.py", 163)
             return False
 
         return True
@@ -206,9 +208,8 @@ class ParameterBase(object):
             raise ValueError("Record name must be a string")
 
         if name not in self.record_names:
-            warnings.warn(
-                "The record does not exist: {}".format(name), UserWarning
-            )
+            err = f"The record does not exist: {name}"
+            warnings.warn_explicit(err, UserWarning, "param_base.py", 212)
             return
 
         for index, nm in enumerate(self.record_names):

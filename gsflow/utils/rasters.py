@@ -8,8 +8,10 @@ import numpy as np
 
 class Rasters(object):
     """
-    Raster object which allows the user
-    to snap a raster to a grid.
+    DEPRECATED: please use flopy.utils.Rasters, will be removed in version
+    1.1.0
+
+    Raster object which allows the users to snap a raster to a grid.
 
     Parameters
     ----------
