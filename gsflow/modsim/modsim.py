@@ -1,6 +1,7 @@
 import numpy as np
 import os
-import warnings
+import inspect
+from ..utils.gsflow_io import _warning
 import flopy as fp
 
 try:
@@ -12,8 +13,6 @@ try:
     import pycrs
 except ImportError:
     pycrs = None
-
-warnings.simplefilter("always", UserWarning)
 
 
 class Modsim(object):
@@ -249,8 +248,8 @@ class Modsim(object):
             return
 
         if shapefile is None:
-            err = "Pyshp must be installed to write MODSIM shapefile"
-            warnings.warn_explicit(err, UserWarning, "modsim.py", 253)
+            msg = "Pyshp must be installed to write MODSIM shapefile"
+            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return
 
         if shp is None:
@@ -323,11 +322,11 @@ class Modsim(object):
             pass
 
         if pycrs is None:
-            err = (
+            msg = (
                 "PyCRS must be installed to add a projection"
                 " to {}".format(shp)
             )
-            warnings.warn_explicit(err, UserWarning, "modsim.py", 330)
+            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return
 
         t = shp.split(".")
@@ -354,11 +353,11 @@ class Modsim(object):
                 crs = None
 
         if crs is None:
-            err = (
+            msg = (
                 "Please provide a valid proj4 or epsg code to flopy's"
                 f"model grid: Skipping writing {os.path.split(prj)[-1]}"
             )
-            warnings.warn_explicit(err, UserWarning, "modsim.py", 361)
+            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return
 
         with open(prj, "w") as foo:

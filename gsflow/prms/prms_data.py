@@ -2,9 +2,6 @@ import os
 import pandas as pd
 import datetime
 from ..utils import GsConstant
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class PrmsData(object):

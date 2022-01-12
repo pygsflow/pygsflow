@@ -4,10 +4,7 @@ from .prms_day import PrmsDay
 from .prms_data import PrmsData
 from ..output import StatVar
 from ..utils import gsflow_io
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
-warnings.simplefilter("always", UserWarning)
+import inspect
 
 
 class PrmsModel(object):
@@ -180,7 +177,9 @@ class PrmsModel(object):
             return PrmsData.load_from_file(data_file)
         except:
             err = "PrmsData load error, Skipping data files"
-            warnings.warn_explicit(err, UserWarning, "prms_model.py", 184)
+            gsflow_io._warning(
+                err, inspect.getframeinfo(inspect.currentframe())
+            )
             return
 
     def get_StatVar(self):

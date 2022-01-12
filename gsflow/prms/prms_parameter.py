@@ -3,10 +3,6 @@ import os
 import numpy as np
 from ..record_base import RecordBase
 from ..param_base import ParameterBase
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
-warnings.simplefilter("always", UserWarning)
 
 
 def is_number(s):

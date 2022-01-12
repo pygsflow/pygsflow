@@ -9,10 +9,7 @@ from .modsim import Modsim
 import flopy
 import subprocess as sp
 import platform
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
-warnings.simplefilter("always", UserWarning)
+import inspect
 
 
 class GsflowModel(object):
@@ -93,8 +90,10 @@ class GsflowModel(object):
             if prms and isinstance(prms, PrmsModel):
                 self.prms = prms
             else:
-                err = "prms is not a PrmsModel object, skipping..."
-                warnings.warn_explicit(err, UserWarning, "gsflow.py", 97)
+                msg = "prms is not a PrmsModel object, skipping..."
+                gsflow_io._warning(
+                    msg, inspect.getframeinfo(inspect.currentframe())
+                )
 
         # set flopy modflow object
         if not prms_only:
@@ -106,8 +105,10 @@ class GsflowModel(object):
                 if namefile is not None:
                     self.mf.namefile = namefile
             else:
-                err = "modflow is not a gsflow.modflow.Modflow object, skipping..."
-                warnings.warn_explicit(err, UserWarning, "gsflow.py", 110)
+                msg = "modflow is not a gsflow.modflow.Modflow object, skipping..."
+                gsflow_io._warning(
+                    msg, inspect.getframeinfo(inspect.currentframe())
+                )
 
         if modsim:
             self.modsim = Modsim(self)

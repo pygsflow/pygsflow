@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
 import flopy as fp
-import warnings
-
-warnings.simplefilter("always", UserWarning)
+import inspect
+from .gsflow_io import _warning
 
 
 class SfrRenumber(object):
@@ -286,17 +285,17 @@ class SfrRenumber(object):
         recommended over this method in most cases
         """
         if self.gage is not None:
-            warn = (
+            msg = (
                 "Gage package will not be renumbered\n"
                 "MODFLOW may not run properly"
             )
-            warnings.warn(warn, UserWarning)
+            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
         elif self.ag is not None:
-            warn = (
+            msg = (
                 "Ag package will not be renumbered\n"
                 "GSFLOW may not run properly"
             )
-            warnings.warn(warn, UserWarning)
+            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
 
         self.__renumber_sfr()
 

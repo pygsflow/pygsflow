@@ -4,9 +4,6 @@ from .record_base import RecordBase
 from .param_base import ParameterBase
 from .utils import GsConstant
 from .utils import gsflow_io
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class ControlFile(ParameterBase):

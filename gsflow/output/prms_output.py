@@ -2,9 +2,6 @@ from ..utils import GsConstant
 import pandas as pd
 import datetime
 import os
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class StatVar(object):

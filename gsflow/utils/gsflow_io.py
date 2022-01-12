@@ -1,7 +1,10 @@
 import os
 import warnings
+import inspect
 
 warnings.simplefilter("always", UserWarning)
+warnings.simplefilter("always", PendingDeprecationWarning)
+warnings.simplefilter("always", DeprecationWarning)
 
 
 def get_file_abs(control_file=None, model_ws=None, fn=None):
@@ -95,7 +98,7 @@ def find_parameter(name, parameters_list):
 
     else:
         err = "parameter_list is empty"
-        warnings.warn(err, UserWarning)
+        _warning(err, inspect.getframeinfo(inspect.currentframe()))
         return None
 
 
@@ -139,3 +142,22 @@ def multi_line_strip(fobj):
         line = line_strip(fobj.readline())
         if line:
             return line.lower()
+
+
+def _warning(msg, frame, wtype=UserWarning):
+    """
+    Method to standardize the warning output in pyGSFLOW and avoid
+    absolute file paths in warning messages
+
+    Parameters
+    ----------
+    msg : str
+        error message
+    frame : named tuple
+        named tuple from inspect.getframeinfo
+    wtype :
+        warning type to be displayed defaults to UserWarning
+
+    """
+    module = os.path.split(frame.filename)[-1]
+    warnings.warn_explicit(msg, wtype, module, frame.lineno)
