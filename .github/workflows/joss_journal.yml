@@ -1,0 +1,46 @@
+# This is a basic workflow to help you get started with Actions
+
+name: JOSS journal build
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  paper:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    if: github.repository_owner == 'pygsflow'
+    steps:
+      - name: Checkout pygsflow repo
+        uses: actions/checkout@v2.3.4
+
+      - name: Output repo information
+        run: |
+          echo $GITHUB_REPOSITORY_OWNER
+          echo $GITHUB_REPOSITORY
+          echo $GITHUB_REF
+          echo $GITHUB_EVENT_NAME
+        
+      - name: Open Journals PDF Generator
+        uses: openjournals/openjournals-draft-action@master
+        with:
+           journal: joss
+           paper-path: ./JOSS/paper.md
+      
+      - name: Upload draft paper
+        uses: actions/upload-artifact@v1
+        with:
+          name: paper
+          # This is the output path where Pandoc will write the compiled
+          # PDF. Note, this should be the same directory as the input
+          # paper.md
+          path: ./JOSS/paper.pdf

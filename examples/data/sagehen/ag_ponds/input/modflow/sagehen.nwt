@@ -1,0 +1,6 @@
+# MODFLOW2005 NWT Input File
+# SAGEHEN-GRID Test Problem 
+#HEADTOL  FLUXTOL MAXITEROUT THICKFACT   LINMETH    IPRNWT     IBOTAV                OPTIONS  [DBDTHETA]  [DBDKAPPA] [DBDGAMMA] [MOMFACT] [BACKFLAG] [MAXBACKITER] [BACKTOL] [BACKREDUCE]
+# [IACL] [NORDER]    [LEVEL]   [NORTH] [IREDSYS] [RRCTOLS] [IDROPTOL]   [EPSRN]  [HCLOSEXMD] [MXITERXMD]
+  1.0E-3   1000.0        500    1.0e-6         2         1          1              SPECIFIED        0.96     0.00001        0.0      0.00          0            20       2.0          0.6  linmeth=1 (GMRES); =2 (xmd)  
+       1        1          0         7         0       0.0          1    5.0E-3       1.0e-3         200

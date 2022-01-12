@@ -1,0 +1,5 @@
+2                        # NUMGAGE
+  18   1  65 5           # GAGESEG GAGERCH UNIT OUTTYPE   "segment 18 diversion"
+  19   1  66 5           # GAGESEG GAGERCH UNIT OUTTYPE   "segment 19 diversion"
+  
+
