@@ -14,7 +14,7 @@ with open('README.md') as readme_file:
 if sys.version_info >= (3, 0):
     requirements = ["pandas",
                     "numpy",
-                    "flopy >= 3.3.1",
+                    "flopy == 3.3.4",
                     "pyshp",
                     "pycrs",
                     "matplotlib"]
@@ -25,14 +25,8 @@ setup_requirements = []
 
 test_requirements = []
 
-try:
-    import pypandoc
-
-    fpth = os.path.join(".", "RELEASE.md")
-    long_description = pypandoc.convert_file(fpth, 'rst')
-except ImportError:
-    long_description = ""
-
+with open(os.path.join(".", "README.md")) as foo:
+    long_description = foo.read()
 
 setup(
     author="Ayman Alzraiee, Joshua Larsen, Rich Niswonger",
@@ -56,9 +50,10 @@ setup(
     install_requires=requirements,
     license="MIT license",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     include_package_data=True,
     keywords='gsflow',
-    name='gsflow',
+    name='pygsflow',
     packages=find_packages(include=['gsflow',
                                     'gsflow.prms',
                                     'gsflow.utils',
@@ -69,6 +64,6 @@ setup(
     test_suite='autotest',
     tests_require=test_requirements,
     url='https://github.com/pygsflow/pygsflow',
-    version='1.0.0',
+    version='1.0.1',
     zip_safe=False,
 )
