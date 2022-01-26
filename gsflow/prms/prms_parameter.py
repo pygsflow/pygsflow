@@ -332,6 +332,10 @@ class PrmsParameters(ParameterBase):
             add = True
 
         if add:
+            if file_name is None:
+                file_name = self.parameter_files[-1]
+                where = None
+                after = None
 
             new_record = ParameterRecord(
                 name=name,
