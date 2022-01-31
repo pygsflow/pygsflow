@@ -912,7 +912,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                 ("numcell", int),
                 ("period", float),
                 ("triggerfact", float),
-                ("flowthrough", int),
+                ("flowthrough", float),
             ]
 
             for i in range(maxells):
@@ -1329,6 +1329,8 @@ def _read_irrpond_block(fobj, nrec, recarray, trigger):
                 if ix2 >= len(rec):
                     pass
                 else:
-                    recarray[name][ix] = rec[ix2]
-
+                    try:
+                        recarray[name][ix] = rec[ix2]
+                    except ValueError:
+                        print('break')
     return recarray
