@@ -448,7 +448,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                         fmt16 = "{:d}   {:d}   {:d}   {:d}\n"
                     else:
                         # item pond
-                        fmt16 = "{:d}   {:f}   {:d}\n"
+                        fmt16 = "{:d}   {:f}   {:d}   {:f}\n"
 
                     for record in self.pond_list:
                         if self.tabfilespond:
@@ -466,6 +466,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                                     record["hru_id"] + 1,
                                     record["q"],
                                     record["segid"],
+                                    record["qfrac"]
                                 )
                             )
 
@@ -723,12 +724,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     if self.irrpond is not None and self.irrpond:
                         foo.write("IRRPOND \n")
 
-                        if self.trigger:
-                            # item 32
-                            fmt32 = "{:d}   {:d}   {:f}   {:f}   {:d}\n"
-                        else:
-                            # item 32
-                            fmt32 = "{:d}   {:d}   {:f}   {:d}\n"
+                        # item 32
+                        fmt32 = "{:d}   {:d}   {:f}   {:f}  {:f}\n"
 
                         fmt33 = "{:d}   {:d}   {:f}   {:f}\n"
                         if per in self.irrpond:
@@ -772,7 +769,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
                                                 fmt32.format(
                                                     rec["pond_id"] + 1,
                                                     rec["numcell"],
-                                                    rec["period"],
+                                                    0,
+                                                    0,
                                                     rec["flowthrough"],
                                                 )
                                             )
@@ -862,7 +860,9 @@ class ModflowAg(flopy.modflow.ModflowAg):
             ]
 
         elif block == "pond":
-            dtype = [("hru_id", int), ("q", float), ("segid", int)]
+            dtype = [
+                ("hru_id", int), ("q", float), ("segid", int), ("qfrac", float)
+            ]
 
         elif block == "tabfile_pond":
             dtype = [
@@ -1079,7 +1079,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     for ix, rec in enumerate(t):
                         if not tf:
                             hru_id = int(rec[0]) - 1
-                            pond[ix] = (hru_id, rec[1], rec[2])
+                            pond[ix] = (hru_id, rec[1], rec[2], rec[3])
                         else:
                             hru_id = int(rec[2]) - 1
                             pond[ix] = (rec[0], rec[1], hru_id, rec[3])
@@ -1124,8 +1124,11 @@ class ModflowAg(flopy.modflow.ModflowAg):
                             )
 
                             # read blocks 20 & 21
-                            irr = _read_block_21_25_or_29(mfag, nrec, irr, 21)
-
+                            try:
+                                irr = _read_block_21_25_or_29(mfag, nrec, irr, 21)
+                            except ValueError:
+                                print(per)
+                                raise ValueError
                         irr_diversion[per] = irr
                         line = multi_line_strip(mfag)
 
@@ -1310,7 +1313,7 @@ def _read_irrpond_block(fobj, nrec, recarray, trigger):
         if trigger:
             t1 += ll[3:5]
         else:
-            t1 += [0, ll[3]]
+            t1 += [ll[3], ll[4]]
 
         for _ in range(int(t1[1])):
             tmp = multi_line_strip(fobj).split()[:4]
