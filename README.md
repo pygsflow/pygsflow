@@ -46,7 +46,7 @@ To install the release version, open a terminal, command prompt, or anaconda pro
 
 `pip install pygsflow`
 
-**Version 1.1.0** (Develop version with most recent updates)
+**Version 1.0.2** (Develop version with most recent updates)
 
 To install the development version, open a terminal, command prompt or anaconda promt and type:  
 
@@ -77,9 +77,6 @@ Survey Software Release, 2 July 2021, https://doi.org/10.5066/P9NPZ5AD](https://
 
 ## IPDS number
 IP-128405
-
-## Bugs
-The code is in active development and although there is a testing infrastructure set up we cannot catch all the software bugs without the help of users. If you find a bug or have an issue, please report it by opening a new issue. You can open a new issue by clicking the issues tab near the top of the page.
 
 ## Contributing
 Please see [Contributing.md](https://github.com/pygsflow/pygsflow/blob/develop/CONTRIBUTING.md)
