@@ -12,7 +12,7 @@ pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW 
 
 GSFLOW model development has previously been a piecemeal approach that required multiple software tools to build, edit, postprocess, and visualize models. pyGSFLOW changes this by being a tightly coupled scripting library that provides support for GSFLOW, PRMS, and MODFLOW. Custom modules for both GSFLOW and PRMS are included in this library. MODFLOW support is provided by wrapping the [Flopy](https://github.com/modflowpy/flopy) package (Bakker and others, 2021) with GSFLOW specific code. Together, these three pieces create a single integrated scripting package that helps to standardize and streamline model development and calibration. 
 
-This is the development repository for pyGSFLOW. Official USGS releases can be found [here](https://code.usgs.gov/water/pyGSFLOW) 
+This is the development repository for pyGSFLOW. Official USGS releases can be found [here](https://code.usgs.gov/jlarsen/pygsflow/) 
 ## API Documentation
 pyGSFLOW API documentation can be found @
 
