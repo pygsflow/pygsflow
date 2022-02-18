@@ -74,8 +74,8 @@ pyGSFLOW [@Larsen:2021] is a Python package for creating new GSFLOW models,
 importing existing models, running GSFLOW models, processing model outputs, 
 and visualizing model data. Instead of working directly with formatted model 
 input files, the pyGSFLOW Application Programming Interface (API) allows the 
-user to work with class-based methods to create GSFLOW [@Markstrom:2008], 
-PRMS [@Markstrom:2015], MODSIM [@Labadie:2006] vectorized surface-water 
+user to work with class-based methods to create GSFLOW [@Markstrom:2008], and 
+PRMS [@Markstrom:2015] input files, MODSIM [@Labadie:2006] vectorized surface-water 
 operations networks, and MODFLOW [@Harbaugh:2005] model packages and binds them 
 into a single integrated model instance. pyGSFLOW leverages features from FloPy, 
 an existing Python package for the MODFLOW suite of groundwater modeling software
@@ -93,7 +93,7 @@ hydrologic models in western basins, including the example shown below
 highlighting application to the Russian River basin and the Santa Rosa Plain 
 Watershed (figure 1) [@Woolfenden:2014; @Gardner:2018]. 
 
-The Santa Rosa Plain (SRP) model [@Woolfenden:2014] ) is an IHM that was developed 
+The Santa Rosa Plain (SRP) model [@Woolfenden:2014] is an IHM that was developed 
 as a tool to provide scientific information to water managers about future 
 climate change scenarios. The SRP model applied four global-climate models and 
 simulated relative change in groundwater storage and availability under each 
@@ -160,7 +160,7 @@ The pyGSFLOW package includes the gsflow module and 5 sub-packages (figure 3):
    - gsflow: the gsflow module contains the integrated modeling object 
    GsflowModel, which allows the user to build new GSFLOW models and import 
    existing models. This module calls classes and methods from the following 
-   5 packages within pyGSFLOW.
+   5 sub-packages within pyGSFLOW.
    - prms: the prms sub-package contains classes and methods to build new PRMS 
    models, import existing PRMS models, edit model input data, and write PRMS 
    input data to file.
@@ -196,6 +196,9 @@ The authors welcome additions, suggestions, and assistance from the scientific
 community, and thank all past contributors for their work. Any use of trade, 
 product, or firm names is for descriptive purposes only and does not imply 
 endorsement by the U.S. Government.
+
+# Funding
+This work was funded by the USGS's Water Availability and Use Program.
 
 # References
 
