@@ -103,7 +103,7 @@ process involves identifying sensitive and insensitive parameters.
 Calibration and sensitivity analysis experiments on model parameters can provide 
 insight into reducing model error when predicting results such as simulated 
 streamflow (figure 1). Daily streamflow data from National Water Information 
-System (NWIS) site 11466800 [@U.S. Geological Survey:2022] provided observations 
+System (NWIS) site 11466800 [@USGS:2022] provided observations 
 for this experiment. Twenty-one iterations of the SRP model were run in series 
 with pyGSFLOW to test the sensitivity of the snarea_curve (snow depletion curve), 
 ssr2gw_rate (gravity reservoir to groundwater reservior routing coeficient), 
@@ -118,7 +118,7 @@ interface to update parameters based on grid cell location or parameter zone tha
 can be used for complex operations in conjuction with external calibration software.
 
 ![Root mean squared error in streamflow predictions at U.S Geological Survey 
-streamgage 11466800 [@U.S. Geological Survey: 2022] for three PRMS parameters 
+streamgage 11466800 [@USGS: 2022] for three PRMS parameters 
 (gsflow_coef, snarea_curve, and ssr2gw_rate) during calibration experiments on 
 the Santa Rosa Plain Integrated Hydrologic Model, Santa Rosa, 
 California.](calibration_example_mwc.png)
