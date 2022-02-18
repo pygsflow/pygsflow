@@ -118,7 +118,7 @@ interface to update parameters based on grid cell location or parameter zone tha
 can be used for complex operations in conjuction with external calibration software.
 
 ![Root mean squared error in streamflow predictions at U.S Geological Survey 
-streamgage 11466800 [@USGS: 2022] for three PRMS parameters 
+streamgage 11466800 [@USGS:2022] for three PRMS parameters 
 (gsflow_coef, snarea_curve, and ssr2gw_rate) during calibration experiments on 
 the Santa Rosa Plain Integrated Hydrologic Model, Santa Rosa, 
 California.](calibration_example_mwc.png)
@@ -149,7 +149,7 @@ parameter ssr2gw_rate which is a multiplier that scales the volume of recharge
 from PRMS to MODFLOW. Black fill indicates inactive model cells.](sagehen_plot.png)
 
 
-The online documentation for pyGSFLOW [@Larsen;2021] contains API information 
+The online documentation for pyGSFLOW [@Larsen:2021] contains API information 
 for all major classes and methods and is updated with each new major release. 
 In addition to the online documentation, sample Jupyter notebooks [@Kluyver:2016] 
 are included in the repository to help users become familiar with the code.
