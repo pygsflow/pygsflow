@@ -11,15 +11,15 @@
       "licenses": [
         {
           "name": "Public Domain, CC0-1.0",
-          "URL": "https://code.usgs.gov/jlarsen/pygsflow/-/blob/master/LICENCE.md"
+          "URL": "https://code.usgs.gov/water/pyGSFLOW/-/raw/1.0.2/LICENCE.md"
         }
       ]
     },
 
-    "homepageURL": "https://pygsflow.github.io/pygsflowdocs/",
-    "downloadURL": "https://code.usgs.gov/jlarsen/pygsflow/-/archive/1.0.0/pygsflow-1.0.0.zip",
-    "disclaimerURL": "https://code.usgs.gov/jlarsen/pygsflow/-/blob/master/DISCLAIMER.md",
-    "repositoryURL": "https://code.usgs.gov/jlarsen/pygsflow",
+    "homepageURL": "https://code.usgs.gov/water/pyGSFLOW",
+    "downloadURL": "https://code.usgs.gov/water/pyGSFLOW/-/archive/1.0.2/pygsflow-1.0.2.zip",
+    "disclaimerURL": "https://code.usgs.gov/water/pyGSFLOW/-/raw/1.0.2/DISCLAIMER.md",
+    "repositoryURL": "https://code.usgs.gov/water/pyGSFLOW",
     "vcs": "git",
 
     "laborHours": -1,
