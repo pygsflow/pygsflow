@@ -19,11 +19,11 @@ Example notebooks can be found in the github repository at [https://github.com/p
 Installation
 ------------------------------------------------
 
-To install pyGSFLOW version 1.0.1:
+To install pyGSFLOW version 1.0.2:
 
     pip install pygsflow
 
-To update to pyGSFLOW version 1.0.1:
+To update to pyGSFLOW version 1.0.2:
 
     pip install pygsflow --upgrade
 

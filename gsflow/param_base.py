@@ -1,10 +1,7 @@
 import numpy as np
 from .utils import gsflow_io
 import copy
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
-warnings.simplefilter("always", UserWarning)
+import inspect
 
 
 class ParameterBase(object):
@@ -69,8 +66,8 @@ class ParameterBase(object):
         if isinstance(record, rectype):
             return record
         else:
-            err = "The record does not exist..."
-            warnings.warn(err, UserWarning)
+            msg = "The record does not exist..."
+            gsflow_io._warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return None
 
     def get_values(self, name):
@@ -91,15 +88,15 @@ class ParameterBase(object):
 
         if record is None:
             err = "The record does not exist..."
-            warnings.warn(err, UserWarning)
+            warnings.warn_explicit(err, UserWarning, "param_base.py", 93)
             return None
 
         elif isinstance(record.values, np.ndarray):
             return record.values
 
         else:
-            err = "The values does not exist..."
-            warnings.warn(err, UserWarning)
+            msg = "The values does not exist..."
+            gsflow_io._warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return None
 
     def set_values(self, name, values):
@@ -118,8 +115,8 @@ class ParameterBase(object):
         record = gsflow_io.find_parameter(name, self._records_list)
 
         if record is None:
-            err = "The record does not exist {}".format(name)
-            warnings.warn(err, UserWarning)
+            msg = "The record does not exist {}".format(name)
+            gsflow_io._warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return None
 
         elif isinstance(record.values, np.ndarray):
@@ -127,11 +124,11 @@ class ParameterBase(object):
             return record.values
 
         else:
-            err = "The record does not exist..."
-            warnings.warn(err, UserWarning)
+            msg = "The record does not exist..."
+            gsflow_io._warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return None
 
-    def _check_before_add(self, name, values):
+    def _check_before_add(self, name, values, replace=False):
         """
         Internal method to check a record before adding to _records_list
 
@@ -141,6 +138,8 @@ class ParameterBase(object):
             record name
         values : list
             list of values
+        replace : bool
+            boolean flag to indicate if record should be replaced
 
         """
         if isinstance(name, str):
@@ -153,12 +152,13 @@ class ParameterBase(object):
             raise ValueError("Value must be a list or np.ndarray")
 
         if name in self.record_names:
-            err = (
+            msg = (
                 "The record already exists, skipping add_record: {}...".format(
                     name
                 )
             )
-            warnings.warn(err, UserWarning)
+            if not replace:
+                gsflow_io._warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return False
 
         return True
@@ -206,9 +206,8 @@ class ParameterBase(object):
             raise ValueError("Record name must be a string")
 
         if name not in self.record_names:
-            warnings.warn(
-                "The record does not exist: {}".format(name), UserWarning
-            )
+            msg = f"The record does not exist: {name}"
+            gsflow_io._warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return
 
         for index, nm in enumerate(self.record_names):

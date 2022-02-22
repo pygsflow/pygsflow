@@ -4,12 +4,16 @@ particularly to sample raster using a PrmsDiscretization
 object and then use it as input data
 """
 import numpy as np
+import inspect
+from .gsflow_io import _warning
 
 
 class Rasters(object):
     """
-    Raster object which allows the user
-    to snap a raster to a grid.
+    DEPRECATED: please use flopy.utils.Rasters, will be removed in version
+    1.1.0
+
+    Raster object which allows the users to snap a raster to a grid.
 
     Parameters
     ----------
@@ -18,6 +22,8 @@ class Rasters(object):
     """
 
     def __init__(self, raster):
+        msg = "Rasters is Deprecated and will be removed in v.1.1.0"
+        _warning(msg, inspect.getframeinfo(inspect.currentframe()), DeprecationWarning)
         self.raster = raster
         self._band_data = None
         self._xpoints = None

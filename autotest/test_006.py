@@ -7,6 +7,7 @@ import pandas as pd
 
 ws = os.path.abspath(os.path.dirname(__file__))
 
+
 def test_build_prms_model():
     # buld control file object
     cf_name = "test.control"

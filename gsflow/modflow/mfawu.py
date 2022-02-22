@@ -1,11 +1,13 @@
+import inspect
 from .mfag import ModflowAg
-import warnings
+from ..utils.gsflow_io import _warning
 
-warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class ModflowAwu(ModflowAg):
     """
+    DEPRECATED and will be removed in version 1.1.0
+
     The ModflowAwu class is used to build read, write, and edit data
     from the MODFLOW-NWT AG package.
 
@@ -59,11 +61,11 @@ class ModflowAwu(ModflowAg):
         nper=0,
     ):
 
-        err = (
-            "ModflowAwu is deprecated and will be removed, please use"
-            " ModflowAg in the future"
+        msg = (
+            "ModflowAwu is deprecated and will be removed for version 1.1.0, "
+            "please use ModflowAg"
         )
-        warnings.warn(err, PendingDeprecationWarning)
+        _warning(msg, inspect.getframeinfo(inspect.currentframe()), DeprecationWarning)
 
         super(ModflowAwu, self).__init__(
             model,
@@ -100,7 +102,7 @@ class ModflowAwu(ModflowAg):
         -------
             ModflowAwu object
         """
-        err = "ModflowAwu is deprecated and will be removed, calling ModflowAg"
-        warnings.warn(err, PendingDeprecationWarning)
+        msg = "ModflowAwu is deprecated and will be removed, calling ModflowAg"
+        _warning(msg, inspect.getframeinfo(inspect.currentframe()), DeprecationWarning)
 
         return ModflowAg.load(f, model, nper, ext_unit_dict)

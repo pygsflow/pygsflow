@@ -27,6 +27,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
         dictionary of the irrdiversion block
     irrwell : dict {per: np.recarray}
         dictionary of the irrwell block
+    irrpond : dict {per: np.recarray}
+        dictionary of the irrpond block
     supwell : dict {per: np.recarray}
         dictionary of the supwell block
     extension : str, optional
@@ -44,8 +46,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
     load a ModflowAg file
 
     >>> import gsflow
-    >>> ml = gsflow.modflow.Modflow('awutest')
-    >>> ag = gsflow.modflow.ModflowAg.load('test.awu', ml, nper=2)
+    >>> ml = gsflow.modflow.Modflow('agtest')
+    >>> ag = gsflow.modflow.ModflowAg.load('test.g', ml, nper=2)
 
     """
 
@@ -167,7 +169,16 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     OptionBlock.nested: True,
                     OptionBlock.n_nested: 1,
                     OptionBlock.vars: OrderedDict(
-                        [("accel", OptionBlock.simple_float)]
+                        [
+                            (
+                                "accel",
+                                {
+                                    OptionBlock.dtype: float,
+                                    OptionBlock.nested: False,
+                                    OptionBlock.optional: True,
+                                },
+                            )
+                        ]
                     ),
                 },
             ),
@@ -312,9 +323,34 @@ class ModflowAg(flopy.modflow.ModflowAg):
             nper=nper,
         )
 
+    @property
+    def segment_list(self):
+        """
+        Method to get a unique list of segments from irrdiversion and irrpond
+
+        """
+        segments = []
+        if self.irrdiversion is not None:
+            for _, recarray in self.irrdiversion.items():
+                if np.isscalar(recarray):
+                    continue
+                t = np.unique(recarray["segid"])
+                for seg in t:
+                    segments.append(seg)
+
+            segments = list(set(segments))
+
+        # if pond list exists pop off segments that are routed to ponds
+        if self.pond_list is not None:
+            for seg in self.pond_list["segid"]:
+                if seg in segments:
+                    segments.pop(segments.index(seg))
+
+        return segments
+
     def write_file(self, check=False):
         """
-        Write method for ModflowAwu
+        Write method for ModflowAg
 
         Parameters
         ----------
@@ -329,6 +365,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
             name = self.file_name[0]
             with open(os.path.join(ws, name), "w") as foo:
                 foo.write(self.heading)
+                if not self.heading.endswith("\n"):
+                    foo.write("\n")
 
                 # update options
                 self.options.update_from_package(self)
@@ -410,7 +448,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                         fmt16 = "{:d}   {:d}   {:d}   {:d}\n"
                     else:
                         # item pond
-                        fmt16 = "{:d}   {:f}   {:d}\n"
+                        fmt16 = "{:d}   {:f}   {:d}   {:f}\n"
 
                     for record in self.pond_list:
                         if self.tabfilespond:
@@ -428,6 +466,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                                     record["hru_id"] + 1,
                                     record["q"],
                                     record["segid"],
+                                    record["qfrac"]
                                 )
                             )
 
@@ -685,12 +724,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     if self.irrpond is not None and self.irrpond:
                         foo.write("IRRPOND \n")
 
-                        if self.trigger:
-                            # item 32
-                            fmt32 = "{:d}   {:d}   {:f}   {:f}   {:d}\n"
-                        else:
-                            # item 32
-                            fmt32 = "{:d}   {:d}   {:f}   {:d}\n"
+                        # item 32
+                        fmt32 = "{:d}   {:d}   {:f}   {:f}  {:f}\n"
 
                         fmt33 = "{:d}   {:d}   {:f}   {:f}\n"
                         if per in self.irrpond:
@@ -734,7 +769,8 @@ class ModflowAg(flopy.modflow.ModflowAg):
                                                 fmt32.format(
                                                     rec["pond_id"] + 1,
                                                     rec["numcell"],
-                                                    rec["period"],
+                                                    0,
+                                                    0,
                                                     rec["flowthrough"],
                                                 )
                                             )
@@ -824,7 +860,9 @@ class ModflowAg(flopy.modflow.ModflowAg):
             ]
 
         elif block == "pond":
-            dtype = [("hru_id", int), ("q", float), ("segid", int)]
+            dtype = [
+                ("hru_id", int), ("q", float), ("segid", int), ("qfrac", float)
+            ]
 
         elif block == "tabfile_pond":
             dtype = [
@@ -874,7 +912,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                 ("numcell", int),
                 ("period", float),
                 ("triggerfact", float),
-                ("flowthrough", int),
+                ("flowthrough", float),
             ]
 
             for i in range(maxells):
@@ -994,7 +1032,9 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     nrec = len(t)
 
                     # check if this is block 16a
-                    if isinstance(options.tabfileswell, np.recarray):
+                    if isinstance(
+                        options.tabfileswell, np.recarray
+                    ) or isinstance(options.tabfiles, np.recarray):
                         tf = True
                         well = ModflowAg.get_empty(nrec, block="tabfile_well")
                     else:
@@ -1039,7 +1079,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                     for ix, rec in enumerate(t):
                         if not tf:
                             hru_id = int(rec[0]) - 1
-                            pond[ix] = (hru_id, rec[1], rec[2])
+                            pond[ix] = (hru_id, rec[1], rec[2], rec[3])
                         else:
                             hru_id = int(rec[2]) - 1
                             pond[ix] = (rec[0], rec[1], hru_id, rec[3])
@@ -1084,8 +1124,11 @@ class ModflowAg(flopy.modflow.ModflowAg):
                             )
 
                             # read blocks 20 & 21
-                            irr = _read_block_21_25_or_29(mfag, nrec, irr, 21)
-
+                            try:
+                                irr = _read_block_21_25_or_29(mfag, nrec, irr, 21)
+                            except ValueError:
+                                print(per)
+                                raise ValueError
                         irr_diversion[per] = irr
                         line = multi_line_strip(mfag)
 
@@ -1165,6 +1208,80 @@ class ModflowAg(flopy.modflow.ModflowAg):
             nper=nper,
         )
 
+    def plot(self, **kwargs):
+        """
+        Plot 2-D, 3-D, transient 2-D, and stress period list (MfList)
+        package input data
+
+        Parameters
+        ----------
+        **kwargs : dict
+            filename_base : str
+                Base file name that will be used to automatically generate file
+                names for output image files. Plots will be exported as image
+                files if file_name_base is not None. (default is None)
+            file_extension : str
+                Valid matplotlib.pyplot file extension for savefig(). Only used
+                if filename_base is not None. (default is 'png')
+            mflay : int
+                MODFLOW zero-based layer number to return.  If None, then all
+                all layers will be included. (default is None)
+            kper : int
+                MODFLOW zero-based stress period number to return. (default is
+                zero)
+            key : str
+                MfList dictionary key. (default is None)
+
+        Returns
+        ----------
+        axes : list
+            Empty list is returned if filename_base is not None. Otherwise
+            a list of matplotlib.pyplot.axis are returned.
+
+        See Also
+        --------
+
+        Notes
+        -----
+
+        Examples
+        --------
+        >>> import gsflow
+        >>> ml = gsflow.modflow.Modflow.load('test.nam')
+        >>> ml.ag.plot()
+
+        """
+        return super(ModflowAg, self).plot(**kwargs)
+
+    def to_shapefile(self, filename, **kwargs):
+        """
+        Export 2-D, 3-D, and transient 2-D model data to shapefile (polygons).
+        Adds an attribute for each layer in each data array
+
+        Parameters
+        ----------
+        filename : str
+            Shapefile name to write
+
+        Returns
+        ----------
+        None
+
+        See Also
+        --------
+
+        Notes
+        -----
+
+        Examples
+        --------
+        >>> import gsflow
+        >>> ml = gsflow.modflow.Modflow.load('test.nam')
+        >>> ml.ag.to_shapefile('test_hk.shp')
+
+        """
+        return super(ModflowAg, self).to_shapefile(filename, **kwargs)
+
 
 def _read_irrpond_block(fobj, nrec, recarray, trigger):
     """
@@ -1196,7 +1313,7 @@ def _read_irrpond_block(fobj, nrec, recarray, trigger):
         if trigger:
             t1 += ll[3:5]
         else:
-            t1 += [0, ll[3]]
+            t1 += [ll[3], ll[4]]
 
         for _ in range(int(t1[1])):
             tmp = multi_line_strip(fobj).split()[:4]
@@ -1212,6 +1329,8 @@ def _read_irrpond_block(fobj, nrec, recarray, trigger):
                 if ix2 >= len(rec):
                     pass
                 else:
-                    recarray[name][ix] = rec[ix2]
-
+                    try:
+                        recarray[name][ix] = rec[ix2]
+                    except ValueError:
+                        print('break')
     return recarray

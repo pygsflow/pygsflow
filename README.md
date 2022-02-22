@@ -13,6 +13,7 @@ pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW 
 GSFLOW model development has previously been a piecemeal approach that required multiple software tools to build, edit, postprocess, and visualize models. pyGSFLOW changes this by being a tightly coupled scripting library that provides support for GSFLOW, PRMS, and MODFLOW. Custom modules for both GSFLOW and PRMS are included in this library. MODFLOW support is provided by wrapping the [Flopy](https://github.com/modflowpy/flopy) package (Bakker and others, 2021) with GSFLOW specific code. Together, these three pieces create a single integrated scripting package that helps to standardize and streamline model development and calibration. 
 
 This is the development repository for pyGSFLOW. Official USGS releases can be found [here](https://code.usgs.gov/water/pyGSFLOW) 
+
 ## API Documentation
 pyGSFLOW API documentation can be found @
 
@@ -26,27 +27,27 @@ Interactive jupyter notebook example problems can be found in the examples direc
 https://github.com/pygsflow/pygsflow/tree/master/examples
 
 ## Requirements
-**Version 1.0.1** (Master branch and from pypi)
+**Version 1.0.2** (Master branch and from pypi)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.6 or greater  
-   3) FloPy 3.3.4 (`pip install flopy==3.3.4`)
+   3) FloPy 3.3.4 or greater, *note* for Python 3.6 use (`pip install flopy==3.3.4`)
    4) NetCdf4 (optional, required for netcdf exporting and autotesting) (`pip install netcdf4`)
 
-**Version 1.0.2** (Develop branch)
+**Version 1.1.0** (Develop branch)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.6 or greater 
    3) Flopy 3.3.4 or greater (`pip install flopy`) *note* for Python 3.6 use (`pip install flopy==3.3.4`)
    4) NetCdf4 (optional, required for netcdf exporting and autotesting) (`pip install netcdf4`)
    
 ## Installation
-**Version 1.0.1** (Master branch and from pypi)
+**Version 1.0.2** (Master branch and from pypi)
     
 The pygsflow repository can be installed using pip.
 To install the release version, open a terminal, command prompt, or anaconda prompt and type:
 
 `pip install pygsflow`
 
-**Version 1.0.2** (Develop version with most recent updates)
+**Version 1.1.0** (Develop version with most recent updates)
 
 To install the development version, open a terminal, command prompt or anaconda promt and type:  
 

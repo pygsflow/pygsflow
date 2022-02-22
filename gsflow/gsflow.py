@@ -9,17 +9,14 @@ from .modsim import Modsim
 import flopy
 import subprocess as sp
 import platform
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
-warnings.simplefilter("always", UserWarning)
+import inspect
 
 
 class GsflowModel(object):
     """
     GsflowModel is the GSFLOW model object. This class can be used
     to build a GSFLOW model, to load a GSFLOW model from it's control file,
-    to write input files for GSFLOW and to run GSFLOW.
+    to write input files for GSFLOW, and to run GSFLOW.
 
     Parameters
     ----------
@@ -36,8 +33,8 @@ class GsflowModel(object):
     gsflow_exe : str
         GSFLOW executable path and name
     modsim : bool
-        boolean flag to indicate that modsim is active
-        this creates a gsflow.modsim.Modsim object
+        boolean flag to indicate that modsim is active. This
+        creates a gsflow.modsim.Modsim object
     model_ws : str, None
         override method to set the base model directory when the
         GSFLOW control file is not located in the same directory as
@@ -46,12 +43,12 @@ class GsflowModel(object):
     Examples
     --------
 
-    load from control file
+    Load model from a control file
 
     >>> import gsflow
     >>> gsf = gsflow.GsflowModel.load_from_file("gsflow.control")
 
-    create new, empty gsflow object
+    Create a new, empty gsflow object
 
     >>> control = gsflow.ControlFile(records_list=[])
     >>> gsf = gsflow.GsflowModel(control=control)
@@ -93,8 +90,10 @@ class GsflowModel(object):
             if prms and isinstance(prms, PrmsModel):
                 self.prms = prms
             else:
-                err = "prms is not a PrmsModel object, skipping..."
-                warnings.warn(err, UserWarning)
+                msg = "prms is not a PrmsModel object, skipping..."
+                gsflow_io._warning(
+                    msg, inspect.getframeinfo(inspect.currentframe())
+                )
 
         # set flopy modflow object
         if not prms_only:
@@ -106,8 +105,10 @@ class GsflowModel(object):
                 if namefile is not None:
                     self.mf.namefile = namefile
             else:
-                err = "modflow is not a gsflow.modflow.Modflow object, skipping..."
-                warnings.warn(err, UserWarning)
+                msg = "modflow is not a gsflow.modflow.Modflow object, skipping..."
+                gsflow_io._warning(
+                    msg, inspect.getframeinfo(inspect.currentframe())
+                )
 
         if modsim:
             self.modsim = Modsim(self)
@@ -117,25 +118,22 @@ class GsflowModel(object):
     @property
     def modflow_only(self):
         """
-        Returns
-        -------
-            bool
+        Returns boolean value indicating if the model is a modflow only model
+
         """
         return self._modflow_only
 
     @property
     def prms_only(self):
         """
-        Returns
-        -------
-            bool
+        Returns a boolean value indicating if the model is a prms only model
         """
         return self._prms_only
 
     def export_nc(self, f, **kwargs):
         """
         Method to export the GSFLOW model as a netcdf
-        file. This method only works if nhru is equivalent
+        file. Note: This method only works if nhru is equivalent
         to nrow * ncol in modflow.
 
         Parameters
@@ -174,7 +172,7 @@ class GsflowModel(object):
         Parameters
         ----------
         control_file : str
-            control file path & name, GSFLOW
+            control file path & name
         gsflow_exe : str
             gsflow executable path & name
         modflow_only : bool
@@ -298,10 +296,13 @@ class GsflowModel(object):
     def write_input(self, basename=None, workspace=None, write_only=None):
         """
          Write input files for gsflow. Four cases are possible:
-            (1) if basename and workspace are None,then the exisiting files will be overwritten
-            (2) if basename is specified, only file names will be changes
-            (3) if only workspace is specified, only folder will be changed
-            (4) when both basename and workspace are specifed both files are changed
+            - if basename and workspace are None,then the exisiting files
+            will be overwritten
+            - if basename is specified, only file names will be changes
+            - if only workspace is specified, only the directory will be
+            changed
+            - when both basename and workspace are specifed both files and
+            the directory they are written to are changed
 
         Parameters
         ----------
@@ -355,6 +356,11 @@ class GsflowModel(object):
                 )
                 self.prms.data.model_dir = workspace
                 self.control.set_values("data_file", [curr_file])
+
+                # change day files
+                if self.prms.day is not None:
+                    for dvar, day in self.prms.day.items():
+                        day.change_file_ws(workspace)
 
             # change mf
             if self.mf is not None:
@@ -447,6 +453,11 @@ class GsflowModel(object):
             self.prms.data.name = dfile
             self.control.set_values("data_file", [curr_file])
 
+            # change day files
+            if self.prms.day is not None:
+                for dvar, day in self.prms.day.items():
+                    day.change_file_ws(workspace)
+
             # flatten mf
             if self.mf is not None:
                 self.mf.change_model_ws(workspace)
@@ -500,10 +511,14 @@ class GsflowModel(object):
                     if rec_name in ("modflow_name",):
                         continue
 
-                    elif rec_name in (
-                        "modflow_name",
-                        "param_file",
-                        "data_file",
+                    elif (
+                        rec_name
+                        in (
+                            "modflow_name",
+                            "param_file",
+                            "data_file",
+                        )
+                        or rec_name.endswith("_day")
                     ):
                         file_values = self.control.get_values(rec_name)
                         file_value = []
@@ -580,6 +595,7 @@ class GsflowModel(object):
             "control",
             "parameters",
             "prms_data",
+            "prms_day",
             "mf",
             "modsim",
         )
@@ -615,6 +631,13 @@ class GsflowModel(object):
                 print("Writing Data file ...")
                 self.prms.data.write()
 
+            # write day
+            if len(write_only) == 0 or "prms_day" in write_only:
+                print("Writing Day files ...")
+                if self.prms.day is not None:
+                    for dvar, day in self.prms.day.items():
+                        day.write()
+
         # write mf
         if self.mf is not None:
             if len(write_only) == 0 or "mf" in write_only:
@@ -626,7 +649,9 @@ class GsflowModel(object):
                 print("Writing MODSIM shapefile")
                 self.modsim.write_modsim_shapefile()
 
-    def run_model(self, model_ws=".", forgive=False):
+    def run_model(
+        self, model_ws=".", forgive=False, gsflow_exe=None, silent=False
+    ):
         """
         Method to run a gsflow model
 
@@ -636,6 +661,12 @@ class GsflowModel(object):
             parameter to specify the model directory
         forgive : bool
             forgives convergence issues
+        gslfow_exe : str or None
+            path to gsflow_exe, if gsflow_exe is None it will use
+            the previously defined gsflow_exe variable or the default
+            gsflow.exe.
+        silent : bool
+            flag to supress output printing to terminal during model run
 
         Returns
         -------
@@ -649,10 +680,14 @@ class GsflowModel(object):
 
         """
         fn = self.control_file
-        if not os.path.isfile(self.gsflow_exe):
+
+        if gsflow_exe is None:
+            gsflow_exe = self.gsflow_exe
+
+        if not os.path.isfile(gsflow_exe):
             print(
-                "Warning : The executable of the model is not specified. Use .gsflow_exe "
-                "to define its path... "
+                "Warning : The executable of the model could not be found. "
+                "Use the gsflow_exe= parameter to define its path... "
             )
             return None
 
@@ -663,10 +698,11 @@ class GsflowModel(object):
             normal_msg.append("failed to meet solver convergence criteria")
 
         return self.__run(
-            exe_name=self.gsflow_exe,
+            exe_name=gsflow_exe,
             namefile=fn,
             normal_msg=normal_msg,
             model_ws=model_ws,
+            silent=silent,
         )
 
     def _generate_batch_file(self):
@@ -796,11 +832,11 @@ class GsflowModel(object):
                 argv.append(t)
 
         # run the model with Popen
-        if platform.system().lower() == "windows":
-            self._generate_batch_file()
-            argv = self.__bat_file
-        else:
-            pass
+        # if platform.system().lower() == "windows":
+        #     self._generate_batch_file()
+        #     cargv = self.__bat_file
+        # else:
+        #     pass
 
         model_ws = os.path.dirname(self.control_file)
         proc = sp.Popen(argv, stdout=sp.PIPE, stderr=sp.STDOUT, cwd=model_ws)

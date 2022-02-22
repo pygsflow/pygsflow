@@ -4,14 +4,12 @@ from .record_base import RecordBase
 from .param_base import ParameterBase
 from .utils import GsConstant
 from .utils import gsflow_io
-import warnings
-
-warnings.simplefilter("always", PendingDeprecationWarning)
 
 
 class ControlFile(ParameterBase):
     """
-    Class to hold information about control file, also it reads and writes data.
+    Class to hold information about control file.
+    Class reads, allows edits, and writes control file parameter data.
 
     Parameters
     ----------
@@ -32,6 +30,7 @@ class ControlFile(ParameterBase):
 
     load from file
 
+    >>> import gsflow
     >>> control = gsflow.ControlFile.load_from_file("gsflow.control")
 
 
@@ -64,9 +63,7 @@ class ControlFile(ParameterBase):
     @property
     def records_list(self):
         """
-        Returns
-        -------
-            a list of ControlRecord objects
+        Returns a list of ControlRecord objects
         """
         return self._records_list
 
@@ -80,7 +77,6 @@ class ControlFile(ParameterBase):
         ----------
         control_file : str
             control file path & name
-
         set_abs : bool
             optional flag to set control file variables to abs paths, default
             is True
@@ -198,6 +194,7 @@ class ControlFile(ParameterBase):
         ----------
         name : str
             record name
+
         Returns
         -------
             np.ndarray or list
@@ -230,9 +227,9 @@ class ControlFile(ParameterBase):
             record name
         values : list
             list of values
-        where : int
+        where : int, optional
             index location to insert record
-        after : int
+        after : int, optional
             index location - 1 to insert record
 
         """
@@ -247,7 +244,7 @@ class ControlFile(ParameterBase):
 
     def remove_record(self, name):
         """
-        Convenience method to remove a record from a control file
+        Method to remove a parameter record from a control file
 
         Parameters
         ----------
@@ -298,14 +295,14 @@ class ControlRecord(RecordBase):
         list of values
     datatype : int
         integer datatype flag
-    nvalues : int
-        number of values in record
+
 
     Examples
+    --------
 
     create a modflow_nam ControlRecord
 
-    >>> rec = ControlRecord("modflow_nam", "gsflow_test.nam")
+    >>> rec = ControlRecord("modflow_nam", ["gsflow_test.nam",])
 
     """
 
@@ -315,6 +312,10 @@ class ControlRecord(RecordBase):
 
     @property
     def values(self):
+        """
+        Returns a list of the records values
+
+        """
         return self._values
 
     @values.setter
@@ -326,18 +327,6 @@ class ControlRecord(RecordBase):
             print("Warning: the number of values is modefied")
         self._check_dtype()
         self._force_dtype()
-
-    """
-    @ comment JL
-    
-    these write methods can be cleaned up by using
-    a list and then .join()
-    
-    Furthermore; we could template these and fill using
-    a format string... Think about best method.
-    
-    Applies to PrmsParameters class too!
-    """
 
     def write(self, fid):
         """

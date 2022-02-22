@@ -21,6 +21,7 @@ class PrmsPlot(object):
 
     create a plot object and plot an array
 
+    >>> import gsflow
     >>> dis = gsflow.output.PrmsDiscretization.load_from_shapefile("myshp.shp")
     >>> plot = gsflow.output.PrmsPlot(prms_dis=dis)
     >>> array = np.random((dis.nhru,))
@@ -318,7 +319,7 @@ class PrmsPlot(object):
         else:
             raise ValueError("Valid number of dimensions is 1 or 2")
 
-    def plot_data_timeseries(self, data, names, ax=None, **kwargs):
+    def _plot_data_timeseries(self, data, names, ax=None, **kwargs):
         """
         Not implemented yet
 

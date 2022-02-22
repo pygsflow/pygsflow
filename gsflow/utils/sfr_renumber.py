@@ -1,17 +1,17 @@
 import numpy as np
 import pandas as pd
 import flopy as fp
-import warnings
-
-warnings.simplefilter("always", UserWarning)
+import inspect
+from .gsflow_io import _warning
 
 
 class SfrRenumber(object):
     """
     Class method that facilitates SFR package renumbering based on
-    topology trees, discretization elevations, STRTOP elevation, or a user defined
-    scheme. This class can be used to renumber SFR file or it can
-    be used to renumber all SFR associated files in a model ex. SFR, GAGE, AG...
+    topology trees, discretization elevations, STRTOP elevation, or a user
+    defined scheme. This class can be used to renumber SFR file or it can
+    be used to renumber all SFR associated files in a model ex. SFR, LAK, GAGE,
+    AG...
 
     Parameters
     ----------
@@ -45,15 +45,15 @@ class SfrRenumber(object):
     Renumber a model based on the topology of the SFR network connections
     (Recommended method)
 
-    >>> import flopy
-    >>> ml = flopy.modflow.Modflow.load("sagehen.nam")
+    >>> import gsflow
+    >>> ml = gsflow.modflow.Modflow.load("sagehen.nam")
     >>> sfr_renumber = SfrRenumber(model=ml)  # default scheme="topology"
     >>> sfr_renumber.renumber_all()
 
     Renumber a model based on the elevation of TOP in the dis file
 
-    >>> import flopy
-    >>> ml = flopy.modflow.Modflow.load("sagehen.nam")
+    >>> import gsflow
+    >>> ml = gsflow.modflow.Modflow.load("sagehen.nam")
     >>> sfr_renumber = SfrRenumber(model=ml, scheme="dis")
     >>> sfr_renumber.renumber_all()
 
@@ -67,15 +67,15 @@ class SfrRenumber(object):
 
     or
 
-    >>> import flopy
-    >>> ml = flopy.modflow.Modflow.load("sagehen.nam")
+    >>> import gsflow
+    >>> ml = gsflow.modflow.Modflow.load("sagehen.nam")
     >>> sfr_renumber = SfrRenumber(model=ml, scheme="sfr")
     >>> sfr_renumber.renumber_all()
 
     Renumber a model using a user defined renumbering scheme
 
-    >>> import flopy
-    >>> ml = flopy.modflow.Modflow.load("sagehen.nam")
+    >>> import gsflow
+    >>> ml = gsflow.modflow.Modflow.load("sagehen.nam")
     >>> # create and apply a segment inversion scheme
     >>> t = range(50, 0, -1)
     >>> my_scheme = {ix: i for ix, i in enumerate(t)}
@@ -184,12 +184,20 @@ class SfrRenumber(object):
 
     @property
     def renumbering(self):
+        """
+        Returns a dictionary of the SFR renumbering graph
+
+        """
         if self.__renumber is None:
             self.__calculate_renumbering_scheme()
         return self.__renumber
 
     @property
     def scheme(self):
+        """
+        Returns the scheme name
+
+        """
         return self.__scheme
 
     def __calculate_renumbering_scheme(self):
@@ -273,22 +281,21 @@ class SfrRenumber(object):
 
     def renumber_sfr(self):
         """
-        Method to renumber only the Sfr Package. Using
-        renumber_all() is recommended over this method
-        in most cases
+        Method to renumber only the Sfr Package. Using renumber_all() is
+        recommended over this method in most cases
         """
         if self.gage is not None:
-            warn = (
+            msg = (
                 "Gage package will not be renumbered\n"
                 "MODFLOW may not run properly"
             )
-            warnings.warn(warn, UserWarning)
+            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
         elif self.ag is not None:
-            warn = (
+            msg = (
                 "Ag package will not be renumbered\n"
                 "GSFLOW may not run properly"
             )
-            warnings.warn(warn, UserWarning)
+            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
 
         self.__renumber_sfr()
 
@@ -436,8 +443,8 @@ class SfrRenumber(object):
 
 class Topology(object):
     """
-    A topological sort method that uses a modified
-    Khan algorithm to sort the SFR network
+    A topological sort method that uses a modified Khan algorithm to sort the
+    SFR network
 
     Parameters
     ----------

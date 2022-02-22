@@ -3,7 +3,6 @@ import inspect
 import flopy
 import platform
 from flopy.utils import TemporalReference
-from flopy.utils.reference import SpatialReference
 from flopy.modflow.mf import Modflow as fpModflow
 from ..utils import mfreadnam
 
@@ -21,10 +20,11 @@ class Modflow(fpModflow):
     namefile_ext : string, optional
         Extension for the namefile (the default is 'nam')
     version : string, optional
-        Version of MODFLOW to use (the default is 'mf2005').
+        Version of MODFLOW to use (the default is 'mfnwt')
+    version2 : str, optional
+        Secondary MODFLOW version to use (the default is 'gsflow')
     exe_name : string, optional
-        The name of the executable to use (the default is
-        'mf2005').
+        The name of the executable to use (the default is 'mfnwt').
     listunit : integer, optional
         Unit number for the list file (the default is 2).
     model_ws : string, optional
@@ -95,9 +95,9 @@ class Modflow(fpModflow):
             **kwargs
         )
 
-        self.version2 = version2
+        self._version2 = version2
 
-        # Using a local gsflow import to avoid circular imports with python 2.7
+        # Using a local gsflow import to avoid circular imports
         import gsflow
 
         # we can override packages here by setting the package object
@@ -108,7 +108,6 @@ class Modflow(fpModflow):
             "pval": flopy.modflow.ModflowPval,
             "bas6": flopy.modflow.ModflowBas,
             "dis": flopy.modflow.ModflowDis,
-            "disu": flopy.modflow.ModflowDisU,
             "bcf6": flopy.modflow.ModflowBcf,
             "lpf": flopy.modflow.ModflowLpf,
             "hfb6": flopy.modflow.ModflowHfb,
@@ -132,7 +131,6 @@ class Modflow(fpModflow):
             "pcgn": flopy.modflow.ModflowPcgn,
             "nwt": flopy.modflow.ModflowNwt,
             "pks": flopy.modflow.ModflowPks,
-            "sms": flopy.modflow.ModflowSms,
             "sfr": flopy.modflow.ModflowSfr2,
             "lak": flopy.modflow.ModflowLak,
             "gage": flopy.modflow.ModflowGage,
@@ -152,8 +150,64 @@ class Modflow(fpModflow):
         }
 
     @property
+    def version2(self):
+        """
+        Secondary version information about modflow
+
+        """
+        return self._version2
+
+    @property
     def model_ws(self):
+        """
+        Modflow model's base directory path
+
+        """
         return super(Modflow, self).model_ws
+
+    @property
+    def nper(self):
+        """
+        Returns the number of stress periods in the model
+
+        """
+        try:
+            return self.dis.nper
+        except AttributeError:
+            return 0
+
+    @property
+    def nrow(self):
+        """
+        Returns the number of model rows
+
+        """
+        try:
+            return self.modelgrid.nrow
+        except AttributeError:
+            return 0
+
+    @property
+    def ncol(self):
+        """
+        Returns the number of columns in the model
+
+        """
+        try:
+            return self.modelgrid.ncol
+        except AttributeError:
+            return 0
+
+    @property
+    def ncpl(self):
+        """
+        Returns the number of cells per layer in the model
+
+        """
+        try:
+            return self.modelgrid.ncpl
+        except AttributeError:
+            return 0
 
     def change_model_ws(self, new_pth=None, reset_external=False):
         """
@@ -168,9 +222,7 @@ class Modflow(fpModflow):
 
         Returns
         -------
-        val : list of strings
-            Can be used to see what packages are in the model, and can then
-            be used with get_package to pull out individual packages.
+        None
 
         """
         super(Modflow, self).change_model_ws(new_pth, reset_external)
@@ -268,10 +320,10 @@ class Modflow(fpModflow):
         f : str
             Path to MODFLOW name file to load.
         version : str, optional
-            MODFLOW version. Default 'mf2005', although can be modified on
+            MODFLOW version. Default 'mfnwt', although can be modified on
             loading packages unique to different MODFLOW versions.
         exe_name : str, optional
-            MODFLOW executable name. Default 'mf2005.exe'.
+            MODFLOW executable name. Default 'mfnwt.exe'.
         verbose : bool, optional
             Show messages that can be useful for debugging. Default False.
         model_ws : str
@@ -298,8 +350,8 @@ class Modflow(fpModflow):
         Examples
         --------
 
-        >>> import flopy
-        >>> ml = flopy.modflow.Modflow.load('model.nam')
+        >>> import gsflow
+        >>> ml = gsflow.modflow.Modflow.load('model.nam')
 
         """
 
@@ -583,3 +635,77 @@ class Modflow(fpModflow):
 
         # return model object
         return ml
+
+    def plot(self, SelPackList=None, **kwargs):
+        """
+        Plot 2-D, 3-D, transient 2-D, and stress period list (MfList)
+        model input data
+
+        Parameters
+        ----------
+        SelPackList : bool or list
+            List of of packages to plot. If SelPackList=None all packages
+            are plotted. (default is None)
+        **kwargs : dict
+            filename_base : str
+                Base file name that will be used to automatically generate file
+                names for output image files. Plots will be exported as image
+                files if file_name_base is not None. (default is None)
+            file_extension : str
+                Valid matplotlib.pyplot file extension for savefig(). Only used
+                if filename_base is not None. (default is 'png')
+            mflay : int
+                MODFLOW zero-based layer number to return.  If None, then all
+                all layers will be included. (default is None)
+            kper : int
+                MODFLOW zero-based stress period number to return.
+                (default is zero)
+            key : str
+                MfList dictionary key. (default is None)
+
+        Returns
+        ----------
+        axes : list
+            Empty list is returned if filename_base is not None. Otherwise
+            a list of matplotlib.pyplot.axis are returned.
+
+        See Also
+        --------
+
+        Notes
+        -----
+
+        Examples
+        --------
+        >>> import gsflow
+        >>> ml = gsflow.modflow.Modflow.load('test.nam')
+        >>> ml.plot()
+
+        """
+        super(Modflow, self).plot(SelPackList=SelPackList, **kwargs)
+
+    def to_shapefile(self, filename, package_names=None, **kwargs):
+        """
+        Wrapper function for writing a shapefile for the model grid.  If
+        package_names is not None, then search through the requested packages
+        looking for arrays that can be added to the shapefile as attributes
+
+        Parameters
+        ----------
+        filename : string
+            name of the shapefile to write
+        package_names : list of package names (e.g. ["dis","lpf"])
+            Packages to export data arrays to shapefile. (default is None)
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        >>> import gsflow
+        >>> m = gsflow.modflow.Modflow()
+        >>> m.to_shapefile('model.shp', SelPackList)
+
+        """
+        super(Modflow, self).to_shapefile(filename, package_names, **kwargs)
