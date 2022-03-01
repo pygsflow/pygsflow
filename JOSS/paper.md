@@ -39,7 +39,7 @@ and rapid development [@Garrote:2017; @Lotze:2006; @Mekonnen:2016]. Groundwater 
 often serve as a tool for exploring the impacts of different water management pressures 
 and conservation scenarios [@Moore:1980]. The traditional groundwater modeling approach 
 has focused on simulating saturated flow in the groundwater system and uses simplified 
-boundary conditions for representing recharge and discharge from the system [@Chiu:2010; Li:2011; Siade:2014]. 
+boundary conditions for representing recharge and discharge from the system [@Chiu:2010; @Li:2011; @Siade:2014]. 
 Ignoring landscape changes in space and time and applying simple boundary conditions 
 within hydrologic models is no longer adequate to address watershed and basin scale 
 issues [@Fatichi:2016]. Instead, integrated hydrologic models (IHMs), that couple 
