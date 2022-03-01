@@ -39,7 +39,7 @@ and rapid development have resulted in increased demands for water  [@Garrote:20
 Understanding interactions among the different components of a hydrologic system, often 
 supported by physics-based models, is important information for water resources planning 
 and management. For example, groundwater models often serve as a tool for exploring the 
-impacts of different water management and conservation scenarios[@Davie:2019]. The 
+impacts of different water management and conservation scenarios [@Davie:2019]. The 
 traditional groundwater modeling approach has mainly focused on simulating flow and 
 storage in aquifers that have simplified boundary conditions to represent exchanges 
 with surface water [@Chiu:2010; @Li:2011; @Siade:2014]. 
