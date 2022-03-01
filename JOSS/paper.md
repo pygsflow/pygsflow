@@ -29,26 +29,33 @@ bibliography: paper.bib
 ---
 
 # Overview
-pyGSFLOW is a python package designed to create new GSFLOW integrated hydrologic 
+pyGSFLOW is a Python package designed to create new GSFLOW integrated hydrologic 
 models, read existing models, edit model input data, run GSFLOW models, process 
 output, and visualize model data.
 
 # Introduction
-Hydrologic modeling has been steadily increasing in complexity over the years. 
-The addition of new types of data sets and the need to represent the interaction 
-between surface-water and groundwater systems has been driving this complexity. 
-Ignoring landscape changes in space and time and applying simple boundary conditions 
-within hydrologic models is no longer adequate to address watershed and basin scale 
-issues [@Fatichi:2016]. Instead, integrated hydrologic models (IHMs), that couple 
-governing equations for surface-water and groundwater flow, are used to represent 
-feedback mechanisms between these systems.
+Effective management of limited water resources is challenging because of competing interests
+and rapid development have resulted in increased demands for water  [@Garrote:2017; @Lotze:2006; @Mekonnen:2016]. 
+Understanding interactions among the different components of a hydrologic system, often 
+supported by physics-based models, is important information for water resources planning 
+and management. For example, groundwater models often serve as a tool for exploring the 
+impacts of different water management and conservation scenarios [@Davie:2019]. The 
+traditional groundwater modeling approach has mainly focused on simulating flow and 
+storage in aquifers that have simplified boundary conditions to represent exchanges 
+with surface water [@Chiu:2010; @Li:2011; @Siade:2014]. 
+Ignoring spatiotemporal changes in the hydraulicly connected surface water and 
+groundwater systems by applying simple and loosely coupled boundary conditions 
+within hydrologic models is no longer adequate to address water management issues [@Fatichi:2016]. 
+Instead, integrated hydrologic models (IHMs) that couple governing equations for 
+surface-water and groundwater flow, are necessary to represent water resources 
+that are impacted by changes in climate and increases in withdrawals and consumption of water.
 
-Among these IHMs is GSFLOW simulation code [@Markstrom:2008] that simulates surface 
+GSFLOW is an IHM [@Markstrom:2008] that simulates surface 
 and subsurface hydrologic processes by integrating the Precipitation Runoff 
 Modeling System (PRMS)  [@Markstrom:2015] and MODFLOW [@Harbaugh:2005; @Niswonger:2011] 
 into a single code that simulates feedbacks between the two systems. Because 
-modelers are moving toward simulating greater portions of the hydrologic cycle, 
-larger datasets, from multiple sources are used to parameterize these models. 
+modelers are moving toward simulating the hydrologic cycle in greater detail, 
+larger datasets from multiple sources are used to parameterize these models. 
 Beyond the scope of example problems, most applied problems require custom workflows 
 and code to process large datasets related to model inputs and outputs. Scripting 
 languages like Python make it easier to process large data sets and provide standard 
@@ -58,14 +65,14 @@ major advancements in model reproducibility and improvements in model
 applicability [@Bakker:2016; @Gardner:2018; @Ng:2018].
 
 # Statement of need
-GSFLOW model development previously has been a piecemeal approach. Arcpy-GSFLOW 
+GSFLOW model development has previously been a piecemeal approach. Arcpy-GSFLOW 
 scripts [@Gardner:2018] or GSFLOW-GRASS packages have been used to 
 process surface-water input data into model files. PRMS-Python 
 [@Volk:2019] could be used to edit most of the PRMS inputs to 
 GSFLOW. Finally, FloPy [@Bakker:2016; @Bakker:2021] could be used to edit most 
 of the MODFLOW inputs to GSFLOW. This approach is not tightly coupled and still 
 requires manual edits and additional external scripts to edit, run models, and 
-process output data. Because of the complexity of integrated hydrologic models 
+process output data. Because of the complexity of IHMs 
 and the need for model reproducibility, a single integrated scripting package 
 will help standardize and streamline model development and calibration. 
 
@@ -80,7 +87,7 @@ operations networks, and MODFLOW [@Harbaugh:2005] model packages and binds them
 into a single integrated model instance. pyGSFLOW leverages features from FloPy, 
 an existing Python package for the MODFLOW suite of groundwater modeling software
 [@Harbaugh:2005; @Niswonger:2011; @Panday:2013; @Langevin:2017] 
-and extends the capabilities for integrated hydrologic models. pyGSFLOW relies 
+and extends the capabilities for IHMs. pyGSFLOW relies 
 on FloPy model and package objects and interfaces with these features to provide 
 FloPy users with familiar code syntax and to ensure the long-term maintainability 
 of the code base.
@@ -182,7 +189,7 @@ with each of these listed modules and the FloPy package.](Package_architecture.p
 
 
 # Conclusion
-GSFLOW integrated hydrologic models simulate complex processes and interactions 
+GSFLOW IHMs simulate complex processes and interactions 
 between surface-water and groundwater flow systems. Parameterizing these model 
 processes requires large datasets from multiple sources to represent the hydrologic 
 cycle. Previous approaches involved multiple disconnected scripts and packages, 
@@ -198,7 +205,7 @@ product, or firm names is for descriptive purposes only and does not imply
 endorsement by the U.S. Government.
 
 # Funding
-This work was funded by the USGS's Water Availability and Use Program.
+This work was funded by the United States Geological Survey's Water Availability and Use Program.
 
 # References
 
