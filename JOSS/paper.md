@@ -34,23 +34,27 @@ models, read existing models, edit model input data, run GSFLOW models, process
 output, and visualize model data.
 
 # Introduction
-Water resources are becoming increasingly scarce due to pressures from competing interests 
-and rapid development [@Garrote:2017; @Lotze:2006; @Mekonnen:2016]. Groundwater models 
-often serve as a tool for exploring the impacts of different water management pressures 
-and conservation scenarios [@Moore:1980]. The traditional groundwater modeling approach 
-has focused on simulating saturated flow in the groundwater system and uses simplified 
-boundary conditions for representing recharge and discharge from the system [@Chiu:2010; @Li:2011; @Siade:2014]. 
-Ignoring landscape changes in space and time and applying simple boundary conditions 
-within hydrologic models is no longer adequate to address watershed and basin scale 
-issues [@Fatichi:2016]. Instead, integrated hydrologic models (IHMs), that couple 
-governing equations for surface-water and groundwater flow, are used to represent 
-feedback mechanisms between these systems.
+Effective management of limited water resources is challenging because of competing interests
+and rapid development have resulted in increased demands for water  [@Garrote:2017; @Lotze:2006; @Mekonnen:2016]. 
+Understanding interactions among the different components of a hydrologic system, often 
+supported by physics-based models, is important information for water resources planning 
+and management. For example, groundwater models often serve as a tool for exploring the 
+impacts of different water management and conservation scenarios[@Davie:1980]. The 
+traditional groundwater modeling approach has mainly focused on simulating flow and 
+storage in aquifers that have simplified boundary conditions to represent exchanges 
+with surface water [@Chiu:2010; @Li:2011; @Siade:2014]. 
+Ignoring spatiotemporal changes in the hydraulicly connected surface water and 
+groundwater systems by applying simple and loosely coupled boundary conditions 
+within hydrologic models is no longer adequate to address water management issues [@Fatichi:2016]. 
+Instead, integrated hydrologic models (IHMs) that couple governing equations for 
+surface-water and groundwater flow, are necessary to represent water resources 
+that are impacted by changes in climate and increases in withdrawals and consumption of water.
 
-Among these IHMs is the GSFLOW simulation code [@Markstrom:2008] that simulates surface 
+GSFLOW is an IHM [@Markstrom:2008] that simulates surface 
 and subsurface hydrologic processes by integrating the Precipitation Runoff 
 Modeling System (PRMS)  [@Markstrom:2015] and MODFLOW [@Harbaugh:2005; @Niswonger:2011] 
 into a single code that simulates feedbacks between the two systems. Because 
-modelers are moving toward simulating greater portions of the hydrologic cycle, 
+modelers are moving toward simulating the hydrologic cycle in greater detail, 
 larger datasets from multiple sources are used to parameterize these models. 
 Beyond the scope of example problems, most applied problems require custom workflows 
 and code to process large datasets related to model inputs and outputs. Scripting 
