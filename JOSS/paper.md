@@ -47,7 +47,7 @@ Ignoring spatiotemporal changes in the hydraulicly connected surface water and
 groundwater systems by applying simple and loosely coupled boundary conditions 
 within hydrologic models is no longer adequate to address water management issues [@Fatichi:2016]. 
 Instead, integrated hydrologic models (IHMs) that couple governing equations for 
-surface-water and groundwater flow, are necessary to represent water resources 
+surface-water and groundwater flow are necessary to represent water resources 
 that are impacted by changes in climate and increases in withdrawals and consumption of water.
 
 GSFLOW is an IHM [@Markstrom:2008] that simulates surface 
