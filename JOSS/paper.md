@@ -43,7 +43,7 @@ impacts of different water management and conservation scenarios [@Davie:2019]. 
 traditional groundwater modeling approach has mainly focused on simulating flow and 
 storage in aquifers that have simplified boundary conditions to represent exchanges 
 with surface water [@Chiu:2010; @Li:2011; @Siade:2014]. 
-Ignoring spatiotemporal changes in the hydraulicly connected surface water and 
+Ignoring spatiotemporal changes in the hydraulically connected surface water and 
 groundwater systems by applying simple and loosely coupled boundary conditions 
 within hydrologic models is no longer adequate to address water management issues [@Fatichi:2016]. 
 Instead, integrated hydrologic models (IHMs) that couple governing equations for 
