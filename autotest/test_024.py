@@ -12,6 +12,11 @@ def test_import_prms_builder():
 def test_build_prms_parameters():
     from gsflow.builder import GenerateFishnet, FlowAccumulation, PrmsBuilder
     from gsflow.prms import PrmsParameters
+    try:
+        import rasterio
+        import shapefile
+    except ImportError:
+        return
 
     param_out = os.path.join(ws, "temp", "builder.prms.parameter")
     data_ws = os.path.join(ws, "..", "examples", "data", "geospatial")
