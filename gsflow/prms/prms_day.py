@@ -16,14 +16,15 @@ class PrmsDay(object):
         optional variable name, required if not loading a file
     dataframe : pd.DataFrame
         optional dataframe of cell by hru data if not loading from file
-
+    nhru : int
+        number of hrus
     """
 
     date_header = ["year", "month", "day", "hh", "mm", "sec"]
 
     nhru_declaration = None
 
-    def __init__(self, f, variable_name=None, dataframe=None):
+    def __init__(self, f, variable_name=None, dataframe=None, nhru=None):
 
         self.__day_file = f
         self.__header = ""
@@ -34,8 +35,20 @@ class PrmsDay(object):
         self.__orad_flag = False
         self.__data_startline = None
         self.__pd_hru_header = []
-        self.__load_metadata()
+        if dataframe is None:
+            self.__load_metadata()
+        else:
+            self.__pd_hru_header = list(
+                sorted(
+                    [
+                        int(i)
+                        for i in list(dataframe)
+                        if i not in self.date_header
+                    ]
+                )
+            )
         self.__dataframe = dataframe
+        self._nhru_declaration = nhru
 
     @property
     def name(self):
@@ -216,7 +229,14 @@ class PrmsDay(object):
 
                 f.write("#" * 40 + "\n")
 
-                df.to_csv(f, sep=" ", header=None, index=False, na_rep=-999)
+                df.to_csv(
+                    f,
+                    sep=" ",
+                    header=None,
+                    index=False,
+                    na_rep=-999,
+                    line_terminator="\n",
+                )
 
             del df
             self.__dataframe = None

@@ -3,7 +3,6 @@ from .mfag import ModflowAg
 from ..utils.gsflow_io import _warning
 
 
-
 class ModflowAwu(ModflowAg):
     """
     DEPRECATED and will be removed in version 1.1.0
@@ -65,7 +64,11 @@ class ModflowAwu(ModflowAg):
             "ModflowAwu is deprecated and will be removed for version 1.1.0, "
             "please use ModflowAg"
         )
-        _warning(msg, inspect.getframeinfo(inspect.currentframe()), DeprecationWarning)
+        _warning(
+            msg,
+            inspect.getframeinfo(inspect.currentframe()),
+            DeprecationWarning,
+        )
 
         super(ModflowAwu, self).__init__(
             model,
@@ -103,6 +106,10 @@ class ModflowAwu(ModflowAg):
             ModflowAwu object
         """
         msg = "ModflowAwu is deprecated and will be removed, calling ModflowAg"
-        _warning(msg, inspect.getframeinfo(inspect.currentframe()), DeprecationWarning)
+        _warning(
+            msg,
+            inspect.getframeinfo(inspect.currentframe()),
+            DeprecationWarning,
+        )
 
         return ModflowAg.load(f, model, nper, ext_unit_dict)

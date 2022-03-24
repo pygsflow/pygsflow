@@ -60,6 +60,32 @@ class ControlFile(ParameterBase):
         if abs_path:
             self._make_pths_abs()
 
+    def __getattr__(self, item):
+
+        if item in self.record_names:
+            return self.get_record(item)
+        else:
+            try:
+                return super(ControlFile).__getattribute__(item)
+            except AttributeError:
+                raise AttributeError(
+                    f"ControlFile does not have record {item}"
+                )
+
+    def __setattr__(self, key, value):
+        if key in (
+            "name",
+            "model_dir",
+            "header",
+            "control_file",
+            "_records_list",
+        ):
+            super().__setattr__(key, value)
+        elif key in self.record_names:
+            self.set_values(key, value)
+        else:
+            raise AttributeError(f"PrmsParameters does not have record {key}")
+
     @property
     def records_list(self):
         """

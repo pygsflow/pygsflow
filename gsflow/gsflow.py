@@ -511,15 +511,11 @@ class GsflowModel(object):
                     if rec_name in ("modflow_name",):
                         continue
 
-                    elif (
-                        rec_name
-                        in (
-                            "modflow_name",
-                            "param_file",
-                            "data_file",
-                        )
-                        or rec_name.endswith("_day")
-                    ):
+                    elif rec_name in (
+                        "modflow_name",
+                        "param_file",
+                        "data_file",
+                    ) or rec_name.endswith("_day"):
                         file_values = self.control.get_values(rec_name)
                         file_value = []
                         for fil in file_values:

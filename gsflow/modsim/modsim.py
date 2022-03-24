@@ -53,6 +53,7 @@ class Modsim(object):
         self._other = other
         self._sfr = self.mf.get_package("SFR")
         self._lak = self.mf.get_package("LAK")
+        self._ag = self.mf.get_package("AG")
         self._ready = True
 
         if self.mf is None:

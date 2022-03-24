@@ -22,6 +22,8 @@ class PrmsBuilder(object):
     modelgrid : flopy.discretization.StructuredGrid object
     hru_type : np.ndarray
         hru_type array
+    hru_subbasin : np.ndarray
+        hru_subbasin array
     defaults : gsflow.builder.Defaults object
         optional gsflow.builder.Defaults object to build the PrmsParameters
         object with.
@@ -164,9 +166,6 @@ class PrmsBuilder(object):
         hru_slope[hru_slope < 1e-04] = 0
         param_dict["hru_slope"] = {"record": hru_slope, "dtype": 2}
 
-        # hru type - get it from the FA??? modified ... - nhru
-        # @ comment JL: I think we should have an option to return the
-        #  FA hru type and then we can
         if self.hru_type is None:
             hru_type = np.ones((nhru,), dtype=int)
         else:
@@ -174,9 +173,7 @@ class PrmsBuilder(object):
         param_dict["hru_type"] = {"record": hru_type, "dtype": 1}
 
         # # hru_elev = dem elev (should it be the sink filled..???). -
-        param_dict["hru_elev"] = {
-            "record": self.dem.ravel(), "dtype": 2
-        }
+        param_dict["hru_elev"] = {"record": self.dem.ravel(), "dtype": 2}
 
         # todo: look at returning a sink filled dem elevation in FlowAcc. for this
         aspect = self.stream_data_obj.aspect.ravel()
@@ -207,7 +204,7 @@ class PrmsBuilder(object):
         params = PrmsParameters(param_list)
 
         # add cascade parameters
-        for rname in ('hru_up_id', "hru_down_id", "hru_strmseg_down_id"):
+        for rname in ("hru_up_id", "hru_down_id", "hru_strmseg_down_id"):
             values = self.cascades_obj.__dict__[rname]
             params.add_record(
                 name=rname,
@@ -215,7 +212,7 @@ class PrmsBuilder(object):
                 dimensions=[["ncascade", self.cascades_obj.ncascade]],
                 datatype=1,
                 file_name=name,
-                replace=True
+                replace=True,
             )
 
             params.add_record(
@@ -224,7 +221,7 @@ class PrmsBuilder(object):
                 dimensions=[["ncascadgw", self.cascades_obj.ncascade]],
                 datatype=1,
                 file_name=name,
-                replace=True
+                replace=True,
             )
 
         params.add_record(
@@ -233,7 +230,7 @@ class PrmsBuilder(object):
             dimensions=[["ncascade", self.cascades_obj.ncascade]],
             datatype=2,
             file_name=name,
-            replace=True
+            replace=True,
         )
 
         params.add_record(
@@ -242,15 +239,15 @@ class PrmsBuilder(object):
             dimensions=[["ncascadgw", self.cascades_obj.ncascade]],
             datatype=2,
             file_name=name,
-            replace=True
+            replace=True,
         )
-        # todo: need to calculate the subbasin linkage in flow_accumulation
-        # we should be able to run it through Topology to create a graph of
-        # this...
+
         if len(np.unique(self.hru_subbasin)) == 2:
             params.add_record(
                 "subbasin_down",
-                values=[0,],
+                values=[
+                    0,
+                ],
                 dimensions=[["nsub", 1]],
                 datatype=1,
                 file_name=name,
@@ -263,7 +260,7 @@ class PrmsBuilder(object):
                 values=list(range(1, nhru + 1)),
                 dimensions=[["nhrucell", nhru]],
                 datatype=1,
-                file_name=name
+                file_name=name,
             )
 
         return params

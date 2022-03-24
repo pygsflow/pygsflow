@@ -50,6 +50,32 @@ class PrmsParameters(ParameterBase):
 
         self.__parameter_files = []
 
+    def __getattr__(self, item):
+
+        if item in self.record_names:
+            return self.get_record(item)
+        else:
+            try:
+                return super(PrmsParameters).__getattribute__(item)
+            except AttributeError:
+                raise AttributeError(
+                    f"PrmsParameters does not have record {item}"
+                )
+
+    def __setattr__(self, key, value):
+        if key in (
+            "name",
+            "model_dir",
+            "header",
+            "_records_list",
+            "_PrmsParameters__parameter_files",
+        ):
+            super().__setattr__(key, value)
+        elif key in self.record_names:
+            self.set_values(key, value)
+        else:
+            raise AttributeError(f"PrmsParameters does not have record {key}")
+
     @property
     def parameters_list(self):
         """
@@ -79,6 +105,20 @@ class PrmsParameters(ParameterBase):
         self.__parameter_files = all_files
         return self.__parameter_files
 
+    def reset_filenames(self, f):
+        """
+        Method to reset all filenames in the PrmsParameter object
+        to a single user supplied filename
+
+        Parameters
+        ----------
+        f : str
+
+        Returns
+        -------
+
+        """
+
     @staticmethod
     def load_from_file(param_files):
         """
@@ -106,7 +146,9 @@ class PrmsParameters(ParameterBase):
         parameters_list = []
         for ifile, file in enumerate(param_files):
             print("------------------------------------")
-            print("Reading parameter file : {}".format(os.path.split(file)[-1]))
+            print(
+                "Reading parameter file : {}".format(os.path.split(file)[-1])
+            )
             print("------------------------------------")
             if not (os.path.isfile(file)):
                 raise FileNotFoundError("Invalid file name {}".format(file))
@@ -362,14 +404,14 @@ class PrmsParameters(ParameterBase):
         """
         super(PrmsParameters, self).remove_record(name)
 
-    def add_record_object(self, record_obj, replace=False):
+    def add_record_object(self, record_obj, replace=True):
         """
         Method to add a ParameterRecord object
 
         record_obj : ParameterRecord object
             ParameterRecord object
         replace : bool
-            boolean flag that allows record replacement, default is False
+            boolean flag that allows record replacement, default is True
         """
         add = self._check_before_add(
             record_obj.name, record_obj.values, replace
@@ -380,6 +422,9 @@ class PrmsParameters(ParameterBase):
             add = True
 
         if add:
+            if record_obj.file_name is None:
+                record_obj.file_name = self.parameter_files[-1]
+
             super(PrmsParameters, self).add_record(record_obj)
 
     def write(self, name=None):
@@ -522,6 +567,48 @@ class ParameterRecord(RecordBase):
                 )
                 raise ValueError(err)
 
+    def __getitem__(self, item):
+        return self.values[item]
+
+    def __setitem__(self, key, value):
+        self.values[key] = value
+
+    def __add__(self, other):
+        self._check_if_compatible()
+        self.values += other
+        return self
+
+    def __mul__(self, other):
+        self._check_if_compatible()
+        self.values *= other
+        return self
+
+    def __sub__(self, other):
+        self._check_if_compatible()
+        self.values -= other
+
+        return self
+
+    def __truediv__(self, other):
+        self._check_if_compatible()
+        self.values /= other
+        return self
+
+    def __pow__(self, power):
+        self._check_if_compatible()
+        self.values **= power
+        return self
+
+    def _check_if_compatible(self):
+        if self.datatype not in (1, 2, 3):
+            raise AssertionError(
+                "Mathematical operation cannot be performed on strings"
+            )
+        elif self.datatype == 1:
+            raise AssertionError(
+                "Mathematical operation not supported for integer dtypes"
+            )
+
     @property
     def values(self):
         """
@@ -531,6 +618,9 @@ class ParameterRecord(RecordBase):
 
     @values.setter
     def values(self, new_values):
+        if isinstance(new_values, ParameterRecord):
+            new_values = new_values.values
+
         self._check_values(new_values)
         if (
             np.prod(np.array(self.dims)) != self.nvalues

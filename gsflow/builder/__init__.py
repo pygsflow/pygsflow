@@ -8,3 +8,5 @@ from .fishnet import GenerateFishnet
 from .modflow_builder import ModflowBuilder
 from .controlfile_builder import ControlFileBuilder
 from .prms_builder import PrmsBuilder
+from .flow_accumulation import FlowAccumulation
+from . import builder_utils
