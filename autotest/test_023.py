@@ -258,7 +258,7 @@ def test_cascade_generation():
 
     n = np.count_nonzero(cascades.hru_strmseg_down_id)
 
-    if n != 56:
+    if n != 489:
         raise AssertionError("cascade generation failed")
 
 

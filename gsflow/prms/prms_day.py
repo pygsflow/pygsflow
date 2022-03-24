@@ -34,6 +34,7 @@ class PrmsDay(object):
         self.__day_variable_declaration = variable_name
         self.__orad_flag = False
         self.__data_startline = None
+        self._nhru_declaration = nhru
         self.__pd_hru_header = []
         if dataframe is None:
             self.__load_metadata()
@@ -48,7 +49,7 @@ class PrmsDay(object):
                 )
             )
         self.__dataframe = dataframe
-        self._nhru_declaration = nhru
+
 
     @property
     def name(self):
