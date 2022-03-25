@@ -89,8 +89,10 @@ class ParameterBase(object):
         record = gsflow_io.find_parameter(name, self._records_list)
 
         if record is None:
-            err = "The record does not exist..."
-            warnings.warn_explicit(err, UserWarning, "param_base.py", 93)
+            msg = "The record does not exist..."
+            gsflow_io._warning(
+                msg, inspect.getframeinfo(inspect.currentframe())
+            )
             return None
 
         elif isinstance(record.values, np.ndarray):
