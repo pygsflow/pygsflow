@@ -101,7 +101,7 @@ class PrmsModel(object):
             data_file = control.get_values("data_file")[0]
             data_file = gsflow_io.get_file_abs(model_ws=model_ws, fn=data_file)
 
-            day_files = [
+            df_list = [
                 gsflow_io.get_file_abs(
                     model_ws=model_ws, fn=control.get_values(dfn)[0]
                 )
@@ -119,7 +119,7 @@ class PrmsModel(object):
             data_file = control.get_values("data_file")[0]
             data_file = gsflow_io.get_file_abs(control_file, data_file)
 
-            day_files = [
+            df_list = [
                 gsflow_io.get_file_abs(
                     control_file, fn=control.get_values(dfn)[0]
                 )
@@ -129,9 +129,9 @@ class PrmsModel(object):
 
         parameters = PrmsModel._load_parameters(parameter_files)
         data = PrmsModel._load_data(data_file)
-        if day_files:
+        if df_list:
             day_files = {}
-            for f in day_files:
+            for f in df_list:
                 day = PrmsDay(f)
                 day_files[day.variable_name] = day
         else:

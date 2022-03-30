@@ -1,4 +1,4 @@
-from gsflow import PrmsData
+from gsflow import PrmsData, GsflowModel
 from gsflow.prms import PrmsDay
 import pandas as pd
 import numpy as np
@@ -49,7 +49,34 @@ def test_load_write_prms_day():
             raise ValueError("Day file data is not consistent")
 
 
+def test_load_write_prms_day_model():
+    model_dir = os.path.join(ws, "..", "examples", "data", "day", "model")
+    ows = os.path.join(ws, "temp")
+    control_file = os.path.join(model_dir, "control_HW17_singlerun")
+    gsf = GsflowModel.load_from_file(control_file, prms_only=True)
+
+    gsf.write_input(workspace=ows)
+
+    gsf2 = GsflowModel.load_from_file(
+        os.path.join(ows, "control_HW17_singlerun"), prms_only=True
+    )
+
+    if not isinstance(gsf2.prms.day, dict):
+        raise AssertionError("Day file not properly written to output")
+
+    if "precip" not in gsf2.prms.day:
+        raise AssertionError("PRMS variable type is incorrect for day file")
+
+    df = gsf.prms.day['precip'].dataframe
+    df2 = gsf2.prms.day["precip"].dataframe
+
+    for col in list(df2):
+        if not np.allclose(df[col].values, df2[col].values):
+            raise ValueError("Day file data is not consistent")
+
+
 if __name__ == "__main__":
     test_empty_prms_data()
     test_build_prms_data()
     test_load_write_prms_day()
+    test_load_write_prms_day_model()
