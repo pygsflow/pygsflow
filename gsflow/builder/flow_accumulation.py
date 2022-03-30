@@ -484,7 +484,10 @@ class FlowAccumulation(object):
                 if not tdest:
                     # goto the next node number
                     dn += 1
-                    node = graph_nodes[dn]
+                    try:
+                        node = graph_nodes[dn]
+                    except IndexError:
+                        print('break')
                     stack = [node]
                 else:
                     stack = tdest
@@ -639,8 +642,13 @@ class FlowAccumulation(object):
         """
         idxs = self._offsets + ix
 
+
         cell_elevation = dem[ix]
         neighbor_elevation = dem[idxs]
+        # prevent algortithm from considering inactive cells
+        inactive = np.where(self._hru_type[idxs] == 0)[0]
+        if len(inactive > 0):
+            neighbor_elevation[inactive] = 1e+20
 
         xcell = self._xcenters[ix]
         ycell = self._ycenters[ix]
@@ -811,6 +819,13 @@ class FlowAccumulation(object):
         elif ix > (nnodes - self._offset):
             return False
         elif self._hru_type[ix] != 1:
+            return False
+        elif self._flow_directions[ix] == -2:
+            msg = "sink present in data (fdir = -2), consider filling sinks " \
+                  "in DEM and re-running flow direction and flow accumulation"
+            gsflow_io._warning(
+                msg, inspect.getframeinfo(inspect.currentframe())
+            )
             return False
         else:
             return True
@@ -1332,7 +1347,6 @@ class FlowAccumulation(object):
 
         isegs = isegs_new
         outsegs = outsegs_new
-        # print('renumber stream dict...')
 
         # renumber stream dict
         new_stream_dict = {}
@@ -1348,7 +1362,7 @@ class FlowAccumulation(object):
         # build sfrtop as dem
         strtop = (
             self._data.copy()
-        )  # should this be the modified det (get_dem_data)?
+        )
         strtop[np.isnan(streams)] = np.nan
 
         # intialize rchlen and slope arrays
