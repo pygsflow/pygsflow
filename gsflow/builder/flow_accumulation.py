@@ -1216,7 +1216,7 @@ class FlowAccumulation(object):
         # dictionary with stream information
         stream_dict = {}
         iseg = 0
-
+        stack = []
         for ix in headwaters:
             # set cell; n = r, c
             n = ix
@@ -1227,7 +1227,10 @@ class FlowAccumulation(object):
             proc = True
             stream_dict[iseg] = {"inseg": [], "graph": []}
             while self._next_cell(n):
+                if n in stack:
+                    break
 
+                stack.append(n)
                 # check flow direction
                 ndir = fdir_array[n]
                 if np.isnan(ndir):
