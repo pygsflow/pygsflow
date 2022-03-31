@@ -1168,7 +1168,7 @@ class FlowAccumulation(object):
         # assign streams that are >= to threshold stream array has
         # flow accumulation stored
         streams = fa_array.copy()
-        streams[streams < threshold] = np.nan
+        streams = np.where(streams > threshold, streams, np.nan)
         # get stream indexes
         streams = np.pad(
             streams, 1, "constant", constant_values=np.nan
@@ -1216,7 +1216,7 @@ class FlowAccumulation(object):
         # dictionary with stream information
         stream_dict = {}
         iseg = 0
-        stack = []
+        sstack = []
         for ix in headwaters:
             # set cell; n = r, c
             n = ix
@@ -1227,10 +1227,10 @@ class FlowAccumulation(object):
             proc = True
             stream_dict[iseg] = {"inseg": [], "graph": []}
             while self._next_cell(n):
-                if n in stack:
+                if n in sstack:
                     break
 
-                stack.append(n)
+                sstack.append(n)
                 # check flow direction
                 ndir = fdir_array[n]
                 if np.isnan(ndir):
@@ -1362,11 +1362,10 @@ class FlowAccumulation(object):
             }
 
         stream_dict = new_stream_dict
-        # build sfrtop as dem
-        strtop = (
-            self._data.copy()
-        )
-        strtop[np.isnan(streams)] = np.nan
+
+        # build sfrtop from dem
+        strtop = np.zeros(self._data.shape) * np.nan
+        strtop[sstack] = self._data[sstack]
 
         # intialize rchlen and slope arrays
         rchlens = np.zeros(fdir_array.shape)
