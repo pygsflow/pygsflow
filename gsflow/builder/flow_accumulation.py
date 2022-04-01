@@ -867,6 +867,10 @@ class FlowAccumulation(object):
                     continue
                 else:
                     hru_up = list(idxs[idxs_ix])
+                    # fix basin outlet issue for user supplied hru_type
+                    if self._wpp in hru_up:
+                        popix = hru_up.index(self._wpp)
+                        hru_up.pop(popix)
                     hru_down = [ix] * len(hru_up)
                     hru_pct = [1.0 / len(hru_up)] * len(hru_up)
 
