@@ -23,7 +23,7 @@ def test_defaults():
 
     control = defaults.control
     r = control.get_default('rpt_days')
-    control.add_default(r.name, r.data + 2)
+    control.add_default(r.name, 1, r.data + 2)
 
     r2 = control.get_default('rpt_days')
     if r2.data != 9:
