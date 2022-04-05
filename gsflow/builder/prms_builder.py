@@ -85,8 +85,9 @@ class PrmsBuilder(object):
         nhru = self.modelgrid.nrow * self.modelgrid.ncol
 
         # set segment and reach
-        dimension_defaults["nsegment"] = self.stream_data_obj.iseg.max()
-        dimension_defaults["nreach"] = self.stream_data_obj.reach_data.size
+        if self.stream_data_obj is not None:
+            dimension_defaults["nsegment"] = self.stream_data_obj.iseg.max()
+            dimension_defaults["nreach"] = self.stream_data_obj.reach_data.size
 
         dimension_defaults["ngw"] = nhru
         dimension_defaults["ngwcell"] = nhru
@@ -162,9 +163,10 @@ class PrmsBuilder(object):
         param_dict["hru_lat"] = {"record": hru_lat, "dtype": 2}
         param_dict["hru_lon"] = {"record": hru_lon, "dtype": 2}
 
-        hru_slope = self.stream_data_obj.slope.ravel()
-        hru_slope[hru_slope < 1e-04] = 0
-        param_dict["hru_slope"] = {"record": hru_slope, "dtype": 2}
+        if self.stream_data_obj is not None:
+            hru_slope = self.stream_data_obj.slope.ravel()
+            hru_slope[hru_slope < 1e-04] = 0
+            param_dict["hru_slope"] = {"record": hru_slope, "dtype": 2}
 
         if self.hru_type is None:
             hru_type = np.ones((nhru,), dtype=int)
@@ -175,9 +177,9 @@ class PrmsBuilder(object):
         # # hru_elev = dem elev (should it be the sink filled..???). -
         param_dict["hru_elev"] = {"record": self.dem.ravel(), "dtype": 2}
 
-        # todo: look at returning a sink filled dem elevation in FlowAcc. for this
-        aspect = self.stream_data_obj.aspect.ravel()
-        param_dict["hru_aspect"] = {"record": aspect, "dtype": 2}
+        if self.stream_data_obj is not None:
+            aspect = self.stream_data_obj.aspect.ravel()
+            param_dict["hru_aspect"] = {"record": aspect, "dtype": 2}
 
         if self.hru_subbasin is None:
             hru_subbasin = np.ones((nhru,), dtype=int)
