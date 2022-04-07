@@ -116,8 +116,12 @@ class PrmsModel(object):
                 gsflow_io.get_file_abs(control_file, pfn)
                 for pfn in parameter_files
             ]
-            data_file = control.get_values("data_file")[0]
-            data_file = gsflow_io.get_file_abs(control_file, data_file)
+
+            if "data_file" in control.record_names:
+                data_file = control.get_values("data_file")[0]
+                data_file = gsflow_io.get_file_abs(control_file, data_file)
+            else:
+                data_file = None
 
             df_list = [
                 gsflow_io.get_file_abs(
@@ -129,6 +133,7 @@ class PrmsModel(object):
 
         parameters = PrmsModel._load_parameters(parameter_files)
         data = PrmsModel._load_data(data_file)
+
         if df_list:
             day_files = {}
             for f in df_list:
