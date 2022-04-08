@@ -132,7 +132,7 @@ defaults = {
             "circle_switch": {"dtype": 1, "dimension": "one", "record": 1},
             "gw_pct_up": {
                 "dtype": 2,
-                "dimension": "ncascadgw",
+                "dimension": "ncascdgw",
                 "record": [1.0],
             },
             "hru_pct_up": {

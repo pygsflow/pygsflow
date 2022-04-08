@@ -95,7 +95,7 @@ class PrmsBuilder(object):
         dimension_defaults["nhrucell"] = nhru
         dimension_defaults["nssr"] = nhru
         dimension_defaults["ncascade"] = self.cascades_obj.ncascade
-        dimension_defaults["ncascadgw"] = self.cascades_obj.ncascade
+        dimension_defaults["ncascdgw"] = self.cascades_obj.ncascade
         dimension_defaults["ndeplval"] = dimension_defaults["ndepl"] * 11
         dimension_defaults["nsub"] = np.count_nonzero(np.unique(self.hru_type))
         dimension_defaults["nhrucell"] = nhru
@@ -220,7 +220,7 @@ class PrmsBuilder(object):
             params.add_record(
                 name=rname.replace("hru", "gw"),
                 values=values,
-                dimensions=[["ncascadgw", self.cascades_obj.ncascade]],
+                dimensions=[["ncascdgw", self.cascades_obj.ncascade]],
                 datatype=1,
                 file_name=name,
                 replace=True,
@@ -238,7 +238,7 @@ class PrmsBuilder(object):
         params.add_record(
             name="gw_pct_up",
             values=self.cascades_obj.hru_pct_up,
-            dimensions=[["ncascadgw", self.cascades_obj.ncascade]],
+            dimensions=[["ncascdgw", self.cascades_obj.ncascade]],
             datatype=2,
             file_name=name,
             replace=True,
