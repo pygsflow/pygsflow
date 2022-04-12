@@ -201,6 +201,32 @@ class Modsim(object):
 
         return temp
 
+    def __set_ag_diversion(self, sfr_topology):
+        """
+        Method to set a flag for ag diversion or not ag diversion
+
+        Parameters
+        ----------
+        sfr_topology: __Sfr_Topology object
+
+        Returns
+        -------
+            __Sfr_Topology object
+        """
+        if self._ag is None:
+            return sfr_topology
+
+        ag_segments = self._ag._segment_list(ignore_ponds=True)
+
+        temp = []
+        for sfr in sfr_topology:
+            if sfr.attributes.iseg in ag_segments:
+                sfr.attributes.ag_diversion = 1
+
+            temp.append(sfr)
+
+        return temp
+
     def write_modsim_shapefile(
         self,
         shp=None,
@@ -208,6 +234,7 @@ class Modsim(object):
         flag_spillway=False,
         nearest=True,
         sfr_nearest=False,
+        flag_ag_diversion=False
     ):
         """
         Method to create a modsim compatible
@@ -243,6 +270,9 @@ class Modsim(object):
             if sfr_nearest is True, sfr topology will connect using the
             distance equation. If False topology will connect to the start
             or end of the Segment based on iupseg and outseg
+        flag_ag_diversion : bool
+            if flag_ag_diversion is True, code will check if SFR segments are
+            agricultural diversions and then flag the diversions.
 
         """
         if not self._ready:
@@ -271,6 +301,9 @@ class Modsim(object):
                 flag_spillway, sfr_topology
             )
 
+        if flag_ag_diversion:
+            sfr_topology = self.__set_ag_diversion(sfr_topology)
+
         w = shapefile.Writer(shp)
         w.shapeType = 3
         w.field("ISEG", "N")
@@ -279,17 +312,36 @@ class Modsim(object):
         w.field("SPILL_FLG", "N")
         if self._other is not None:
             w.field(self._other.upper(), "N", decimal=5)
+        if flag_ag_diversion:
+            w.field("AG_FLG", "N")
 
         for sfr in sfr_topology:
             w.line(sfr.polyline)
             attributes = sfr.attributes
-            if self._other is None:
+            if self._other is None and not flag_ag_diversion:
                 w.record(
                     attributes.iseg,
                     attributes.iupseg,
                     attributes.outseg,
                     attributes.spill_flg,
                 )
+            elif self._other is not None and not flag_ag_diversion:
+                w.record(
+                    attributes.iseg,
+                    attributes.iupseg,
+                    attributes.outseg,
+                    attributes.spill_flg,
+                    attributes.other,
+                )
+            elif self._other is None and flag_ag_diversion:
+                w.record(
+                    attributes.iseg,
+                    attributes.iupseg,
+                    attributes.outseg,
+                    attributes.spill_flg,
+                    attributes.ag_diversion
+                )
+
             else:
                 w.record(
                     attributes.iseg,
@@ -297,6 +349,7 @@ class Modsim(object):
                     attributes.outseg,
                     attributes.spill_flg,
                     attributes.other,
+                    attributes.ag_diversion
                 )
 
         for lake in lake_topology:
@@ -581,7 +634,9 @@ class _SfrTopology(object):
     other : str or None
         include can be used to add an optional sfr field (ex. strhc1) to the
         stream vector shapefile.
-
+    other_val : int, float, or None
+        other_val can be used to add an optional value to the shapefile for
+        each SFR segment.
 
     """
 
@@ -818,6 +873,7 @@ class _Attributes(object):
         self.flow = flow
         self.elev = strtop
         self.spill_flg = 0
+        self.ag_diversion = 0
         if other is None:
             self.other = np.nan
         else:
