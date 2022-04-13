@@ -1,8 +1,10 @@
 from __future__ import absolute_import, division, print_function
 import os
 import numpy as np
+import inspect
 from ..record_base import RecordBase
 from ..param_base import ParameterBase
+from ..utils import gsflow_io
 
 
 def is_number(s):
@@ -144,6 +146,7 @@ class PrmsParameters(ParameterBase):
         all_dims = {}
         headers = []
         parameters_list = []
+        param_names = []
         for ifile, file in enumerate(param_files):
             print("------------------------------------")
             print(
@@ -203,9 +206,22 @@ class PrmsParameters(ParameterBase):
                                     "".format(parameters_list[-1].name)
                                 )
                             value = int(fid.readline().strip())
+
+                            if field_name in param_names:
+                                msg = f"Duplicate parameter {field_name} " \
+                                      f"found, overwriting with new values"
+                                gsflow_io._warning(
+                                    msg, inspect.getframeinfo(
+                                        inspect.currentframe()
+                                    )
+                                )
+                                pidx = param_names.index(field_name)
+                                parameters_list.pop(pidx)
+
                             curr_record = ParameterRecord(
                                 name=field_name, values=[value], file_name=file
                             )
+                            param_names.append(field_name)
                             parameters_list.append(curr_record)
                             all_dims[field_name] = value
                         else:
@@ -248,6 +264,18 @@ class PrmsParameters(ParameterBase):
                             par_dim = []
                             for dn in dim_nms:
                                 par_dim.append([dn, all_dims[dn]])
+
+                            if field_name in param_names:
+                                msg = f"Duplicate parameter {field_name} " \
+                                      f"found, overwriting with new values"
+                                gsflow_io._warning(
+                                    msg, inspect.getframeinfo(
+                                        inspect.currentframe()
+                                    )
+                                )
+                                pidx = param_names.index(field_name)
+                                parameters_list.pop(pidx)
+
                             curr_record = ParameterRecord(
                                 name=field_name,
                                 values=value,
@@ -256,6 +284,7 @@ class PrmsParameters(ParameterBase):
                                 file_name=file,
                             )
 
+                            param_names.append(curr_record.name)
                             parameters_list.append(curr_record)
 
         return PrmsParameters(parameters_list=parameters_list, header=headers)
@@ -690,7 +719,8 @@ class ParameterRecord(RecordBase):
         fid.write("####\n")
         fid.write(self.name)
         fid.write(" ")
-        fid.write("{}\n".format(self.width))
+        if self.width is not None:
+            fid.write("{}\n".format(self.width))
         # write number of dimension
         fid.write(str(self.ndim))
         # write dimension names

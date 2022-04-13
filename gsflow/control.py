@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function
 import os
+import inspect
 from .record_base import RecordBase
 from .param_base import ParameterBase
 from .utils import GsConstant
@@ -118,6 +119,7 @@ class ControlFile(ParameterBase):
         with open(control_file, "r") as fid:
             headers = []
             records_list = []
+            param_names = []
             EndOfFile = False
             _read_comments = True
             while True:
@@ -137,6 +139,17 @@ class ControlFile(ParameterBase):
                 nvalues = int(fid.readline().strip())
                 data_type = int(fid.readline().strip())
                 values = []
+
+                if field_name in param_names:
+                    msg = f"Duplicate parameter {field_name} " \
+                          f"found, overwriting with new values"
+                    gsflow_io._warning(
+                        msg, inspect.getframeinfo(
+                            inspect.currentframe()
+                        )
+                    )
+                    pidx = param_names.index(field_name)
+                    records_list.pop(pidx)
 
                 # loop over values
                 while True:
@@ -160,6 +173,7 @@ class ControlFile(ParameterBase):
                                 values=values,
                                 datatype=data_type,
                             )
+                            param_names.append(field_name)
                             records_list.append(curr_record)
                             break
                         else:

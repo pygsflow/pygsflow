@@ -202,3 +202,22 @@ def _read_pickle(f):
     with open(f, "rb") as foo:
         data = pickle.load(foo)
     return data
+
+
+def isint(s):
+    """
+    Method to check if a string is an integer
+
+    Parameters
+    ----------
+    s : str
+
+    Returns
+    -------
+        bool
+    """
+    try:
+        int(s)
+        return True
+    except (TypeError, ValueError):
+        return False
