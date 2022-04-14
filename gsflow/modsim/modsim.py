@@ -230,7 +230,7 @@ class Modsim(object):
     def write_modsim_shapefile(
         self,
         shp=None,
-        proj4=None,
+        epsg=None,
         flag_spillway=False,
         nearest=True,
         sfr_nearest=False,
@@ -247,9 +247,9 @@ class Modsim(object):
             optional shapefile name, if none
             will be written in gsflow directory using
             the model name.
-        proj4 : str
-            proj4 projection string, if none will try to
-            grab proj4 or epsg from flopy modelgrid
+        epsg : int
+            epsg projection projection code, if none will epsg from
+            flopy modelgrid
         flag_spillway : bool, str, list
             if flag_spillway is indicated then MODSIM will change
             the spill_flg attribute to one. This can be accomplished
@@ -275,6 +275,7 @@ class Modsim(object):
             agricultural diversions and then flag the diversions.
 
         """
+        import requests
         if not self._ready:
             return
 
@@ -375,47 +376,26 @@ class Modsim(object):
         except AttributeError:
             pass
 
-        if pycrs is None:
-            msg = (
-                "PyCRS must be installed to add a projection"
-                " to {}".format(shp)
-            )
-            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
-            return
+        if epsg is None:
+            epsg = self.mf.modelgrid.epsg
+            if epsg is None:
+                msg = "EPSG code not found, skipping prj file"
+                _warning(msg, inspect.getframeinfo(inspect.currentframe()))
+                return
 
-        t = shp.split(".")
-        if len(t) == 1:
-            prj = shp + ".prj"
-        else:
-            s = ".".join(t[:-1])
-            prj = s + ".prj"
-
-        if proj4 is None:
-            proj4 = self.mf.modelgrid.proj4
-
-        epsg = self.mf.modelgrid.epsg
+        prj = shp[:-4] + ".prj"
+        url = f"https://spatialreference.org/ref/epsg/{epsg}/esriwkt/"
 
         try:
-            crs = pycrs.parse.from_proj4(proj4)
+            r = requests.get(url, verify=False)
+            esri_wkt = r.text
         except:
-            crs = None
-
-        if crs is None:
-            try:
-                crs = pycrs.parse.from_epsg_code(epsg)
-            except:
-                crs = None
-
-        if crs is None:
-            msg = (
-                "Please provide a valid proj4 or epsg code to flopy's"
-                f"model grid: Skipping writing {os.path.split(prj)[-1]}"
-            )
+            msg = f"WKT {epsg} not found, skipping prj file"
             _warning(msg, inspect.getframeinfo(inspect.currentframe()))
             return
 
         with open(prj, "w") as foo:
-            foo.write(crs.to_esri_wkt())
+           foo.write(esri_wkt)
 
 
 class _LakTopology(object):
