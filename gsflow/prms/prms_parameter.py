@@ -216,6 +216,7 @@ class PrmsParameters(ParameterBase):
                                     )
                                 )
                                 pidx = param_names.index(field_name)
+                                param_names.pop(pidx)
                                 parameters_list.pop(pidx)
 
                             curr_record = ParameterRecord(
@@ -274,6 +275,7 @@ class PrmsParameters(ParameterBase):
                                     )
                                 )
                                 pidx = param_names.index(field_name)
+                                param_names.pop(pidx)
                                 parameters_list.pop(pidx)
 
                             curr_record = ParameterRecord(

@@ -149,6 +149,7 @@ class ControlFile(ParameterBase):
                         )
                     )
                     pidx = param_names.index(field_name)
+                    param_names.pop(pidx)
                     records_list.pop(pidx)
 
                 # loop over values
