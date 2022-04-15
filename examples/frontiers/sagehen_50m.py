@@ -5,12 +5,8 @@ import flopy
 import numpy as np
 import shapefile
 import matplotlib.pyplot as plt
-import matplotlib
-import datetime
-import matplotlib.dates as mdates
-from dateutil.relativedelta import relativedelta
 from flopy.utils import Raster
-from flopy.plot import styles, PlotMapView
+from flopy.plot import styles
 from gsflow import GsflowModel, PrmsModel, PrmsData
 from gsflow.builder import (
     GenerateFishnet,
@@ -20,9 +16,6 @@ from gsflow.builder import (
     FlowAccumulation
 )
 import gsflow.builder.builder_utils as bu
-from datetime import date
-from datetime import timedelta
-from dateutil.parser import parse
 
 
 def nash_sutcliffe_efficiency(qsim, qobs, flg):

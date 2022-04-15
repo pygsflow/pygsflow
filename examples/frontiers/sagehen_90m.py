@@ -5,12 +5,8 @@ import flopy
 import numpy as np
 import shapefile
 import matplotlib.pyplot as plt
-import matplotlib
-import datetime
-import matplotlib.dates as mdates
-from dateutil.relativedelta import relativedelta
 from flopy.utils import Raster
-from flopy.plot import styles, PlotMapView
+from flopy.plot import styles
 from gsflow import GsflowModel, PrmsModel, PrmsData
 from gsflow.builder import (
     GenerateFishnet,
@@ -20,9 +16,6 @@ from gsflow.builder import (
     FlowAccumulation
 )
 import gsflow.builder.builder_utils as bu
-from datetime import date
-from datetime import timedelta
-from dateutil.parser import parse
 
 
 def nash_sutcliffe_efficiency(qsim, qobs, flg):
@@ -507,6 +500,7 @@ if __name__ == "__main__":
     gsf.control.add_record("modflow_time_zero", values=[1982, 10, 1, 0, 0, 0])
     gsf.control.add_record("data_file", values=["sagehen_90m.data",])
     gsf.control.add_record("srunoff_module", values=["srunoff_smidx"])
+    gsf.control.add_record("model_output_file", values=["gsflow_sagehen_90.out"])
     gsf.control.set_values("model_mode", values=["GSFLOW5"])
     gsf.control.set_values("subbasin_flag", values=[0,])
     gsf.control.set_values("parameter_check_flag", values=[0, ])

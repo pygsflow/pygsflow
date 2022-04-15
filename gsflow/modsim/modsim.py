@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import os
 import inspect
 from ..utils.gsflow_io import _warning
@@ -382,20 +383,35 @@ class Modsim(object):
                 msg = "EPSG code not found, skipping prj file"
                 _warning(msg, inspect.getframeinfo(inspect.currentframe()))
                 return
+        epsg = int(epsg)
+        ws = os.path.abspath(os.path.dirname(__file__))
+        cache = os.path.join(ws, "epsg_to_wkt.dat")
+        dfepsg = pd.read_csv(cache, delimiter="\t")
+        wkt = None
+        if dfepsg.size != 0:
+            if epsg in dfepsg.epsg.values:
+                wkt = dfepsg.loc[dfepsg.epsg == epsg, "wkt"].values[0]
 
         prj = shp[:-4] + ".prj"
-        url = f"https://spatialreference.org/ref/epsg/{epsg}/esriwkt/"
+        if wkt is None:
+            url = f"https://spatialreference.org/ref/epsg/{epsg}/esriwkt/"
 
-        try:
-            r = requests.get(url, verify=False)
-            esri_wkt = r.text
-        except:
-            msg = f"WKT {epsg} not found, skipping prj file"
-            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
-            return
+            try:
+                r = requests.get(url, verify=False)
+                wkt = r.text
+                if not wkt:
+                    return
+            except:
+                msg = f"WKT {epsg} not found, skipping prj file"
+                _warning(msg, inspect.getframeinfo(inspect.currentframe()))
+                return
+
+            d = {"epsg": epsg, "wkt": wkt}
+            dfepsg = dfepsg.append(d, ignore_index=True)
+            dfepsg.to_csv(cache, sep="\t", index=False)
 
         with open(prj, "w") as foo:
-           foo.write(esri_wkt)
+           foo.write(wkt)
 
 
 class _LakTopology(object):
