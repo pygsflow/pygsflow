@@ -81,7 +81,7 @@ pyGSFLOW [@Larsen:2021] is a Python package for creating new GSFLOW models,
 importing existing models, running GSFLOW models, processing model outputs, 
 and visualizing model data. Instead of working directly with formatted model 
 input files, the pyGSFLOW Application Programming Interface (API) allows the 
-user to work with class-based methods to create GSFLOW [@Markstrom:2008], and 
+user to work with class-based methods to create GSFLOW [@Markstrom:2008] and 
 PRMS [@Markstrom:2015] input files, MODSIM [@Labadie:2006] vectorized surface-water 
 operations networks, and MODFLOW [@Harbaugh:2005] model packages and binds them 
 into a single integrated model instance. pyGSFLOW leverages features from FloPy, 
@@ -114,9 +114,9 @@ System (NWIS) site 11466800 [@USGS:2022] provided observations
 for this experiment. Twenty-one iterations of the SRP model were run in series 
 with pyGSFLOW to test the sensitivity of the snarea_curve (snow depletion curve), 
 ssr2gw_rate (gravity reservoir to groundwater reservior routing coeficient), 
-and gsflow_coef (linear groundwater discharge equation coeficient) with a 
+and gwflow_coef (linear groundwater discharge equation coeficient) with a 
 simple “for loop.” The  ssr2gw_rate was identified as a much more sensitive 
-parameter to model calibration than the snarea_curve and gsflow_coef 
+parameter to model calibration than the snarea_curve and gwflow_coef 
 parameters (figure 1). Insights like these allow researchers to focus their 
 calibration efforts on the most sensitive parameters and fix insensitive parameters, 
 thus reducing the time and complexity of the calibration process. Although actual 
@@ -126,7 +126,7 @@ can be used for complex operations in conjuction with external calibration softw
 
 ![Root mean squared error in streamflow predictions at U.S Geological Survey 
 streamgage 11466800 [@USGS:2022] for three PRMS parameters 
-(gsflow_coef, snarea_curve, and ssr2gw_rate) during calibration experiments on 
+(gwflow_coef, snarea_curve, and ssr2gw_rate) during calibration experiments on 
 the Santa Rosa Plain Integrated Hydrologic Model, Santa Rosa, 
 California.](calibration_example_mwc.png)
 
