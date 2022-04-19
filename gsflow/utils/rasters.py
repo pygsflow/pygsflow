@@ -331,9 +331,14 @@ class Raster(flopy.utils.Raster):
             else:
                 for node in range(ncpl):
                     verts = modelgrid.get_cell_vertices(node)
-                    rstr_data = self.sample_polygon(
-                        verts, band, convert=False
-                    ).astype(float)
+                    try:
+                        rstr_data = self.sample_polygon(
+                            verts, band, convert=False
+                        ).astype(float)
+                    except TypeError:
+                        rstr_data = self.sample_polygon(
+                            verts, band
+                        ).astype(float)
                     msk = np.in1d(rstr_data, self.nodatavals)
                     rstr_data[msk] = np.nan
 
