@@ -16,7 +16,7 @@ try:
 
     ENABLE_JIT = True
 except ImportError:
-    from . import numba
+    from .numba import jit
 
     ENABLE_JIT = False
 
