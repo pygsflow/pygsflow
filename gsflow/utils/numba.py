@@ -1,19 +1,11 @@
 """
-Class to trick python into installing without ray package support.
+Class to trick python into installing without numba package support.
 
 """
 
 
-def jit(func):
+def jit(func, **kwargs):
     def wrapper(*args, **kwargs):
         func(*args, **kwargs)
 
     return wrapper
-
-
-def get(*args):
-    return
-
-
-def put(*args):
-    return
