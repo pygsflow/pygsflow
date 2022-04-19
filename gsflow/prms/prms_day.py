@@ -50,7 +50,6 @@ class PrmsDay(object):
             )
         self.__dataframe = dataframe
 
-
     @property
     def name(self):
         return self.__name

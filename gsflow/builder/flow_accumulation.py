@@ -487,7 +487,7 @@ class FlowAccumulation(object):
                     try:
                         node = graph_nodes[dn]
                     except IndexError:
-                        print('break')
+                        print("break")
                     stack = [node]
                 else:
                     stack = tdest
@@ -642,13 +642,12 @@ class FlowAccumulation(object):
         """
         idxs = self._offsets + ix
 
-
         cell_elevation = dem[ix]
         neighbor_elevation = dem[idxs]
         # prevent algortithm from considering inactive cells
         inactive = np.where(self._hru_type[idxs] == 0)[0]
         if len(inactive > 0):
-            neighbor_elevation[inactive] = 1e+20
+            neighbor_elevation[inactive] = 1e20
 
         xcell = self._xcenters[ix]
         ycell = self._ycenters[ix]
@@ -784,8 +783,16 @@ class FlowAccumulation(object):
         hru_up_id = np.array(hru_up_id)
         hru_down_id = np.array(hru_down_id)
 
-        hru_up_id = (hru_up_id - self._shape[1]) - (np.floor((hru_up_id - self._shape[1]) / self._shape[1]) * 2) - 1
-        hru_down_id = (hru_down_id - self._shape[1]) - (np.floor((hru_down_id - self._shape[1]) / self._shape[1]) * 2) - 1
+        hru_up_id = (
+            (hru_up_id - self._shape[1])
+            - (np.floor((hru_up_id - self._shape[1]) / self._shape[1]) * 2)
+            - 1
+        )
+        hru_down_id = (
+            (hru_down_id - self._shape[1])
+            - (np.floor((hru_down_id - self._shape[1]) / self._shape[1]) * 2)
+            - 1
+        )
         hru_up_id = hru_up_id.astype(int)
         hru_down_id = hru_down_id.astype(int)
         hru_pct_up = np.array(hru_pct_up)
@@ -821,8 +828,10 @@ class FlowAccumulation(object):
         elif self._hru_type[ix] != 1:
             return False
         elif self._flow_directions[ix] == -2:
-            msg = "sink present in data (fdir = -2), consider filling sinks " \
-                  "in DEM and re-running flow direction and flow accumulation"
+            msg = (
+                "sink present in data (fdir = -2), consider filling sinks "
+                "in DEM and re-running flow direction and flow accumulation"
+            )
             gsflow_io._warning(
                 msg, inspect.getframeinfo(inspect.currentframe())
             )

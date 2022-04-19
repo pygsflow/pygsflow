@@ -208,12 +208,15 @@ class PrmsParameters(ParameterBase):
                             value = int(fid.readline().strip())
 
                             if field_name in param_names:
-                                msg = f"Duplicate parameter {field_name} " \
-                                      f"found, overwriting with new values"
+                                msg = (
+                                    f"Duplicate parameter {field_name} "
+                                    f"found, overwriting with new values"
+                                )
                                 gsflow_io._warning(
-                                    msg, inspect.getframeinfo(
+                                    msg,
+                                    inspect.getframeinfo(
                                         inspect.currentframe()
-                                    )
+                                    ),
                                 )
                                 pidx = param_names.index(field_name)
                                 param_names.pop(pidx)
@@ -267,12 +270,15 @@ class PrmsParameters(ParameterBase):
                                 par_dim.append([dn, all_dims[dn]])
 
                             if field_name in param_names:
-                                msg = f"Duplicate parameter {field_name} " \
-                                      f"found, overwriting with new values"
+                                msg = (
+                                    f"Duplicate parameter {field_name} "
+                                    f"found, overwriting with new values"
+                                )
                                 gsflow_io._warning(
-                                    msg, inspect.getframeinfo(
+                                    msg,
+                                    inspect.getframeinfo(
                                         inspect.currentframe()
-                                    )
+                                    ),
                                 )
                                 pidx = param_names.index(field_name)
                                 param_names.pop(pidx)

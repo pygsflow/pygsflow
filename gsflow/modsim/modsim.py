@@ -235,7 +235,7 @@ class Modsim(object):
         flag_spillway=False,
         nearest=True,
         sfr_nearest=False,
-        flag_ag_diversion=False
+        flag_ag_diversion=False,
     ):
         """
         Method to create a modsim compatible
@@ -277,6 +277,7 @@ class Modsim(object):
 
         """
         import requests
+
         if not self._ready:
             return
 
@@ -341,7 +342,7 @@ class Modsim(object):
                     attributes.iupseg,
                     attributes.outseg,
                     attributes.spill_flg,
-                    attributes.ag_diversion
+                    attributes.ag_diversion,
                 )
 
             else:
@@ -351,7 +352,7 @@ class Modsim(object):
                     attributes.outseg,
                     attributes.spill_flg,
                     attributes.other,
-                    attributes.ag_diversion
+                    attributes.ag_diversion,
                 )
 
         for lake in lake_topology:
@@ -411,7 +412,7 @@ class Modsim(object):
             dfepsg.to_csv(cache, sep="\t", index=False)
 
         with open(prj, "w") as foo:
-           foo.write(wkt)
+            foo.write(wkt)
 
 
 class _LakTopology(object):

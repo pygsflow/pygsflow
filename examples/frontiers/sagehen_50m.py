@@ -5,7 +5,7 @@ import flopy
 import numpy as np
 import shapefile
 import matplotlib.pyplot as plt
-from flopy.utils import Raster
+from gsflow.utils import Raster
 from flopy.plot import styles
 from gsflow import GsflowModel, PrmsModel, PrmsData
 from gsflow.builder import (

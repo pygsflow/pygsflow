@@ -1,54 +1,125 @@
 import os
 import numpy as np
-from gsflow.utils import Rasters
+from gsflow.utils import Raster
 from gsflow.output import PrmsDiscretization
 
 
 ws = os.path.abspath(os.path.dirname(__file__))
 
-def test_raster_functions():
 
-    # load the PrmsDiscrtization object
-    local_ws = os.path.join(ws, "..", "examples", "data", "sagehen", "shapefiles")
-    shp = "hru_params.shp"
-    dis = PrmsDiscretization.load_from_shapefile(os.path.join(local_ws, shp))
+def test_raster_sampling_methods():
+    import gsflow
+    from gsflow.utils import Raster
 
-    # load a DEM raster of the area
-    path = os.path.join(ws, '..', 'examples', 'data', 'geospatial')
-    name = "dem.img"
+    rws = os.path.join(ws, "..", "examples", "data", "geospatial")
+    iws = os.path.join(ws, "..", "examples", "data", "sagehen", "modflow")
+    raster_name = "dem.img"
+
     try:
-        x = Rasters.load(os.path.join(path, name))
-    except ImportError:
-        # trap for travis issues with GDAL
+        rio = Raster.load(os.path.join(rws, raster_name))
+    except:
         return
 
-    x.set_raster_band(1)
+    ml = gsflow.modflow.Modflow.load(
+        "saghen.nam", version="mfnwt",
+        model_ws=iws
+    )
+    xoff = 214110
+    yoff = 4366620
+    ml.modelgrid.set_coord_info(xoff, yoff)
 
-    # sample the raster using the discretization object
-    dem = x.sample_discretization(dis)
+    x0, x1, y0, y1 = rio.bounds
 
-    if not isinstance(dem, np.ndarray):
-        raise AssertionError()
+    x0 += 3000
+    y0 += 3000
+    x1 -= 3000
+    y1 -= 3000
+    shape = np.array([(x0, y0), (x0, y1), (x1, y1), (x1, y0), (x0, y0)])
 
-    if len(dem) != len(dis.x_hru_centers):
-        raise AssertionError
+    rio.crop(shape)
 
-    xp = x.xpoints
-    yp = x.ypoints
-    xyp = x.xypoints
+    methods = {
+        "min": 2088.52343,
+        "max": 2103.54882,
+        "mean": 2097.05035,
+        "median": 2097.36254,
+        "mode": 2088.52343,
+        "nearest": 2097.81079,
+        "linear": 2097.81079,
+        "cubic": 2097.81079,
+    }
 
-    if xp is None:
-        raise AssertionError()
-    if yp is None:
-        raise AssertionError()
-    if xyp is None:
-        raise AssertionError()
+    for method, value in methods.items():
+        data = rio.resample_to_grid(
+            ml.modelgrid, band=rio.bands[0], method=method, no_numba=True
+        )
+
+        print(data[34, 37])
+        if np.abs(data[34, 37] - value) > 1e-05:
+            raise AssertionError(
+                f"{method} resampling returning incorrect values"
+            )
 
 
-    array = x.band_array
-    if not isinstance(array, np.ndarray):
-        raise AssertionError()
+def test_raster_sampling_methods_numba():
+    try:
+        from numba import jit
+    except ImportError:
+        return
+
+    import gsflow
+    from gsflow.utils import Raster
+
+    rws = os.path.join(ws, "..", "examples", "data", "geospatial")
+    iws = os.path.join(ws, "..", "examples", "data", "sagehen", "modflow")
+    raster_name = "dem.img"
+
+    try:
+        rio = Raster.load(os.path.join(rws, raster_name))
+    except:
+        return
+
+    ml = gsflow.modflow.Modflow.load(
+        "saghen.nam", version="mfnwt",
+        model_ws=iws
+    )
+    xoff = 214110
+    yoff = 4366620
+    ml.modelgrid.set_coord_info(xoff, yoff)
+
+    x0, x1, y0, y1 = rio.bounds
+
+    x0 += 3000
+    y0 += 3000
+    x1 -= 3000
+    y1 -= 3000
+    shape = np.array([(x0, y0), (x0, y1), (x1, y1), (x1, y0), (x0, y0)])
+
+    rio.crop(shape)
+
+    methods = {
+        "min": 2088.52343,
+        "max": 2103.54882,
+        "mean": 2097.05035,
+        "median": 2097.36254,
+        "mode": 2088.0,  # note some precision is lost in the C mode routine
+        "nearest": 2097.81079,
+        "linear": 2097.81079,
+        "cubic": 2097.81079,
+    }
+
+    for method, value in methods.items():
+        data = rio.resample_to_grid(
+            ml.modelgrid, band=rio.bands[0], method=method
+        )
+
+        print(data[34, 37])
+        if np.abs(data[34, 37] - value) > 1e-05:
+            raise AssertionError(
+                f"{method} resampling returning incorrect values"
+            )
 
 
 if __name__ == "__main__":
-    test_raster_functions()
+    test_raster_sampling_methods()
+    test_raster_sampling_methods_numba()
