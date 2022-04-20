@@ -5,7 +5,7 @@
 [![pygsflow continuous integration](https://github.com/pygsflow/pygsflow/actions/workflows/ci.yml/badge.svg)](https://github.com/pygsflow/pygsflow/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/pygsflow/pygsflow/branch/master/graph/badge.svg?token=UC4KRJAHUS)](https://codecov.io/gh/pygsflow/pygsflow)
 [![PyPI](https://img.shields.io/pypi/v/pygsflow?style=plastic)](https://pypi.org/project/pygsflow/)
-[![JOSS](https://joss.theoj.org/papers/d3989e65aedcc241930001cd32ba3a92/status.svg)](https://joss.theoj.org/papers/d3989e65aedcc241930001cd32ba3a92)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.03852/status.svg)](https://doi.org/10.21105/joss.03852)
 
 # pygsflow
 pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW models
@@ -82,6 +82,10 @@ chmod u+x CRT_1.3.1
 Ayman Alzraiee, Joshua Larsen, Donald Martin, Rich Niswonger
 
 ## How to Cite
+
+[Larsen, J. D., Alzraiee, A., Niswonger, R. G., 2022, Integrated hydrologic model development 
+and postprocessing for GSFLOW using pyGSFLOW. Journal of Open Source Software, 7(72), 3852. 
+](https://doi.org/10.21105/joss.03852)
 
 [Larsen, J. D., Alzraiee, A., Niswonger, R., 2021, pyGSFLOW v1.0.0: U.S. Geological
 Survey Software Release, 2 July 2021, https://doi.org/10.5066/P9NPZ5AD](https://doi.org/10.5066/P9NPZ5AD)
