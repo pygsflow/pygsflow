@@ -742,7 +742,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                         foo.write("IRRPOND \n")
 
                         # item 32
-                        fmt32 = "{:d}   {:d}   {:f}   {:f}  {:f}\n"
+                        fmt32 = "{:d}   {:d}   {:f}   {:f}  {:d}\n"
 
                         fmt33 = "{:d}   {:d}   {:f}   {:f}\n"
                         if per in self.irrpond:
@@ -932,7 +932,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                 ("numcell", int),
                 ("period", float),
                 ("triggerfact", float),
-                ("flowthrough", float),
+                ("flowthrough", int),
             ]
 
             for i in range(maxells):
