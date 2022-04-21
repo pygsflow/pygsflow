@@ -329,6 +329,17 @@ class ModflowAg(flopy.modflow.ModflowAg):
         Method to get a unique list of segments from irrdiversion and irrpond
 
         """
+        return self._segment_list()
+
+    def _segment_list(self, ignore_ponds=False):
+        """
+        Method to get a unique list of segments from irrdiversion and irrpond
+
+        Parameters
+        ----------
+        ignore_ponds: bool
+            boolean flag for modsim stream vectors
+        """
         segments = []
         if self.irrdiversion is not None:
             for _, recarray in self.irrdiversion.items():
@@ -341,10 +352,16 @@ class ModflowAg(flopy.modflow.ModflowAg):
             segments = list(set(segments))
 
         # if pond list exists pop off segments that are routed to ponds
-        if self.pond_list is not None:
-            for seg in self.pond_list["segid"]:
-                if seg in segments:
-                    segments.pop(segments.index(seg))
+        if ignore_ponds:
+            if self.pond_list is not None:
+                for seg in self.pond_list["segid"]:
+                    segments.append(seg)
+            segments = list(set(segments))
+        else:
+            if self.pond_list is not None:
+                for seg in self.pond_list["segid"]:
+                    if seg in segments:
+                        segments.pop(segments.index(seg))
 
         return segments
 
@@ -466,7 +483,7 @@ class ModflowAg(flopy.modflow.ModflowAg):
                                     record["hru_id"] + 1,
                                     record["q"],
                                     record["segid"],
-                                    record["qfrac"]
+                                    record["qfrac"],
                                 )
                             )
 
@@ -861,7 +878,10 @@ class ModflowAg(flopy.modflow.ModflowAg):
 
         elif block == "pond":
             dtype = [
-                ("hru_id", int), ("q", float), ("segid", int), ("qfrac", float)
+                ("hru_id", int),
+                ("q", float),
+                ("segid", int),
+                ("qfrac", float),
             ]
 
         elif block == "tabfile_pond":
@@ -1125,7 +1145,9 @@ class ModflowAg(flopy.modflow.ModflowAg):
 
                             # read blocks 20 & 21
                             try:
-                                irr = _read_block_21_25_or_29(mfag, nrec, irr, 21)
+                                irr = _read_block_21_25_or_29(
+                                    mfag, nrec, irr, 21
+                                )
                             except ValueError:
                                 print(per)
                                 raise ValueError
@@ -1332,5 +1354,5 @@ def _read_irrpond_block(fobj, nrec, recarray, trigger):
                     try:
                         recarray[name][ix] = rec[ix2]
                     except ValueError:
-                        print('break')
+                        print("break")
     return recarray

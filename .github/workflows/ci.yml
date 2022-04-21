@@ -2,9 +2,9 @@ name: pygsflow continuous integration
 
 on:
   push:
-    branches: [master, develop, develop2]
+    branches: [master, develop, builder]
   pull_request:
-    branches: [master, develop]
+    branches: [master, develop, builder]
     
 jobs:
   pygsflowCI:

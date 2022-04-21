@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import os
 import inspect
 from ..utils.gsflow_io import _warning
@@ -53,6 +54,7 @@ class Modsim(object):
         self._other = other
         self._sfr = self.mf.get_package("SFR")
         self._lak = self.mf.get_package("LAK")
+        self._ag = self.mf.get_package("AG")
         self._ready = True
 
         if self.mf is None:
@@ -200,13 +202,40 @@ class Modsim(object):
 
         return temp
 
+    def __set_ag_diversion(self, sfr_topology):
+        """
+        Method to set a flag for ag diversion or not ag diversion
+
+        Parameters
+        ----------
+        sfr_topology: __Sfr_Topology object
+
+        Returns
+        -------
+            __Sfr_Topology object
+        """
+        if self._ag is None:
+            return sfr_topology
+
+        ag_segments = self._ag._segment_list(ignore_ponds=True)
+
+        temp = []
+        for sfr in sfr_topology:
+            if sfr.attributes.iseg in ag_segments:
+                sfr.attributes.ag_diversion = 1
+
+            temp.append(sfr)
+
+        return temp
+
     def write_modsim_shapefile(
         self,
         shp=None,
-        proj4=None,
+        epsg=None,
         flag_spillway=False,
         nearest=True,
         sfr_nearest=False,
+        flag_ag_diversion=False,
     ):
         """
         Method to create a modsim compatible
@@ -219,9 +248,9 @@ class Modsim(object):
             optional shapefile name, if none
             will be written in gsflow directory using
             the model name.
-        proj4 : str
-            proj4 projection string, if none will try to
-            grab proj4 or epsg from flopy modelgrid
+        epsg : int
+            epsg projection projection code, if none will epsg from
+            flopy modelgrid
         flag_spillway : bool, str, list
             if flag_spillway is indicated then MODSIM will change
             the spill_flg attribute to one. This can be accomplished
@@ -242,8 +271,13 @@ class Modsim(object):
             if sfr_nearest is True, sfr topology will connect using the
             distance equation. If False topology will connect to the start
             or end of the Segment based on iupseg and outseg
+        flag_ag_diversion : bool
+            if flag_ag_diversion is True, code will check if SFR segments are
+            agricultural diversions and then flag the diversions.
 
         """
+        import requests
+
         if not self._ready:
             return
 
@@ -270,6 +304,9 @@ class Modsim(object):
                 flag_spillway, sfr_topology
             )
 
+        if flag_ag_diversion:
+            sfr_topology = self.__set_ag_diversion(sfr_topology)
+
         w = shapefile.Writer(shp)
         w.shapeType = 3
         w.field("ISEG", "N")
@@ -278,17 +315,36 @@ class Modsim(object):
         w.field("SPILL_FLG", "N")
         if self._other is not None:
             w.field(self._other.upper(), "N", decimal=5)
+        if flag_ag_diversion:
+            w.field("AG_FLG", "N")
 
         for sfr in sfr_topology:
             w.line(sfr.polyline)
             attributes = sfr.attributes
-            if self._other is None:
+            if self._other is None and not flag_ag_diversion:
                 w.record(
                     attributes.iseg,
                     attributes.iupseg,
                     attributes.outseg,
                     attributes.spill_flg,
                 )
+            elif self._other is not None and not flag_ag_diversion:
+                w.record(
+                    attributes.iseg,
+                    attributes.iupseg,
+                    attributes.outseg,
+                    attributes.spill_flg,
+                    attributes.other,
+                )
+            elif self._other is None and flag_ag_diversion:
+                w.record(
+                    attributes.iseg,
+                    attributes.iupseg,
+                    attributes.outseg,
+                    attributes.spill_flg,
+                    attributes.ag_diversion,
+                )
+
             else:
                 w.record(
                     attributes.iseg,
@@ -296,6 +352,7 @@ class Modsim(object):
                     attributes.outseg,
                     attributes.spill_flg,
                     attributes.other,
+                    attributes.ag_diversion,
                 )
 
         for lake in lake_topology:
@@ -321,47 +378,41 @@ class Modsim(object):
         except AttributeError:
             pass
 
-        if pycrs is None:
-            msg = (
-                "PyCRS must be installed to add a projection"
-                " to {}".format(shp)
-            )
-            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
-            return
+        if epsg is None:
+            epsg = self.mf.modelgrid.epsg
+            if epsg is None:
+                msg = "EPSG code not found, skipping prj file"
+                _warning(msg, inspect.getframeinfo(inspect.currentframe()))
+                return
+        epsg = int(epsg)
+        ws = os.path.abspath(os.path.dirname(__file__))
+        cache = os.path.join(ws, "epsg_to_wkt.dat")
+        dfepsg = pd.read_csv(cache, delimiter="\t")
+        wkt = None
+        if dfepsg.size != 0:
+            if epsg in dfepsg.epsg.values:
+                wkt = dfepsg.loc[dfepsg.epsg == epsg, "wkt"].values[0]
 
-        t = shp.split(".")
-        if len(t) == 1:
-            prj = shp + ".prj"
-        else:
-            s = ".".join(t[:-1])
-            prj = s + ".prj"
+        prj = shp[:-4] + ".prj"
+        if wkt is None:
+            url = f"https://spatialreference.org/ref/epsg/{epsg}/esriwkt/"
 
-        if proj4 is None:
-            proj4 = self.mf.modelgrid.proj4
-
-        epsg = self.mf.modelgrid.epsg
-
-        try:
-            crs = pycrs.parse.from_proj4(proj4)
-        except:
-            crs = None
-
-        if crs is None:
             try:
-                crs = pycrs.parse.from_epsg_code(epsg)
+                r = requests.get(url, verify=False)
+                wkt = r.text
+                if not wkt:
+                    return
             except:
-                crs = None
+                msg = f"WKT {epsg} not found, skipping prj file"
+                _warning(msg, inspect.getframeinfo(inspect.currentframe()))
+                return
 
-        if crs is None:
-            msg = (
-                "Please provide a valid proj4 or epsg code to flopy's"
-                f"model grid: Skipping writing {os.path.split(prj)[-1]}"
-            )
-            _warning(msg, inspect.getframeinfo(inspect.currentframe()))
-            return
+            d = {"epsg": epsg, "wkt": wkt}
+            dfepsg = dfepsg.append(d, ignore_index=True)
+            dfepsg.to_csv(cache, sep="\t", index=False)
 
         with open(prj, "w") as foo:
-            foo.write(crs.to_esri_wkt())
+            foo.write(wkt)
 
 
 class _LakTopology(object):
@@ -580,7 +631,9 @@ class _SfrTopology(object):
     other : str or None
         include can be used to add an optional sfr field (ex. strhc1) to the
         stream vector shapefile.
-
+    other_val : int, float, or None
+        other_val can be used to add an optional value to the shapefile for
+        each SFR segment.
 
     """
 
@@ -817,6 +870,7 @@ class _Attributes(object):
         self.flow = flow
         self.elev = strtop
         self.spill_flg = 0
+        self.ag_diversion = 0
         if other is None:
             self.other = np.nan
         else:

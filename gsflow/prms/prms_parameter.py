@@ -1,8 +1,10 @@
 from __future__ import absolute_import, division, print_function
 import os
 import numpy as np
+import inspect
 from ..record_base import RecordBase
 from ..param_base import ParameterBase
+from ..utils import gsflow_io
 
 
 def is_number(s):
@@ -50,6 +52,32 @@ class PrmsParameters(ParameterBase):
 
         self.__parameter_files = []
 
+    def __getattr__(self, item):
+
+        if item in self.record_names:
+            return self.get_record(item)
+        else:
+            try:
+                return super(PrmsParameters).__getattribute__(item)
+            except AttributeError:
+                raise AttributeError(
+                    f"PrmsParameters does not have record {item}"
+                )
+
+    def __setattr__(self, key, value):
+        if key in (
+            "name",
+            "model_dir",
+            "header",
+            "_records_list",
+            "_PrmsParameters__parameter_files",
+        ):
+            super().__setattr__(key, value)
+        elif key in self.record_names:
+            self.set_values(key, value)
+        else:
+            raise AttributeError(f"PrmsParameters does not have record {key}")
+
     @property
     def parameters_list(self):
         """
@@ -79,6 +107,20 @@ class PrmsParameters(ParameterBase):
         self.__parameter_files = all_files
         return self.__parameter_files
 
+    def reset_filenames(self, f):
+        """
+        Method to reset all filenames in the PrmsParameter object
+        to a single user supplied filename
+
+        Parameters
+        ----------
+        f : str
+
+        Returns
+        -------
+
+        """
+
     @staticmethod
     def load_from_file(param_files):
         """
@@ -104,9 +146,12 @@ class PrmsParameters(ParameterBase):
         all_dims = {}
         headers = []
         parameters_list = []
+        param_names = []
         for ifile, file in enumerate(param_files):
             print("------------------------------------")
-            print("Reading parameter file : {}".format(os.path.split(file)[-1]))
+            print(
+                "Reading parameter file : {}".format(os.path.split(file)[-1])
+            )
             print("------------------------------------")
             if not (os.path.isfile(file)):
                 raise FileNotFoundError("Invalid file name {}".format(file))
@@ -161,9 +206,26 @@ class PrmsParameters(ParameterBase):
                                     "".format(parameters_list[-1].name)
                                 )
                             value = int(fid.readline().strip())
+
+                            if field_name in param_names:
+                                msg = (
+                                    f"Duplicate parameter {field_name} "
+                                    f"found, overwriting with new values"
+                                )
+                                gsflow_io._warning(
+                                    msg,
+                                    inspect.getframeinfo(
+                                        inspect.currentframe()
+                                    ),
+                                )
+                                pidx = param_names.index(field_name)
+                                param_names.pop(pidx)
+                                parameters_list.pop(pidx)
+
                             curr_record = ParameterRecord(
                                 name=field_name, values=[value], file_name=file
                             )
+                            param_names.append(field_name)
                             parameters_list.append(curr_record)
                             all_dims[field_name] = value
                         else:
@@ -206,6 +268,22 @@ class PrmsParameters(ParameterBase):
                             par_dim = []
                             for dn in dim_nms:
                                 par_dim.append([dn, all_dims[dn]])
+
+                            if field_name in param_names:
+                                msg = (
+                                    f"Duplicate parameter {field_name} "
+                                    f"found, overwriting with new values"
+                                )
+                                gsflow_io._warning(
+                                    msg,
+                                    inspect.getframeinfo(
+                                        inspect.currentframe()
+                                    ),
+                                )
+                                pidx = param_names.index(field_name)
+                                param_names.pop(pidx)
+                                parameters_list.pop(pidx)
+
                             curr_record = ParameterRecord(
                                 name=field_name,
                                 values=value,
@@ -214,6 +292,7 @@ class PrmsParameters(ParameterBase):
                                 file_name=file,
                             )
 
+                            param_names.append(curr_record.name)
                             parameters_list.append(curr_record)
 
         return PrmsParameters(parameters_list=parameters_list, header=headers)
@@ -362,14 +441,14 @@ class PrmsParameters(ParameterBase):
         """
         super(PrmsParameters, self).remove_record(name)
 
-    def add_record_object(self, record_obj, replace=False):
+    def add_record_object(self, record_obj, replace=True):
         """
         Method to add a ParameterRecord object
 
         record_obj : ParameterRecord object
             ParameterRecord object
         replace : bool
-            boolean flag that allows record replacement, default is False
+            boolean flag that allows record replacement, default is True
         """
         add = self._check_before_add(
             record_obj.name, record_obj.values, replace
@@ -380,6 +459,9 @@ class PrmsParameters(ParameterBase):
             add = True
 
         if add:
+            if record_obj.file_name is None:
+                record_obj.file_name = self.parameter_files[-1]
+
             super(PrmsParameters, self).add_record(record_obj)
 
     def write(self, name=None):
@@ -522,6 +604,48 @@ class ParameterRecord(RecordBase):
                 )
                 raise ValueError(err)
 
+    def __getitem__(self, item):
+        return self.values[item]
+
+    def __setitem__(self, key, value):
+        self.values[key] = value
+
+    def __add__(self, other):
+        self._check_if_compatible()
+        self.values += other
+        return self
+
+    def __mul__(self, other):
+        self._check_if_compatible()
+        self.values *= other
+        return self
+
+    def __sub__(self, other):
+        self._check_if_compatible()
+        self.values -= other
+
+        return self
+
+    def __truediv__(self, other):
+        self._check_if_compatible()
+        self.values /= other
+        return self
+
+    def __pow__(self, power):
+        self._check_if_compatible()
+        self.values **= power
+        return self
+
+    def _check_if_compatible(self):
+        if self.datatype not in (1, 2, 3):
+            raise AssertionError(
+                "Mathematical operation cannot be performed on strings"
+            )
+        elif self.datatype == 1:
+            raise AssertionError(
+                "Mathematical operation not supported for integer dtypes"
+            )
+
     @property
     def values(self):
         """
@@ -531,6 +655,9 @@ class ParameterRecord(RecordBase):
 
     @values.setter
     def values(self, new_values):
+        if isinstance(new_values, ParameterRecord):
+            new_values = new_values.values
+
         self._check_values(new_values)
         if (
             np.prod(np.array(self.dims)) != self.nvalues
@@ -600,7 +727,8 @@ class ParameterRecord(RecordBase):
         fid.write("####\n")
         fid.write(self.name)
         fid.write(" ")
-        fid.write("{}\n".format(self.width))
+        if self.width is not None:
+            fid.write("{}\n".format(self.width))
         # write number of dimension
         fid.write(str(self.ndim))
         # write dimension names

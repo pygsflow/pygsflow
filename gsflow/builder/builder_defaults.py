@@ -281,7 +281,7 @@ class ControlFileDefaults(_DefaultsBase):
         if name in self._dict:
             return self._dict[name]
 
-    def add_default(self, name, data):
+    def add_default(self, name, dtype, record):
         """
         Method to add or edit an existing default record
 
@@ -289,10 +289,11 @@ class ControlFileDefaults(_DefaultsBase):
         ----------
         name : str
             parameter/dimension name
-        data : list, int, or np.ndarray
-            list, int, or numpy array of data
+        dtype : int
+            gsflow dtype
+        record : int, float, str, list, np.ndarray
         """
-        rec = _DefaultRecord(name, data)
+        rec = _PrmsDefaultRecord(name, dtype, record)
         self._dict[name] = rec
 
     def delete_default(self, name):
