@@ -37,6 +37,7 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
    2) Python 3.6 or greater 
    3) Flopy 3.3.4 or greater (`pip install flopy`) *note* for Python 3.6 use (`pip install flopy==3.3.4`)
    4) NetCdf4 (optional, required for netcdf exporting and autotesting) (`pip install netcdf4`)
+   5) Numba (optional, but recommended for raster resampling routines) (`pip install numba`)
    
 ## Installation
 **Version 1.0.2** (Master branch and from pypi)
@@ -56,17 +57,6 @@ Alternatively the user can download a copy of the repository, open a command pro
 
 `pip install . `
 
-**Builder Branch**
-
-To install the alpha version of the builder branch, open a terminal, command prompt or anaconda promt and type:  
-
-`pip install https://github.com/pygsflow/pygsflow/zipball/builder`
-
-Alternatively the user can download a copy of the repository, open a command prompt or anaconda promt terminal, cd into the trunk directory and type:
-
-`pip install . `
-
-
 **Additional Linux installation instructions**
 
 To use the default version of GSFLOW for Linux that is distributed with pyGSFLOW the user
@@ -75,7 +65,15 @@ a terminal window cd into the trunk/bin directory of the pyGSFLOW repository and
 write:
 ```
 chmod u+x gsflow
+chmod u+x mfnwt
 chmod u+x CRT_1.3.1
+```
+
+In some cases symbolic links to gfortran-10 must be set up this can be done with
+```
+sudo ln -fs /usr/bin/gfortran-10 /usr/bin/gfortran
+sudo ln -fs /usr/bin/gcc-10 /usr/bin/gcc
+sudo ln -fs /usr/bin/g++-10 /usr/bin/g++
 ```
 
 ## Authors
