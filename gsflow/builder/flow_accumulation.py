@@ -253,11 +253,17 @@ class FlowAccumulation(object):
         """
         Method to prep data for flow direction calculations
 
-        Parameters:
-            data : np.ndarray
-            xcenters : np.ndarray
-            ycenters : np.ndarray
-            hru_type : np.ndarray
+        Parameters
+        ----------
+        data : np.ndarray
+        xcenters : np.ndarray
+        ycenters : np.ndarray
+        hru_type : np.ndarray
+
+        Returns
+        -------
+        buffered arrays (data, xcenters, ycenters, hru_type)
+
         """
         shape = data.shape
         xsize = shape[0] + 2
@@ -816,6 +822,17 @@ class FlowAccumulation(object):
         )
 
     def _next_cell(self, ix):
+        """
+        Method to check if code should advance to next cell in stack
+
+        Parameters
+        ----------
+        ix : int
+
+        Returns
+        -------
+            bool
+        """
         nnodes = self._shape[0] * self._shape[1]
         if ix < self._offset:
             return False

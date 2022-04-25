@@ -16,6 +16,9 @@ from gsflow.builder import (
     FlowAccumulation
 )
 import gsflow.builder.builder_utils as bu
+import pandas as pd
+
+pd.options.mode.chained_assignment = None
 
 
 def nash_sutcliffe_efficiency(qsim, qobs, flg):
@@ -345,7 +348,6 @@ if __name__ == "__main__":
     srain_intcp_lut = build_lut(srain_intcp_remap)
 
     # read in "climate dataframe"
-    import pandas as pd
     cdf = pd.read_csv(climate_dataframe)
     ldf = pd.read_csv(climate_lapse_rates)
 
