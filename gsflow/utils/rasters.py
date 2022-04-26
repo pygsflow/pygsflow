@@ -168,6 +168,7 @@ class Raster(flopy.utils.Raster):
         multithread=False,
         thread_pool=2,
         extrapolate_edges=False,
+        block_sample=False,
         no_numba=False,
     ):
         """
@@ -209,6 +210,8 @@ class Raster(flopy.utils.Raster):
             boolean flag indicating if areas without data should be filled
             using the ``nearest`` interpolation method. This option
             has no effect when using the ``nearest`` interpolation method.
+        block_sample: bool
+            experimental block reduction method for downscale resampling
         no_numba : bool
             method to turn off numba based resampling, default is False
 
@@ -259,7 +262,67 @@ class Raster(flopy.utils.Raster):
 
             data = np.zeros((ncpl,), dtype=float)
 
-            if ENABLE_JIT and not multithread and not no_numba:
+            if modelgrid.grid_type == "structured":
+                # apply block reduction method to resample grid
+                success = False
+                xmin, xmax, ymin, ymax = modelgrid.extent
+                rxmin, rxmax, rymin, rymax = self.bounds
+                if rxmin > xmin or rxmax < xmax or rymin > ymin or rymax < ymax:
+                    print("modelgrid outside bounds of raster, cannot use block reduction method. Trying other methods")
+                else:
+                    poly = [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
+
+                    self.crop(poly)
+
+                    arr = self.get_array(band=band)
+                    xred = arr.shape[0] // modelgrid.nrow
+                    yred = arr.shape[1] // modelgrid.ncol
+
+                    i0 = 0
+                    block_sample = []
+                    while i0 < arr.shape[0]:
+                        j0 = 0
+                        i1 = i0 + xred
+                        if i1 > arr.shape[0]:
+                            i1 = arr.shape[0]
+                        while j0 < arr.shape[1]:
+                            j1 = j0 + yred
+                            if j1 > arr.shape[1]:
+                                j1 = arr.shape[1]
+                            block_sample.append(arr[i0:i1, j0:j1].ravel())
+                            j0 = j1
+                        i0 = i1
+
+                    block_sample = np.array(block_sample)
+
+                    if method == "median":
+                        data = np.nanmedian(block_sample, axis=1)
+                    elif method == "mean":
+                        data = np.nanmean(block_sample, axis=1)
+                    elif method == "max":
+                        data = np.nanmax(block_sample, axis=1)
+                    elif method == "mode":
+                        modedata = mode(
+                            block_sample, axis=1, nan_policy="omit"
+                        ).mode
+                        data = []
+                        for val in modedata:
+                            if len(val) == 0:
+                                val = np.nan
+                            else:
+                                val = val[0]
+                            data.append(val)
+                        data = np.array(data)
+                    else:
+                        data = np.nanmin(block_sample, axis=1)
+
+                    try:
+                        data.shape = (modelgrid.shape[1], modelgrid.shape[2])
+                        success = True
+                    except (ValueError, IndexError):
+                        print('block resampling failed trying other methods')
+
+            if ENABLE_JIT and not multithread and not no_numba and not success:
                 arr = self.__arr_dict[band].astype(float)
                 xcenters = self.xcenters
                 ycenters = self.ycenters
@@ -290,7 +353,7 @@ class Raster(flopy.utils.Raster):
                     ncpl,
                 )
 
-            elif multithread:
+            elif multithread and not success:
                 q = queue.Queue()
                 container = threading.BoundedSemaphore(thread_pool)
 
@@ -328,7 +391,7 @@ class Raster(flopy.utils.Raster):
                         node, val = q.get()
                         data[node] = val
 
-            else:
+            elif not success:
                 for node in range(ncpl):
                     verts = modelgrid.get_cell_vertices(node)
                     try:
