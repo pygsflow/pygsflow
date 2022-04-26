@@ -168,7 +168,6 @@ class Raster(flopy.utils.Raster):
         multithread=False,
         thread_pool=2,
         extrapolate_edges=False,
-        block_sample=False,
         no_numba=False,
     ):
         """
