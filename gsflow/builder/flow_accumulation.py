@@ -1246,9 +1246,9 @@ class FlowAccumulation(object):
         # dictionary with stream information
         stream_dict = {}
         iseg = 0
-        sstack = []
         for ix in headwaters:
             # set cell; n = r, c
+            sstack = []
             n = ix
             iseg += 1
             reach = 0
