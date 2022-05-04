@@ -276,6 +276,7 @@ class Raster(flopy.utils.Raster):
                     arr = self.get_array(band=band)
                     xred = arr.shape[0] // modelgrid.nrow
                     yred = arr.shape[1] // modelgrid.ncol
+                    block_size = xred * yred
 
                     i0 = 0
                     block_sample = []
@@ -288,7 +289,11 @@ class Raster(flopy.utils.Raster):
                             j1 = j0 + yred
                             if j1 > arr.shape[1]:
                                 j1 = arr.shape[1]
-                            block_sample.append(arr[i0:i1, j0:j1].ravel())
+                            sample = arr[i0:i1, j0:j1].ravel()
+                            if sample.size != block_size:
+                                j0 = j1
+                                continue
+                            block_sample.append(sample)
                             j0 = j1
                         i0 = i1
 
