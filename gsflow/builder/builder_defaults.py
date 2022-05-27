@@ -51,7 +51,7 @@ class Defaults(_DefaultsBase):
     Defaults class that reads and formats JSON based default files
     into an object oriented interface.
 
-    Parameters:
+    Parameters
     ----------
     f : None, str
         json file name, if None reads in pyGSFLOW's default JSON parameters
@@ -103,7 +103,7 @@ class PrmsDefaults(_DefaultsBase):
     Defaults class that reads and formats JSON based default files
     into an object oriented interface for PRMS.
 
-    Parameters:
+    Parameters
     ----------
     f : None, str
        json file name, if None reads in pyGSFLOW's default JSON parameters
@@ -235,7 +235,7 @@ class ControlFileDefaults(_DefaultsBase):
     Defaults class that reads and formats JSON based default files
     into an object oriented interface for GSFLOW control file.
 
-    Parameters:
+    Parameters
     ----------
     f : None, str
        json file name, if None reads in pyGSFLOW's default JSON parameters
@@ -328,7 +328,7 @@ class ModflowDefaults(_DefaultsBase):
     Defaults class that reads and formats JSON based default files
     into an object oriented interface for FloPy modflow.
 
-    Parameters:
+    Parameters
     ----------
     f : None, str
        json file name, if None reads in pyGSFLOW's default JSON parameters

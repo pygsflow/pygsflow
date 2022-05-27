@@ -14,7 +14,7 @@ class FlowAccumulation(object):
     Class to perform flow accumulation on a DEM (raster) or resampled to
     a model grid
 
-    Parameters:
+    Parameters
     ----------
     data : np.ndarray
         two dimensional numpy array of dem data
@@ -237,7 +237,8 @@ class FlowAccumulation(object):
         """
         Method to get flow vectors array
 
-        Returns:
+        Returns
+        -------
              (u, v): tuple (np.ndarray of flow vectors)
         """
         flow_direction = self.flow_directions()
@@ -697,7 +698,7 @@ class FlowAccumulation(object):
         """
         NIDP method to calculate the flow accumulation array using
 
-        Returns:
+        Returns
         -------
             np.ndarray of flow directions
 

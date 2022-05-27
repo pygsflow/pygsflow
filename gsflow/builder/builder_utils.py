@@ -366,8 +366,8 @@ def ssr2gw_rate(ksat, sand, soil_moist_max):
     sand : np.ndarray
     soil_moist_max : np.ndarray
 
-    Return
-    ------
+    Returns
+    -------
         gsflow.prms.ParameterRecord object
     """
     values = ksat.ravel() / (sand.ravel() * soil_moist_max.ravel())
@@ -395,8 +395,8 @@ def ssr2gw_exp(nhru):
     ----------
     nhru : int
 
-    Return
-    ------
+    Returns
+    -------
         gsflow.prms.ParameterRecord object
     """
     values = np.zeros((nhru,))

@@ -11,7 +11,7 @@ class GenerateFishnet(StructuredGrid):
     The GenerateFishnet class creates a flopy.discretization.StructuredGrid
     object from basic geospatial information
 
-    Parameters:
+    Parameters
     ----------
     bbox : shapefile, raster, [xmin, xmax, ymin, ymax]
         bounding box for modelgrid. The bounding box can be a the extent read

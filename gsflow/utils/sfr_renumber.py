@@ -461,8 +461,8 @@ class Topology(object):
         """
         Method to add a topological connection
 
-        Parmeters
-        ---------
+        Parameters
+        ----------
         iseg : int
             current segment number
         ioutseg : int
