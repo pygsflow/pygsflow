@@ -27,13 +27,14 @@ Interactive jupyter notebook example problems can be found in the examples direc
 https://github.com/pygsflow/pygsflow/tree/master/examples
 
 ## Requirements
-**Version 1.0.2** (Master branch and from pypi)
+**Version 1.1.0** (Master branch and from pypi)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.6 or greater  
    3) FloPy 3.3.4 or greater, *note* for Python 3.6 use (`pip install flopy==3.3.4`)
    4) NetCdf4 (optional, required for netcdf exporting and autotesting) (`pip install netcdf4`)
+   5) Numba (optional, but recommended for raster resampling routines) (`pip install numba`)
 
-**Version 1.1.0** (Develop branch)
+**Version 1.1.1** (Develop branch)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.6 or greater 
    3) Flopy 3.3.4 or greater (`pip install flopy`) *note* for Python 3.6 use (`pip install flopy==3.3.4`)
@@ -41,14 +42,14 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
    5) Numba (optional, but recommended for raster resampling routines) (`pip install numba`)
    
 ## Installation
-**Version 1.0.2** (Master branch and from pypi)
+**Version 1.1.0** (Master branch and from pypi)
     
 The pygsflow repository can be installed using pip.
 To install the release version, open a terminal, command prompt, or anaconda prompt and type:
 
 `pip install pygsflow`
 
-**Version 1.1.0** (Develop version with most recent updates)
+**Version 1.1.1** (Develop version with most recent updates)
 
 To install the development version, open a terminal, command prompt or anaconda promt and type:  
 
