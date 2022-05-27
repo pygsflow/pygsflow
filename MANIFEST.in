@@ -1,3 +1,4 @@
 include gsflow/prms/gsflow_prms.control.par_name
 include gsflow/prms/gsflow_prms.control.var_name
-include gsflow/bulder/defaults.json
+include gsflow/builder/defaults.json
+include gsflow/modsim/epsg_to_wkt.dat

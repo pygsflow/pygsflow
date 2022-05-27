@@ -37,7 +37,9 @@ class PrmsData(object):
         "rain_day",
     ]
 
-    def __init__(self, data_df, name="Data", model_dir="", header="PRMS datafile"):
+    def __init__(
+        self, data_df, name="Data", model_dir="", header="PRMS datafile"
+    ):
         self.name = name
         self.model_dir = model_dir
         self.data_df = data_df

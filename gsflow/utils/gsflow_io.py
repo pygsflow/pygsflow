@@ -161,3 +161,63 @@ def _warning(msg, frame, wtype=UserWarning):
     """
     module = os.path.split(frame.filename)[-1]
     warnings.warn_explicit(msg, wtype, module, frame.lineno)
+
+
+def _write_pickle(f, obj):
+    """
+    Method to write a binary pickle file. Used with _Cascades and _Streamsobj
+
+    Parameters
+    ----------
+    f : str
+        file name
+    obj : class object
+        class object to dump into a binary object
+
+    Returns
+    -------
+        None
+    """
+    import pickle
+
+    with open(f, "wb") as foo:
+        pickle.dump(obj, foo)
+
+
+def _read_pickle(f):
+    """
+    Method to read a binary pickle file. Used with _Cascades and _Streamsobj
+
+    Parameters
+    ----------
+    f : str
+        file name
+
+    Returns
+    -------
+        class object
+    """
+    import pickle
+
+    with open(f, "rb") as foo:
+        data = pickle.load(foo)
+    return data
+
+
+def isint(s):
+    """
+    Method to check if a string is an integer
+
+    Parameters
+    ----------
+    s : str
+
+    Returns
+    -------
+        bool
+    """
+    try:
+        int(s)
+        return True
+    except (TypeError, ValueError):
+        return False

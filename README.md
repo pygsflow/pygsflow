@@ -5,7 +5,7 @@
 [![pygsflow continuous integration](https://github.com/pygsflow/pygsflow/actions/workflows/ci.yml/badge.svg)](https://github.com/pygsflow/pygsflow/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/pygsflow/pygsflow/branch/master/graph/badge.svg?token=UC4KRJAHUS)](https://codecov.io/gh/pygsflow/pygsflow)
 [![PyPI](https://img.shields.io/pypi/v/pygsflow?style=plastic)](https://pypi.org/project/pygsflow/)
-[![JOSS](https://joss.theoj.org/papers/d3989e65aedcc241930001cd32ba3a92/status.svg)](https://joss.theoj.org/papers/d3989e65aedcc241930001cd32ba3a92)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.03852/status.svg)](https://doi.org/10.21105/joss.03852)
 
 # pygsflow
 pyGSFLOW is a python package to Create, Read, Write, Edit, and Visualize GSFLOW models
@@ -38,6 +38,7 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
    2) Python 3.6 or greater 
    3) Flopy 3.3.4 or greater (`pip install flopy`) *note* for Python 3.6 use (`pip install flopy==3.3.4`)
    4) NetCdf4 (optional, required for netcdf exporting and autotesting) (`pip install netcdf4`)
+   5) Numba (optional, but recommended for raster resampling routines) (`pip install numba`)
    
 ## Installation
 **Version 1.0.2** (Master branch and from pypi)
@@ -65,13 +66,25 @@ a terminal window cd into the trunk/bin directory of the pyGSFLOW repository and
 write:
 ```
 chmod u+x gsflow
+chmod u+x mfnwt
 chmod u+x CRT_1.3.1
+```
+
+In some cases symbolic links to gfortran-10 must be set up this can be done with
+```
+sudo ln -fs /usr/bin/gfortran-10 /usr/bin/gfortran
+sudo ln -fs /usr/bin/gcc-10 /usr/bin/gcc
+sudo ln -fs /usr/bin/g++-10 /usr/bin/g++
 ```
 
 ## Authors
 Ayman Alzraiee, Joshua Larsen, Donald Martin, Rich Niswonger
 
 ## How to Cite
+
+[Larsen, J. D., Alzraiee, A., Niswonger, R. G., 2022, Integrated hydrologic model development 
+and postprocessing for GSFLOW using pyGSFLOW. Journal of Open Source Software, 7(72), 3852. 
+](https://doi.org/10.21105/joss.03852)
 
 [Larsen, J. D., Alzraiee, A., Niswonger, R., 2021, pyGSFLOW v1.0.0: U.S. Geological
 Survey Software Release, 2 July 2021, https://doi.org/10.5066/P9NPZ5AD](https://doi.org/10.5066/P9NPZ5AD)

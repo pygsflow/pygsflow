@@ -1,6 +1,7 @@
-from flopy.discretization import StructuredGrid
 import numpy as np
 from flopy.utils import Raster
+from flopy.discretization import StructuredGrid
+from gsflow.utils import gsflow_io
 
 
 class GenerateFishnet(StructuredGrid):
@@ -10,7 +11,7 @@ class GenerateFishnet(StructuredGrid):
     The GenerateFishnet class creates a flopy.discretization.StructuredGrid
     object from basic geospatial information
 
-    Parameters:
+    Parameters
     ----------
     bbox : shapefile, raster, [xmin, xmax, ymin, ymax]
         bounding box for modelgrid. The bounding box can be a the extent read
@@ -112,3 +113,34 @@ class GenerateFishnet(StructuredGrid):
         ncols = int(np.ceil(abs(self._lx) / self.xcs))
         nrows = int(np.ceil(abs(self._ly) / self.ycs))
         return nrows, ncols
+
+    def write(self, f):
+        """
+        Method to save a binary copy of the modelgrid for later use
+
+        Parameters
+        ----------
+        f : str
+            filename
+
+        Returns
+        -------
+            None
+        """
+        gsflow_io._write_pickle(f, self)
+
+    @staticmethod
+    def load_from_file(f):
+        """
+        Method to load a binary modelgrid file
+
+        Parameters
+        ----------
+        f : str
+            binary modelgrid file name
+
+        Returns
+        -------
+            GenerateFishnet object
+        """
+        return gsflow_io._read_pickle(f)

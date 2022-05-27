@@ -51,7 +51,7 @@ class Defaults(_DefaultsBase):
     Defaults class that reads and formats JSON based default files
     into an object oriented interface.
 
-    Parameters:
+    Parameters
     ----------
     f : None, str
         json file name, if None reads in pyGSFLOW's default JSON parameters
@@ -103,7 +103,7 @@ class PrmsDefaults(_DefaultsBase):
     Defaults class that reads and formats JSON based default files
     into an object oriented interface for PRMS.
 
-    Parameters:
+    Parameters
     ----------
     f : None, str
        json file name, if None reads in pyGSFLOW's default JSON parameters
@@ -235,7 +235,7 @@ class ControlFileDefaults(_DefaultsBase):
     Defaults class that reads and formats JSON based default files
     into an object oriented interface for GSFLOW control file.
 
-    Parameters:
+    Parameters
     ----------
     f : None, str
        json file name, if None reads in pyGSFLOW's default JSON parameters
@@ -281,7 +281,7 @@ class ControlFileDefaults(_DefaultsBase):
         if name in self._dict:
             return self._dict[name]
 
-    def add_default(self, name, data):
+    def add_default(self, name, dtype, record):
         """
         Method to add or edit an existing default record
 
@@ -289,10 +289,11 @@ class ControlFileDefaults(_DefaultsBase):
         ----------
         name : str
             parameter/dimension name
-        data : list, int, or np.ndarray
-            list, int, or numpy array of data
+        dtype : int
+            gsflow dtype
+        record : int, float, str, list, np.ndarray
         """
-        rec = _DefaultRecord(name, data)
+        rec = _PrmsDefaultRecord(name, dtype, record)
         self._dict[name] = rec
 
     def delete_default(self, name):
@@ -327,7 +328,7 @@ class ModflowDefaults(_DefaultsBase):
     Defaults class that reads and formats JSON based default files
     into an object oriented interface for FloPy modflow.
 
-    Parameters:
+    Parameters
     ----------
     f : None, str
        json file name, if None reads in pyGSFLOW's default JSON parameters

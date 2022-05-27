@@ -350,12 +350,13 @@ class GsflowModel(object):
                 self.control.set_values("param_file", new_param_file_list)
 
                 # change datafile
-                curr_file = os.path.relpath(
-                    os.path.join(workspace, self.prms.data.name),
-                    self.control.model_dir,
-                )
-                self.prms.data.model_dir = workspace
-                self.control.set_values("data_file", [curr_file])
+                if self.prms.data is not None:
+                    curr_file = os.path.relpath(
+                        os.path.join(workspace, self.prms.data.name),
+                        self.control.model_dir,
+                    )
+                    self.prms.data.model_dir = workspace
+                    self.control.set_values("data_file", [curr_file])
 
                 # change day files
                 if self.prms.day is not None:
@@ -399,13 +400,14 @@ class GsflowModel(object):
             self.control.set_values("param_file", new_param_file_list)
 
             # change datafile
-            dfile = basename + "_dat.data"
-            curr_file = os.path.relpath(
-                os.path.join(self.prms.data.model_dir, dfile),
-                self.control.model_dir,
-            )
-            self.prms.data.name = dfile
-            self.control.set_values("data_file", [curr_file])
+            if self.prms.data is not None:
+                dfile = basename + "_dat.data"
+                curr_file = os.path.relpath(
+                    os.path.join(self.prms.data.model_dir, dfile),
+                    self.control.model_dir,
+                )
+                self.prms.data.name = dfile
+                self.control.set_values("data_file", [curr_file])
 
             # change mf
             if self.mf is not None:
@@ -444,14 +446,16 @@ class GsflowModel(object):
                 if not (curr_file in new_param_file_list):
                     new_param_file_list.append(curr_file)
             self.control.set_values("param_file", new_param_file_list)
+
             # change datafile
-            dfile = basename + "_dat.data"
-            curr_file = os.path.relpath(
-                os.path.join(workspace, dfile), self.control.model_dir
-            )
-            self.prms.data.model_dir = workspace
-            self.prms.data.name = dfile
-            self.control.set_values("data_file", [curr_file])
+            if self.prms.data is not None:
+                dfile = basename + "_dat.data"
+                curr_file = os.path.relpath(
+                    os.path.join(workspace, dfile), self.control.model_dir
+                )
+                self.prms.data.model_dir = workspace
+                self.prms.data.name = dfile
+                self.control.set_values("data_file", [curr_file])
 
             # change day files
             if self.prms.day is not None:
@@ -511,15 +515,11 @@ class GsflowModel(object):
                     if rec_name in ("modflow_name",):
                         continue
 
-                    elif (
-                        rec_name
-                        in (
-                            "modflow_name",
-                            "param_file",
-                            "data_file",
-                        )
-                        or rec_name.endswith("_day")
-                    ):
+                    elif rec_name in (
+                        "modflow_name",
+                        "param_file",
+                        "data_file",
+                    ) or rec_name.endswith("_day"):
                         file_values = self.control.get_values(rec_name)
                         file_value = []
                         for fil in file_values:
@@ -628,13 +628,14 @@ class GsflowModel(object):
 
             # write data
             if len(write_only) == 0 or "prms_data" in write_only:
-                print("Writing Data file ...")
-                self.prms.data.write()
+                if self.prms.data is not None:
+                    print("Writing Data file ...")
+                    self.prms.data.write()
 
             # write day
             if len(write_only) == 0 or "prms_day" in write_only:
-                print("Writing Day files ...")
                 if self.prms.day is not None:
+                    print("Writing Day files ...")
                     for dvar, day in self.prms.day.items():
                         day.write()
 

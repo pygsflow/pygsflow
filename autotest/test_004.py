@@ -59,9 +59,32 @@ def test_build_control_file_object():
     assert isinstance(control.records_list[0], ControlRecord)
 
 
+def test_load_prms_parameter_duplicates():
+    iws = os.path.join(ws, "..", "examples", "data", "sagehen", "duplicates")
+
+    param_files = [os.path.join(iws, "sagehen_duplicates.params"),]
+    params = PrmsParameters.load_from_file(param_files)
+
+    adjmix_rain = params.adjmix_rain.values
+    if not np.all(adjmix_rain == adjmix_rain[0]):
+        raise AssertionError("parameter replacement failed")
+
+
+def test_load_control_file_duplicates():
+    iws = os.path.join(ws, "..", "examples", "data", "sagehen", "duplicates")
+
+    control_file = os.path.join(iws, "sagehen_duplicates.control")
+    control = ControlFile.load_from_file(control_file)
+
+    pc_flag = control.parameter_check_flag.values
+    if not pc_flag[0] == -2:
+        raise AssertionError("controlfile parameter replacement failed")
+
+
 if __name__ == "__main__":
     test_empty_prms_parameter_object()
     test_empty_control_file_object()
     test_build_prms_parameter_object()
     test_build_control_file_object()
-
+    test_load_prms_parameter_duplicates()
+    test_load_control_file_duplicates()

@@ -375,19 +375,21 @@ class Modflow(fpModflow):
                     modelname, 50 * "-"
                 )
             )
+
+        # set the reference information
+        attributes = mfreadnam.attribs_from_namfile_header(namefile_path)
+
         ml = Modflow(
             modelname,
             version=version,
             exe_name=exe_name,
             verbose=verbose,
             model_ws=model_ws,
+            **attributes
         )
 
         files_successfully_loaded = []
         files_not_loaded = []
-
-        # set the reference information
-        attributes = mfreadnam.attribs_from_namfile_header(namefile_path)
 
         # read name file
         ext_unit_dict = mfreadnam.parsenamefile(

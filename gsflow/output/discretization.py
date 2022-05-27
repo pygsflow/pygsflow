@@ -279,6 +279,7 @@ class PrmsDiscretization(object):
         patches = [Polygon(hru, False, **kwargs) for hru in self._xypts]
 
         p = PatchCollection(patches, facecolors="None")
+        p.set(**kwargs)
         ax.add_collection(p)
 
         extent = self.extent
