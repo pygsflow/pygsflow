@@ -1394,11 +1394,8 @@ class FlowAccumulation(object):
 
         stream_dict = new_stream_dict
 
-        # build sfrtop from dem
+        # intialize rchlen, strtop, and slope arrays
         strtop = np.zeros(self._data.shape) * np.nan
-        strtop[sstack] = self._data[sstack]
-
-        # intialize rchlen and slope arrays
         rchlens = np.zeros(fdir_array.shape)
         slopes = np.zeros(fdir_array.shape)
 
@@ -1470,13 +1467,29 @@ class FlowAccumulation(object):
                 dist = np.sqrt(xdiff + ydiff) / 2.0
                 rchlens[ix] += dist
 
-        # calculate slope
+        # calculate hru_slope for all cells
+        for cell, fdir in enumerate(fdir_array):
+            if fdir in (-1, -2) or np.isnan(fdir):
+                continue
+            cell1 = cell + self._offset_dict[fdir]
+            asq = (self._xcenters[cell] - self._xcenters[cell1]) ** 2
+            bsq = (self._ycenters[cell] - self._ycenters[cell1]) ** 2
+            dist = np.sqrt(asq + bsq)
+            delta_elev = self._data[cell] - self._data[cell1]
+            if dist == 0:
+                continue
+            else:
+                slopes[cell] = delta_elev / dist
+
+        # calculate stream slope and set strtop
         for seg in stream_dict:
             stream_cells = stream_dict[seg]["graph"]
             for idx, cell in enumerate(stream_cells):
                 if (idx + 1) < len(stream_cells):
                     next_cell = stream_cells[idx + 1]
                     rchlen = rchlens[cell]
+                    strtop[cell] = self._data[cell]
+                    strtop[next_cell] = self._data[next_cell]
                     nslope = (strtop[cell] - strtop[next_cell]) / rchlen
                     slopes[cell] = nslope
                 else:
