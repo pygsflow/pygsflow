@@ -260,71 +260,62 @@ class Raster(flopy.utils.Raster):
                 ncpl = ncpl[0]
 
             data = np.zeros((ncpl,), dtype=float)
-
+            success = False
             if modelgrid.grid_type == "structured":
-                # apply block reduction method to resample grid
-                success = False
+                # 1st try rasterio resampling methods:
                 xmin, xmax, ymin, ymax = modelgrid.extent
                 rxmin, rxmax, rymin, rymax = self.bounds
                 if rxmin > xmin or rxmax < xmax or rymin > ymin or rymax < ymax:
-                    print("modelgrid outside bounds of raster, cannot use block reduction method. Trying other methods")
+                    print(
+                        "modelgrid outside bounds of raster, cannot use rapid "
+                        "resampling methods. Trying other methods"
+                    )
                 else:
-                    poly = [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
+                    import rasterio
+                    from rasterio.enums import Resampling
 
-                    self.crop(poly)
-
-                    arr = self.get_array(band=band)
-                    xred = arr.shape[0] // modelgrid.nrow
-                    yred = arr.shape[1] // modelgrid.ncol
-                    block_size = xred * yred
-
-                    i0 = 0
-                    block_sample = []
-                    while i0 < arr.shape[0]:
-                        j0 = 0
-                        i1 = i0 + xred
-                        if i1 > arr.shape[0]:
-                            i1 = arr.shape[0]
-                        while j0 < arr.shape[1]:
-                            j1 = j0 + yred
-                            if j1 > arr.shape[1]:
-                                j1 = arr.shape[1]
-                            sample = arr[i0:i1, j0:j1].ravel()
-                            if sample.size != block_size:
-                                j0 = j1
-                                continue
-                            block_sample.append(sample)
-                            j0 = j1
-                        i0 = i1
-
-                    block_sample = np.array(block_sample)
-
-                    if method == "median":
-                        data = np.nanmedian(block_sample, axis=1)
-                    elif method == "mean":
-                        data = np.nanmean(block_sample, axis=1)
-                    elif method == "max":
-                        data = np.nanmax(block_sample, axis=1)
-                    elif method == "mode":
-                        modedata = mode(
-                            block_sample, axis=1, nan_policy="omit"
-                        ).mode
-                        data = []
-                        for val in modedata:
-                            if len(val) == 0:
-                                val = np.nan
-                            else:
-                                val = val[0]
-                            data.append(val)
-                        data = np.array(data)
+                    if modelgrid.angrot != 0:
+                        print(
+                            "modelgrid rotation not equal to 0, cannot use "
+                            "rapid resampling methods. Trying other methods"
+                        )
+                    elif np.sum(modelgrid.delr - modelgrid.delr[0]) > 0:
+                        print(
+                            "modelgrid delr not constant, cannot use "
+                            "rapid resampling methods. Trying other methods"
+                        )
+                    elif np.sum(modelgrid.delc - modelgrid.delc[0]) > 0:
+                        print(
+                            "modelgrid delc not constant, cannot use "
+                            "rapid resampling methods. Trying other methods"
+                        )
                     else:
-                        data = np.nanmin(block_sample, axis=1)
+                        poly = [
+                            [xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]
+                        ]
 
-                    try:
-                        data.shape = (modelgrid.shape[1], modelgrid.shape[2])
+                        self.crop(poly)
+
+                        if method == "mean":
+                            resampler = Resampling.average
+                        elif method == "median":
+                            resampler = Resampling.med
+                        elif method == "min":
+                            resampler = Resampling.min
+                        elif method == "max":
+                            resampler = Resampling.max
+                        else:
+                            resampler = Resampling.mode
+
+                        data = self.structured_downscale(
+                            band,
+                            modelgrid.delr[0],
+                            modelgrid.delc[0],
+                            modelgrid.nrow,
+                            modelgrid.ncol,
+                            resampler
+                        )
                         success = True
-                    except (ValueError, IndexError):
-                        print('block resampling failed trying other methods')
 
             if ENABLE_JIT and not multithread and not no_numba and not success:
                 arr = self.__arr_dict[band].astype(float)
@@ -472,6 +463,72 @@ class Raster(flopy.utils.Raster):
         data[np.isnan(data)] = self.nodatavals[0]
 
         return data
+
+
+    def structured_downscale(self, band, delr, delc, nrow, ncol, resampler):
+        """
+        Fast method for structured grid downscaling. Requires 0 rotation and
+        that delc and delr are constant
+
+        Parameters
+        ----------
+        band : int
+            raster band
+        delr : int
+            x resolution
+        delc : int
+            y resolution
+        resampling : rasterio Resampling
+
+
+        Returns
+        -------
+            np.ndarray
+        """
+        import rasterio.warp as riow
+
+        arr = self.get_array(band)
+        nodata = self.nodatavals
+        if nodata is None:
+            nodata = -1e+30
+        bounds = self.bounds
+        bbox = (bounds[0], bounds[2], bounds[1], bounds[3])
+        import affine
+        newaff0, width, height = riow.calculate_default_transform(
+             self._meta["crs"],
+             self._meta["crs"],
+             self._meta["width"],
+             self._meta["height"],
+             *bbox, # not sure if this is correct or should be self.bounds
+             resolution=(delr, delc)
+        )
+
+        newaff = affine.Affine(
+            delr,
+            self._meta["transform"].b,
+            self._meta["transform"].c,
+            self._meta["transform"].d,
+            -1 * delc,
+            self._meta["transform"].f
+        )
+
+        newarr = np.ones(shape=(nrow, ncol), dtype=float) * np.nan
+        newarr, newaff = riow.reproject(
+            arr,
+            newarr,
+            src_transform=self._meta["transform"],
+            dst_transform=newaff,
+            width=ncol,
+            height=nrow,
+            src_nodata=nodata[0],
+            dst_nodata=nodata[0],
+            src_crs=self._meta["crs"],
+            dst_crs=self._meta["crs"],
+            resampling=resampler
+        )
+
+        return newarr
+
 
     def crop(self, polygon, invert=False):
         """
