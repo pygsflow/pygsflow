@@ -51,7 +51,11 @@ def test_raster_sampling_methods():
 
     for method, value in methods.items():
         data = rio.resample_to_grid(
-            ml.modelgrid, band=rio.bands[0], method=method, no_numba=True
+            ml.modelgrid,
+            band=rio.bands[0],
+            method=method,
+            no_numba=True,
+            use_oldstyle=True
         )
 
         print(data[34, 37])
@@ -110,7 +114,7 @@ def test_raster_sampling_methods_numba():
 
     for method, value in methods.items():
         data = rio.resample_to_grid(
-            ml.modelgrid, band=rio.bands[0], method=method
+            ml.modelgrid, band=rio.bands[0], method=method, use_oldstyle=True
         )
 
         print(data[34, 37])
@@ -165,6 +169,6 @@ def test_raster_warp_resampling():
 
 
 if __name__ == "__main__":
-    # test_raster_sampling_methods()
-    # test_raster_sampling_methods_numba()
+    test_raster_sampling_methods()
+    test_raster_sampling_methods_numba()
     test_raster_warp_resampling()

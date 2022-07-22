@@ -169,6 +169,7 @@ class Raster(flopy.utils.Raster):
         thread_pool=2,
         extrapolate_edges=False,
         no_numba=False,
+        use_oldstyle=False
     ):
         """
         Method to resample the raster data to a
@@ -209,10 +210,11 @@ class Raster(flopy.utils.Raster):
             boolean flag indicating if areas without data should be filled
             using the ``nearest`` interpolation method. This option
             has no effect when using the ``nearest`` interpolation method.
-        block_sample: bool
-            experimental block reduction method for downscale resampling
         no_numba : bool
             method to turn off numba based resampling, default is False
+        use_oldstyle : bool
+            method to force point in polygon intersection routine, default
+            is fast resampling based on raster warp sampling methods
 
         Returns
         -------
@@ -263,59 +265,100 @@ class Raster(flopy.utils.Raster):
             success = False
             if modelgrid.grid_type == "structured":
                 # 1st try rasterio resampling methods:
-                xmin, xmax, ymin, ymax = modelgrid.extent
-                rxmin, rxmax, rymin, rymax = self.bounds
-                if rxmin > xmin or rxmax < xmax or rymin > ymin or rymax < ymax:
+                if modelgrid.angrot != 0:
                     print(
-                        "modelgrid outside bounds of raster, cannot use rapid "
-                        "resampling methods. Trying other methods"
+                        "modelgrid rotation not equal to 0, cannot use "
+                        "rapid resampling methods. Trying other methods"
                     )
+                elif np.sum(modelgrid.delr - modelgrid.delr[0]) > 0:
+                    print(
+                        "modelgrid delr not constant, cannot use "
+                        "rapid resampling methods. Trying other methods"
+                    )
+                elif np.sum(modelgrid.delc - modelgrid.delc[0]) > 0:
+                    print(
+                        "modelgrid delc not constant, cannot use "
+                        "rapid resampling methods. Trying other methods"
+                    )
+                elif use_oldstyle:
+                    pass
                 else:
                     import rasterio
                     from rasterio.enums import Resampling
 
-                    if modelgrid.angrot != 0:
+                    xmin, xmax, ymin, ymax = modelgrid.extent
+                    rxmin, rxmax, rymin, rymax = self.bounds
+                    x0off, x1off, y0off, y1off = 0, 0, 0, 0
+                    if rxmin > xmin or rxmax < xmax or rymin > ymin or rymax < ymax:
                         print(
-                            "modelgrid rotation not equal to 0, cannot use "
-                            "rapid resampling methods. Trying other methods"
+                            "modelgrid outside bounds of raster, "
+                            "offsetting indicies"
                         )
-                    elif np.sum(modelgrid.delr - modelgrid.delr[0]) > 0:
-                        print(
-                            "modelgrid delr not constant, cannot use "
-                            "rapid resampling methods. Trying other methods"
-                        )
-                    elif np.sum(modelgrid.delc - modelgrid.delc[0]) > 0:
-                        print(
-                            "modelgrid delc not constant, cannot use "
-                            "rapid resampling methods. Trying other methods"
-                        )
+                        xedges, yedges = modelgrid.xyedges
+                        xedges += modelgrid.xoffset
+                        yedges += modelgrid.yoffset
+                        if xmax > rxmax:
+                            for ix, val in enumerate(xedges[::-1]):
+                                if rxmax > val:
+                                    x1off = -1 * ix
+                                    xmax = val
+                                    break
+
+                        if xmin < rxmin:
+                            for ix, val in enumerate(xedges):
+                                if rxmin < val:
+                                    x0off = ix
+                                    xmin = val
+                                    break
+
+                        if ymax > rymax:
+                            for ix, val in enumerate(yedges):
+                                if rymax > val:
+                                    y0off = ix
+                                    ymax = val
+                                    break
+
+                        if ymin < rymin:
+                            for ix, val in enumerate(yedges[::-1]):
+                                if rymin < val:
+                                    y1off = -1 * ix
+                                    ymin = val
+                                    break
+
+                    poly = [
+                        [xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]
+                    ]
+
+                    self.crop(poly)
+
+                    if method == "mean":
+                        resampler = Resampling.average
+                    elif method == "median":
+                        resampler = Resampling.med
+                    elif method == "min":
+                        resampler = Resampling.min
+                    elif method == "max":
+                        resampler = Resampling.max
                     else:
-                        poly = [
-                            [xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]
-                        ]
+                        resampler = Resampling.mode
 
-                        self.crop(poly)
-
-                        if method == "mean":
-                            resampler = Resampling.average
-                        elif method == "median":
-                            resampler = Resampling.med
-                        elif method == "min":
-                            resampler = Resampling.min
-                        elif method == "max":
-                            resampler = Resampling.max
-                        else:
-                            resampler = Resampling.mode
-
-                        data = self.structured_downscale(
-                            band,
-                            modelgrid.delr[0],
-                            modelgrid.delc[0],
-                            modelgrid.nrow,
-                            modelgrid.ncol,
-                            resampler
-                        )
-                        success = True
+                    ncol = modelgrid.ncol - x0off + x1off
+                    nrow = modelgrid.nrow - y0off + y1off
+                    tmp = self.structured_downscale(
+                        band,
+                        modelgrid.delr[0],
+                        modelgrid.delc[0],
+                        nrow,
+                        ncol,
+                        resampler
+                    )
+                    data = np.ones((modelgrid.nrow, modelgrid.ncol)) * np.nan
+                    if x1off == 0:
+                        x1off = None
+                    if y1off == 0:
+                        y1off = None
+                    data[y0off:y1off, x0off:x1off] = tmp
+                    success = True
 
             if ENABLE_JIT and not multithread and not no_numba and not success:
                 arr = self.__arr_dict[band].astype(float)
@@ -464,11 +507,10 @@ class Raster(flopy.utils.Raster):
 
         return data
 
-
     def structured_downscale(self, band, delr, delc, nrow, ncol, resampler):
         """
         Fast method for structured grid downscaling. Requires 0 rotation and
-        that delc and delr are constant
+        that delc and delr are constant for accurate downscaling.
 
         Parameters
         ----------
@@ -478,8 +520,7 @@ class Raster(flopy.utils.Raster):
             x resolution
         delc : int
             y resolution
-        resampling : rasterio Resampling
-
+        resampling : rasterio Resampling object
 
         Returns
         -------
@@ -499,7 +540,7 @@ class Raster(flopy.utils.Raster):
              self._meta["crs"],
              self._meta["width"],
              self._meta["height"],
-             *bbox, # not sure if this is correct or should be self.bounds
+             *bbox,
              resolution=(delr, delc)
         )
 
@@ -528,7 +569,6 @@ class Raster(flopy.utils.Raster):
         )
 
         return newarr
-
 
     def crop(self, polygon, invert=False):
         """
