@@ -121,6 +121,8 @@ class RecordBase(object):
         Method to force the dtype on an array
 
         """
+        if type(self.datatype) == type:
+            self.datatype = GsConstant.TYPE_TO_PRMS_TYPE[self.datatype]
         dtype = GsConstant.PRMS_DATA_TYPES[self.datatype]
         if dtype == "integer":
             self._values = self._values.astype(int)

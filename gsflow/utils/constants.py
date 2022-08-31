@@ -11,6 +11,11 @@ class GsConstant(object):
         4: "string",
         "4": "string",
     }
+    TYPE_TO_PRMS_TYPE = {
+        int : 1,
+        float: 2,
+        str: 4
+    }
     PRMS_SECTIONS = ("Dimensions", "Parameters")
     DAY_FILE_VARIABLES = (
         "humidity_hru",
