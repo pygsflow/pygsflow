@@ -21,3 +21,4 @@ dependencies:
   - shapely>=1.8
   - pycrs
   - geos>=3.9.1
+  - rasterstats
