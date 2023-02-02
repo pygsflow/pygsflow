@@ -38,7 +38,7 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.run-type }}-${{ env.CACHE_NUMBER }}-${{ hashFiles('etc/environment.yml') }}
 
     - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v2.1.1
+      uses: conda-incubator/setup-miniconda@v2.2.0
       with:
         python-version: ${{ matrix.python-version }}
         mamba-version: "*"
