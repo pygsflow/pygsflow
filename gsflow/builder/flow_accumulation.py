@@ -493,8 +493,8 @@ class FlowAccumulation(object):
                     dn += 1
                     try:
                         node = graph_nodes[dn]
-                    except IndexError:
-                        print("break")
+                    except IndexError as e:
+                        raise Exception(e)
                     stack = [node]
                 else:
                     stack = tdest
@@ -631,10 +631,10 @@ class FlowAccumulation(object):
             vector = self._resolve_flats(ix, dem, breach)
             return vector
 
-    def _calculate_drop(self, ix, dem, breach=0.0):
+    def _calculate_neighbor_slope(self, ix, dem, breach):
         """
-        Method to calculate the drop and return the indicies
-        and node_numbers of the greatest drop
+        Method to calculate the slope from a node to all of it's neareast
+        neighbors and return the indicies and slopes to each neighbor
 
         ix : int
             index number
@@ -645,12 +645,12 @@ class FlowAccumulation(object):
 
         Returns
         -------
-            dir_idx, node_numbers
+            idxs, node_numbers
         """
         idxs = self._offsets + ix
-
         cell_elevation = dem[ix]
         neighbor_elevation = dem[idxs]
+
         # prevent algortithm from considering inactive cells
         inactive = np.where(self._hru_type[idxs] == 0)[0]
         if len(inactive > 0):
@@ -669,7 +669,26 @@ class FlowAccumulation(object):
 
         drop = np.where(np.abs(drop) <= breach, 0, drop)
 
-        drop /= dist
+        slope = drop / dist
+        return idxs, slope
+
+    def _calculate_drop(self, ix, dem, breach=0.0):
+        """
+        Method to calculate the drop and return the indicies
+        and node_numbers of the greatest drop
+
+        ix : int
+            index number
+        dem : np.ndarray
+            array of elevations
+        breach : float
+            breaching value to ignore digital dams
+
+        Returns
+        -------
+            dir_idx, node_numbers
+        """
+        idxs, drop = self._calculate_neighbor_slope(ix, dem, breach)
 
         dir_idx = np.where(drop == np.min(drop))[0]
         node_numbers = idxs[dir_idx]
@@ -735,8 +754,25 @@ class FlowAccumulation(object):
         flow_accumulation.shape = self._shape
         return flow_accumulation[1:-1, 1:-1]
 
+    def _hru_to_inner_index(self, hru_id):
+        """
+        Debugging function to convert a PRMS hru number to a inner
+        index
+
+        Parameters
+        ----------
+        hru_id : int
+            hru_id
+
+        Returns
+        -------
+            inner_index
+        """
+        inner = self._offset + (np.floor(hru_id / (self._shape[-1] - 2)) * 2) + 1 + hru_id
+        return int(inner)
+
     def get_cascades(
-        self, streams, pour_point=None, modelgrid=None, fmt="rowcol"
+        self, streams, pour_point=None, modelgrid=None, fmt="rowcol", many2many=False, breach=0.0
     ):
         """
         Method to calculate cascade parameters for PRMS
@@ -752,10 +788,17 @@ class FlowAccumulation(object):
             a shapefile, a list with an [(x, y)] tuple of coordinates,
             or as the model zero based [(row, column)] location.
         modelgrid : flopy.discretization.StructuredGrid
-
+            structured grid object
         fmt : str
             format of the pour point information. Acceptable types include
             "xy", "rowcol", and "shp"
+        many2many : bool
+            boolean flag to create slope wieghted many to many cascade
+            connections default is False (many to one cascades)
+        breach : float
+            absolute value of breaching tolerance for digital dams. This should
+            be the set to the same value of breaching tolerance as the
+            flow_direction calculation
 
         Returns
         -------
@@ -779,8 +822,12 @@ class FlowAccumulation(object):
         elif self._wpp is None:
             raise AssertionError("Watershed deliniation must be run first")
 
-        hru_up_id, hru_down_id, hru_pct_up = self._build_nidp(cascades=True)
-
+        if not many2many:
+            hru_up_id, hru_down_id, hru_pct_up = self._build_nidp(cascades=True)
+            cascade_flag = 1
+        else:
+            hru_up_id, hru_down_id, hru_pct_up = self._build_many2many_cascades(streams, breach)
+            cascade_flag = 0
         # add the watershed outlet hru to cascades_ids
         hru_up_id.append(self._wpp)
         hru_down_id.append(self._wpp)
@@ -819,8 +866,93 @@ class FlowAccumulation(object):
         hru_down_id += 1
 
         return _Cascades(
-            hru_up_id, hru_down_id, hru_pct_up, hru_strmseg_down_id
+            hru_up_id, hru_down_id, hru_pct_up, hru_strmseg_down_id, cascade_flag
         )
+
+    def _build_many2many_cascades(self, streams, breach=0.0):
+        """
+        Method to build slope weighted many to many cascades
+
+        Parameters
+        ----------
+        breach : float
+            absolute value of breaching tolerance for digital dams. Use
+            caution while applying breaching values. These should be small
+            numbers.
+
+        Returns
+        -------
+
+        """
+        dem = self._data
+        streams = np.pad(
+            streams.iseg.copy(),
+            1,
+            mode="constant",
+            constant_values=0
+        ).ravel()
+        streams_ix = np.argwhere(streams != 0)
+        hru_up_id = []
+        hru_down_id = []
+        hru_pct_up = []
+        t = [32, 64, 128, 16, 1, 8, 4, 2]
+        enforce_fdir = {1: [1, 2, 4, 6, 7],
+                        2: [4, 6, 7],
+                        4: [3, 4, 5, 6, 7],
+                        8: [3, 5, 6],
+                        16: [0, 1, 3, 6, 7],
+                        32: [0, 1, 3],
+                        64: [0, 1, 2, 3, 4],
+                        128: [1, 2, 4]}
+
+        for ix in self._inner_idx:
+            if self._hru_type[ix] == 0:
+                continue
+            elif self._wpp == ix:
+                continue
+            if self._flow_directions[ix] == -1:
+                raise Exception("Flow Direction not calculated")
+
+            if ix in streams_ix:
+                # for stream cells: maybe we don't need to cascade!
+                # for stream cells route flow downstream only!
+                fdir = self._flow_directions[ix]
+                hru_down = ix + self._offset_dict[fdir]
+                hru_up_id.append(ix)
+                hru_down_id.append(hru_down)
+                hru_pct_up.append(1)
+            else:
+                fdir = int(self._flow_directions[ix])
+                fdir_ix = enforce_fdir[fdir]
+
+                # make sure flow direction is honored when doing calculation
+                # this should prevent circular routing
+                idxs, slope = self._calculate_neighbor_slope(
+                    ix, dem, breach
+                )
+                enf_idxs = idxs[fdir_ix]
+                slope = slope[fdir_ix]
+
+                # todo: maybe rewrite, so if slope = 0 then follow fdir
+                flow_idxs = np.where(slope < 0)[0]
+                if len(flow_idxs) == 0:
+                    hru_pcts = np.ones((1,))
+                    hru_downs = np.array([ix + self._offset_dict[fdir],])
+                    flow_idxs = [np.nan,]
+                else:
+                    total_slope = np.sum(np.abs(slope[flow_idxs]))
+                    hru_pcts = np.abs(slope[flow_idxs]) / total_slope
+                    # remove links with low fraction of flow
+                    keep_idx = np.where(hru_pcts > 0.01)[0]
+                    flow_idxs = flow_idxs[keep_idx]
+                    hru_pcts = np.abs(slope[flow_idxs]) / np.sum(np.abs(slope[flow_idxs]))
+                    hru_downs = enf_idxs[flow_idxs]
+
+                hru_up_id.extend([ix, ] * len(flow_idxs))
+                hru_down_id.extend(hru_downs.tolist())
+                hru_pct_up.extend(hru_pcts.tolist())
+
+        return hru_up_id, hru_down_id, hru_pct_up
 
     def _next_cell(self, ix):
         """
@@ -1395,7 +1527,7 @@ class FlowAccumulation(object):
         stream_dict = new_stream_dict
 
         # intialize rchlen, strtop, and slope arrays
-        strtop = np.zeros(self._data.shape) * np.nan
+        strtop = np.copy(self._data)
         rchlens = np.zeros(fdir_array.shape)
         slopes = np.zeros(fdir_array.shape)
 
@@ -1441,7 +1573,7 @@ class FlowAccumulation(object):
 
                 dist = np.sqrt(xdiff + ydiff) / 2.0
 
-                rchlens[ix] += dist.sum()
+                rchlens[ix] += np.nansum(dist)
 
             # process outseg
             if outseg != 0:
@@ -1479,6 +1611,8 @@ class FlowAccumulation(object):
             if dist == 0:
                 continue
             else:
+                if delta_elev == 0:
+                    delta_elev = 1e-04
                 slopes[cell] = delta_elev / dist
 
         # calculate stream slope and set strtop
@@ -1488,6 +1622,7 @@ class FlowAccumulation(object):
                 if (idx + 1) < len(stream_cells):
                     next_cell = stream_cells[idx + 1]
                     rchlen = rchlens[cell]
+                    t = self._data[cell]
                     strtop[cell] = self._data[cell]
                     strtop[next_cell] = self._data[next_cell]
                     nslope = (strtop[cell] - strtop[next_cell]) / rchlen
@@ -1497,6 +1632,7 @@ class FlowAccumulation(object):
 
         slopes[slopes < min_slope] = min_slope
         slopes[slopes > max_slope] = max_slope
+        # slopes = np.where(np.isnan(slopes), min_slope, slopes)
 
         unique, counts = np.unique(isegs, return_counts=True)
         max_reaches = {k: v for k, v in zip(unique, counts) if k != 0}
@@ -1544,6 +1680,7 @@ class FlowAccumulation(object):
 
         strtop.shape = self._shape
         strtop = strtop[1:-1, 1:-1]
+        strtop[isegs == 0] = np.nan
 
         # # build reach data
         reach_data_dict = {}
@@ -1767,16 +1904,25 @@ class _Cascades(object):
         array of percentage of flow from up hru
     hru_strmseg_down_id : np.ndarray
         array of stream seg id's a cascade connects to
+    cascade_flag : int
+        flag to indicate if many to one or many to many cascades.
+        Default is 1 (many to one), 0 is many tp many.
     """
 
     def __init__(
-        self, hru_up_id, hru_down_id, hru_pct_up, hru_strmseg_down_id=None
+        self,
+        hru_up_id,
+        hru_down_id,
+        hru_pct_up,
+        hru_strmseg_down_id=None,
+        cascade_flag=1
     ):
         self.ncascade = hru_up_id.size
         self.hru_up_id = hru_up_id
         self.hru_down_id = hru_down_id
         self.hru_pct_up = hru_pct_up
         self.hru_strmseg_down_id = hru_strmseg_down_id
+        self.cascade_flag = 1
 
     def write(self, f):
         """
