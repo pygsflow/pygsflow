@@ -1031,7 +1031,7 @@ class FlowAccumulation(object):
                         popix = hru_up.index(self._wpp)
                         hru_up.pop(popix)
                     hru_down = [ix] * len(hru_up)
-                    hru_pct = [1.0,] * len(hru)  # [1.0 / len(hru_up)] * len(hru_up)
+                    hru_pct = [1.0,] * len(hru_up)  # [1.0 / len(hru_up)] * len(hru_up)
 
                 hru_up_id += hru_up
                 hru_down_id += hru_down
