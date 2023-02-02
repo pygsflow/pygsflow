@@ -29,7 +29,7 @@ jobs:
       uses: nelonoel/branch-name@v1.0.1
 
     - name: Cache Miniconda
-      uses: actions/cache@v2.1.0
+      uses: actions/cache@v3.2.4
       env:
         # Increase this value to reset cache if environment.yml has changed
         CACHE_NUMBER: 3
