@@ -150,6 +150,13 @@ class PrmsData(object):
             )
             pd_to_write = self.data_df.copy()
             pd_to_write = pd_to_write.drop(["Date"], axis=1)
-            pd_to_write.to_csv(
-                fid, index=False, sep=" ", header=False
-            )
+
+            try:
+                pd_to_write.to_csv(
+                    fid, index=False, sep=" ", lineterminator="\n", header=False
+                )
+            except:
+                # remove this once line_terminator is fully deprecated
+                pd_to_write.to_csv(
+                    fid, index=False, sep=" ", line_terminator="\n", header=False
+                )
