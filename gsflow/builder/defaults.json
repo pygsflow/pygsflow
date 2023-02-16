@@ -190,7 +190,7 @@
             "circle_switch": {
                 "dimension": "one",
                 "dtype": 1,
-                "record": 1
+                "record": 0
             },
             "cov_type": {
                 "dimension": "nhru",
