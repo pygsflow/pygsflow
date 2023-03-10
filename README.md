@@ -32,14 +32,13 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
    2) Python 3.6 or greater  
    3) FloPy 3.3.4 or greater, *note* for Python 3.6 use (`pip install flopy==3.3.4`)
    4) NetCdf4 (optional, required for netcdf exporting and autotesting) (`pip install netcdf4`)
-   5) Numba (optional, but recommended for raster resampling routines) (`pip install numba`)
 
 **Version 1.1.1** (Develop branch)
    1) Windows or Linux operating system (GSFLOW is not currently compiled for MacOS)  
    2) Python 3.6 or greater 
-   3) Flopy 3.3.4 or greater (`pip install flopy`) *note* for Python 3.6 use (`pip install flopy==3.3.4`)
+   3) Flopy 3.3.6 or greater (`pip install flopy`) *note* for Python 3.6 use (`pip install flopy==3.3.4`)
    4) NetCdf4 (optional, required for netcdf exporting and autotesting) (`pip install netcdf4`)
-   5) Numba (optional, but recommended for raster resampling routines) (`pip install numba`)
+   5) Rasterio and rasterstats (optional, required for raster resampling and model building methods)
    
 ## Installation
 **Version 1.1.0** (Master branch and from pypi)
