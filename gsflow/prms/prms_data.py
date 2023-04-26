@@ -135,7 +135,7 @@ class PrmsData(object):
             climate_count = {}
             climate_unique = []
             for col in columns:
-                nm = col.split("_")[0]
+                nm = col[:col.rfind('_')]
                 if nm in PrmsData.data_names:
                     climate_data.append(nm)
                     if not (nm in climate_unique):
