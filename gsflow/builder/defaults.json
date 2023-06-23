@@ -729,14 +729,14 @@
                     0.1
                 ]
             },
-            "sstor_init": {
+            "ssstor_init": {
                 "dimension": "nssr",
                 "dtype": 2,
                 "record": [
                     0.0
                 ]
             },
-            "sstor_init_frac": {
+            "ssstor_init_frac": {
                 "dimension": "nssr",
                 "dtype": 2,
                 "record": [
