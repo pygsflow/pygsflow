@@ -11,14 +11,14 @@ import os
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-if (3, 7) >= sys.version_info >= (3, 6):
+if (3, 8) >= sys.version_info >= (3, 7):
     requirements = ["pandas",
                     "numpy",
-                    "flopy == 3.3.4",
+                    "flopy == 3.3.5",
                     "pyshp",
                     "pycrs",
                     "matplotlib"]
-elif sys.version_info >= (3, 7):
+elif sys.version_info >= (3, 8):
     requirements = ["pandas",
                     "numpy",
                     "flopy >= 3.3.4",
@@ -26,7 +26,7 @@ elif sys.version_info >= (3, 7):
                     "pycrs",
                     "matplotlib"]
 else:
-    raise EnvironmentError("pyGSFLOW is only supported with python 3.6 and above")
+    raise EnvironmentError("pyGSFLOW is only supported with python 3.7 and above")
 
 setup_requirements = []
 
@@ -44,8 +44,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Topic :: Scientific/Engineering :: Hydrology',
