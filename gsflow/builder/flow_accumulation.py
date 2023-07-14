@@ -1922,7 +1922,7 @@ class _Cascades(object):
         self.hru_down_id = hru_down_id
         self.hru_pct_up = hru_pct_up
         self.hru_strmseg_down_id = hru_strmseg_down_id
-        self.cascade_flag = 1
+        self.cascade_flag = cascade_flag
 
     def write(self, f):
         """

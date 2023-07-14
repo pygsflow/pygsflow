@@ -98,8 +98,11 @@ class PrmsModel(object):
                 gsflow_io.get_file_abs(model_ws=model_ws, fn=pfn)
                 for pfn in parameter_files
             ]
-            data_file = control.get_values("data_file")[0]
-            data_file = gsflow_io.get_file_abs(model_ws=model_ws, fn=data_file)
+            if "data_file" in control.record_names:
+                data_file = control.get_values("data_file")[0]
+                data_file = gsflow_io.get_file_abs(control_file, data_file)
+            else:
+                data_file = None
 
             df_list = [
                 gsflow_io.get_file_abs(

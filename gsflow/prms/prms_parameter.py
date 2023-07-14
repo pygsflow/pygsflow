@@ -107,6 +107,83 @@ class PrmsParameters(ParameterBase):
         self.__parameter_files = all_files
         return self.__parameter_files
 
+    def upslope_neighbors(self, hru=None):
+        """
+        Method to get upslope neighbors and pct contribution for each hru
+        in a model
+
+        Returns
+        -------
+            dict : {hru_id : upslope neighbors}
+        """
+        hru_up = self.hru_up_id.values
+        hru_down = self.hru_down_id.values
+        hru_pct = self.hru_pct_up.values
+        nhru = self.nhru.values[0]
+        conn = {i: [] for i in range(nhru)}
+        pct = {i: [] for i in range(nhru)}
+        for ix, casc in enumerate(hru_up):
+            conn[hru_down[ix]].append(casc)
+            pct[hru_down[ix]].append(hru_pct[ix])
+
+        if hru is None:
+            return conn, pct
+        else:
+            return conn[hru], pct[hru]
+
+    def upslope_streams(self, stream_hru=None):
+        """
+        Method to get the upslope stream locations for each stream
+
+        Returns
+        -------
+        dict : {hru: [upstream_hru0, ....], ....}
+
+        """
+        from ..utils.sfr_renumber import Topology
+
+        hru_strmseg_down_id = self.hru_strmseg_down_id.values
+        hru_to_stream = np.where(hru_strmseg_down_id > 0)[0]
+        hru_up = self.hru_up_id.values
+        hru_down = self.hru_down_id.values
+        stream_hrus = hru_down[hru_to_stream]
+        if np.all(stream_hrus == 0):
+            raise AssertionError("No casacades exist in the stream hrus, "
+                                 "unable to determine routing")
+
+        # get the connectivity graph
+        strm_ix = np.where(np.isin(hru_up, stream_hrus))[0]
+        dn_strm = hru_down[strm_ix]
+        up_strm = hru_up[strm_ix]
+
+        topo = Topology()
+        for ix, dn in enumerate(dn_strm):
+            topo.add_connection(up_strm[ix], dn)
+
+        topo.sort()
+        connections = topo.topology
+        conn_stack = {}
+        for up_conn, dn_conn in connections.items():
+            if dn_conn not in conn_stack:
+                conn_stack[dn_conn] = [up_conn]
+            else:
+                conn_stack[dn_conn].append(up_conn)
+
+        if stream_hru is None:
+            return conn_stack
+        else:
+            stack = [stream_hru,]
+            stream_conn_stack = {}
+            while stack:
+                hru = stack.pop(0)
+                if hru in conn_stack:
+                    up_conns = conn_stack[hru]
+                    stream_conn_stack[hru] = up_conns
+                    for conn in up_conns:
+                        stack.append(conn)
+
+        return stream_conn_stack
+
     def reset_filenames(self, f):
         """
         Method to reset all filenames in the PrmsParameter object
