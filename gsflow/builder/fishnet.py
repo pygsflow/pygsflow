@@ -52,7 +52,13 @@ class GenerateFishnet(StructuredGrid):
         delc = np.array([self.ycs] * self._nrows)
         # generate flopy grid
         super(GenerateFishnet, self).__init__(
-            xoff=self._xmin, yoff=self._ymin, delr=delr, delc=delc
+            xoff=self._xmin,
+            yoff=self._ymin,
+            delr=delr,
+            delc=delc,
+            nlay=1,
+            top=np.ones((self._nrows, self._ncols)),
+            botm=np.zeros((1, self._nrows, self._ncols))
         )
 
     def _get_extent(self):
