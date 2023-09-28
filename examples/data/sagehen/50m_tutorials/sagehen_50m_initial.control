@@ -103,7 +103,7 @@ transp_tindex
 param_file
 1
 4
-data\sagehen\50m_tutorials\sagehen_50m_initial.param
+sagehen_50m_initial.param
 ####
 modflow_name
 1
