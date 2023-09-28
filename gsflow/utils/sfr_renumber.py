@@ -208,7 +208,7 @@ class SfrRenumber(object):
 
         if self.scheme in ("sfr", "dis"):
             # sort by topography
-            data = pd.DataFrame(columns=["segment", "elev"])
+            data = pd.DataFrame(columns=["segment", "elev"], dtype=float)
             sfr_ds2 = self.sfr.reach_data
 
             if self.scheme == "sfr":
@@ -220,7 +220,13 @@ class SfrRenumber(object):
                                 s2 = pd.Series(
                                     {"segment": iseg, "elev": strtop}
                                 )
-                                data = data.append(s2, ignore_index=True)
+                                try:
+                                    df_s2 = pd.DataFrame(s2).transpose()
+                                    data = pd.concat([data, df_s2],
+                                                     ignore_index=True,
+                                                     )
+                                except:
+                                    data = data.append(s2, ignore_index=True)
                                 break
 
             elif self.scheme == "dis":
@@ -235,7 +241,13 @@ class SfrRenumber(object):
                                 s2 = pd.Series(
                                     {"segment": iseg, "elev": strelev}
                                 )
-                                data = data.append(s2, ignore_index=True)
+                                try:
+                                    df_s2 = pd.DataFrame(s2).transpose()
+                                    data = pd.concat([data, df_s2],
+                                                     ignore_index=True,
+                                                     )
+                                except:
+                                    data = data.append(s2, ignore_index=True)
                                 break
 
             data = data.sort_values(by=["elev"], ascending=False)
