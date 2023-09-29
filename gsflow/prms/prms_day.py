@@ -228,16 +228,24 @@ class PrmsDay(object):
                     f.write("orad 1\n")
 
                 f.write("#" * 40 + "\n")
-
-                df.to_csv(
-                    f,
-                    sep=" ",
-                    header=None,
-                    index=False,
-                    na_rep=-999,
-                    line_terminator="\n",
-                )
-
+                try:
+                    df.to_csv(
+                        f,
+                        sep=" ",
+                        header=None,
+                        index=False,
+                        na_rep=-999,
+                        lineterminator="\n",
+                    )
+                except:
+                    df.to_csv(
+                        f,
+                        sep=" ",
+                        header=None,
+                        index=False,
+                        na_rep=-999,
+                        line_terminator="\n",
+                    )
             del df
             self.__dataframe = None
 
