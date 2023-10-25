@@ -673,13 +673,14 @@ def tmin_adj(nhru, nmonths=12):
     return record
 
 
-def calculate_jensen_haise(dem, tmin_mean, tmax_mean):
+def calculate_jensen_haise(dem, tmin_mean, tmax_mean, elev_scalar=1):
     """
     Method to calculate the Jensen Haise coefficient for PRMS
 
     Parameters
     ----------
     dem : np.ndarray
+        apparently in feet....
     tmin_mean : np.ndarray
         list of monthly mean values for tmin
     tmax_mean : np.ndarray
@@ -694,7 +695,7 @@ def calculate_jensen_haise(dem, tmin_mean, tmax_mean):
     idx = np.where(tmax_mean == np.max(tmax_mean))[0]
     tmax = tmax_mean[idx[0]]
     tmin = tmin_mean[idx[0]]
-    jh_coef = 27.5 - 0.25 * (ea(tmax) - ea(tmin)) - (dem / 1000.0)
+    jh_coef = 27.5 - 0.25 * (ea(tmax) - ea(tmin)) - ((dem * elev_scalar) / 1000.0)
     jh_coef = ParameterRecord(
         "jh_coef_hru", jh_coef, dimensions=[["nhru", nhru]], datatype=2
     )

@@ -276,7 +276,7 @@ class PrmsDiscretization(object):
         if "color" not in kwargs:
             kwargs["facecolor"] = "None"
 
-        patches = [Polygon(hru, False, **kwargs) for hru in self._xypts]
+        patches = [Polygon(hru, closed=False, **kwargs) for hru in self._xypts]
 
         p = PatchCollection(patches, facecolors="None")
         p.set(**kwargs)
