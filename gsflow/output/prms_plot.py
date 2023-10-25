@@ -383,7 +383,7 @@ class PrmsPlot(object):
         else:
             vmax = np.max(array)
 
-        patches = [Polygon(hru, True) for hru in self.prms_dis.xypts]
+        patches = [Polygon(hru, closed=True) for hru in self.prms_dis.xypts]
 
         p = PatchCollection(patches)
         p.set_array(array)
