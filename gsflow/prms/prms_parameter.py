@@ -747,6 +747,7 @@ class ParameterRecord(RecordBase):
 
         # change data type
         self._check_dtype()
+        self._values = new_values
 
     def export_nc(self, f, modflow, **kwargs):
         """
