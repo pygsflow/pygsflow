@@ -414,7 +414,7 @@ class FlowAccumulation(object):
                 diff = dir_idx[1:] - dir_idx[:-1]
                 diff = diff == 1
                 consecutive = False
-                if np.alltrue(diff):
+                if np.all(diff):
                     consecutive = True
 
                 if not self._dijkstra:
@@ -602,7 +602,7 @@ class FlowAccumulation(object):
             diff = dir_idx[1:] - dir_idx[:-1]
             diff = diff == 1
             consecutive = False
-            if np.alltrue(diff):
+            if np.all(diff):
                 consecutive = True
 
             if not self._dijkstra:
@@ -707,7 +707,7 @@ class FlowAccumulation(object):
             cell_elevation = dem[ix]
             neighbor_elvevation = dem[idxs]
             mask = neighbor_elvevation > cell_elevation
-            if np.alltrue(mask):
+            if np.all(mask):
                 nval = np.min(neighbor_elvevation) + 1e-06
                 dem[ix] = nval
 
