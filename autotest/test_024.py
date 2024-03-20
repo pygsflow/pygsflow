@@ -37,6 +37,7 @@ def test_build_prms_parameters():
     watershed = np.genfromtxt(watershed, dtype=int)
     streams = FlowAccumulation.load_streams(streams)
     cascades = FlowAccumulation.load_cascades(cascades)
+    cascades.dany_flag = False
 
     prms_build = PrmsBuilder(
         streams,
