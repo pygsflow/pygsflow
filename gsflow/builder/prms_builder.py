@@ -88,6 +88,9 @@ class PrmsBuilder(object):
         if self.stream_data_obj is not None:
             dimension_defaults["nsegment"] = self.stream_data_obj.iseg.max()
             dimension_defaults["nreach"] = self.stream_data_obj.reach_data.size
+        elif self.cascades_obj.dany_flag:
+            dimension_defaults["nsegment"] = self.cascades_obj.nsegments
+            dimension_defaults["nreaches"] = self.cascades_obj.nreaches
 
         dimension_defaults["ngw"] = nhru
         dimension_defaults["ngwcell"] = nhru
@@ -103,6 +106,7 @@ class PrmsBuilder(object):
             "ndeplval"
         ]
         try:
+            # todo: this seems like it should be ncpl except TypeError, then nnodes
             dimension_defaults["ngwcell"] = self.modelgrid.nnodes
         except TypeError:
             dimension_defaults["ngwcell"] = self.modelgrid.ncpl
@@ -154,8 +158,12 @@ class PrmsBuilder(object):
             param_list.append(param_record)
 
         param_dict = {}
-        cell_area = (self.modelgrid.xcs * self.modelgrid.ycs) * area_conv
-        hru_area = np.full(nhru, cell_area)
+        if self.cascades_obj.dany_flag:
+            hru_area = self.cascades_obj.hru_area
+        else:
+            cell_area = (self.modelgrid.xcs * self.modelgrid.ycs) * area_conv
+            hru_area = np.full(nhru, cell_area)
+
         param_dict["hru_area"] = {"record": hru_area, "dtype": 2}
 
         hru_lon = self.modelgrid.xcellcenters.ravel()
@@ -168,6 +176,17 @@ class PrmsBuilder(object):
             hru_slope[hru_slope < 1e-04] = 0
             param_dict["hru_slope"] = {"record": hru_slope, "dtype": 2}
 
+            aspect = self.stream_data_obj.aspect.ravel()
+            param_dict["hru_aspect"] = {"record": aspect, "dtype": 2}
+
+        elif self.cascades_obj.dany_flag:
+            hru_slope = self.cascades_obj.hru_slope
+            hru_slope[hru_slope < 1e-04] = 0
+            param_dict["hru_slope"] = {"record": hru_slope, "dtype": 2}
+
+            hru_aspect = self.cascades_obj.hru_aspect
+            param_dict["hru_aspect"] = {"record": hru_aspect, "dtype": 2}
+
         if self.hru_type is None:
             hru_type = np.ones((nhru,), dtype=int)
         else:
@@ -176,10 +195,6 @@ class PrmsBuilder(object):
 
         # # hru_elev = dem elev (should it be the sink filled..???). -
         param_dict["hru_elev"] = {"record": self.dem.ravel(), "dtype": 2}
-
-        if self.stream_data_obj is not None:
-            aspect = self.stream_data_obj.aspect.ravel()
-            param_dict["hru_aspect"] = {"record": aspect, "dtype": 2}
 
         if self.hru_subbasin is None:
             hru_subbasin = np.ones((nhru,), dtype=int)

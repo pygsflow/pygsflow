@@ -1917,6 +1917,7 @@ class _Cascades(object):
         hru_strmseg_down_id=None,
         cascade_flag=1
     ):
+        self.dany_flag = False
         self.ncascade = hru_up_id.size
         self.hru_up_id = hru_up_id
         self.hru_down_id = hru_down_id
