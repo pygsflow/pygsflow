@@ -16,7 +16,7 @@ def test_load_write_model_prms_only():
     assert isinstance(gs.prms.data, PrmsData)
 
     ws2 = os.path.join(ws, "temp")
-    gs.write_input(workspace=ws2)
+    gs.write_input(workspace=ws2, prms_precision=5)
 
     gs2 = gsflow.GsflowModel.load_from_file(os.path.join(ws2, control_file))
 

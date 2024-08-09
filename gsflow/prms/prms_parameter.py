@@ -545,7 +545,7 @@ class PrmsParameters(ParameterBase):
 
             super(PrmsParameters, self).add_record(record_obj)
 
-    def write(self, name=None):
+    def write(self, name=None, precision=9):
         """
         Method to write the PrmsParameters object to PRMS parameter files
 
@@ -580,14 +580,14 @@ class PrmsParameters(ParameterBase):
                         continue
 
                     if name is not None:
-                        record.write(fid)
+                        record.write(fid, precision=precision)
 
                     else:
                         if ifile == 0 and record.section == "Dimensions":
                             if os.path.normpath(
                                 record.file_name
                             ) == os.path.normpath(filename):
-                                record.write(fid)
+                                record.write(fid, precision=precision)
                 ##
                 # write param
                 if ifile == 0:
@@ -599,13 +599,13 @@ class PrmsParameters(ParameterBase):
                         continue
 
                     if name is not None:
-                        record.write(fid)
+                        record.write(fid, precision=precision)
 
                     else:
                         if os.path.normpath(
                             record.file_name
                         ) == os.path.normpath(filename):
-                            record.write(fid)
+                            record.write(fid, precision=precision)
 
                 fid.write("\n")
 
@@ -796,7 +796,7 @@ class ParameterRecord(RecordBase):
             fid.write("\n")
             fid.write(str(val))
 
-    def _write_parameter(self, fid):
+    def _write_parameter(self, fid, precision):
         """
         Write method for parameters ParameterRecord
 
@@ -830,9 +830,12 @@ class ParameterRecord(RecordBase):
         # write values
         for val in self.values:
             fid.write("\n")
-            fid.write(str(val))
+            if self.datatype in (2, 3) and self.name != "hru_area":
+                fid.write(f"{val :.{precision}f}")
+            else:
+                fid.write(str(val))
 
-    def write(self, fid):
+    def write(self, fid, precision=9):
         """
         Method to write to an open file
 
@@ -844,7 +847,7 @@ class ParameterRecord(RecordBase):
         if self.section == "Dimensions":
             self._write_dimension(fid)
         else:
-            self._write_parameter(fid)
+            self._write_parameter(fid, precision=precision)
 
     def __repr__(self):
         try:

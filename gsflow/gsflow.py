@@ -293,7 +293,7 @@ class GsflowModel(object):
             forgive=forgive,
         )
 
-    def write_input(self, basename=None, workspace=None, write_only=None):
+    def write_input(self, basename=None, workspace=None, write_only=None, prms_precision=9):
         """
          Write input files for gsflow. Four cases are possible:
             - if basename and workspace are None,then the exisiting files
@@ -312,7 +312,9 @@ class GsflowModel(object):
             model output directory
         write_only: a list
             ['control', 'parameters', 'prms_data', 'mf', 'modsim']
-
+        prms_precision: int
+            integer defining the floating point precision to write floating
+            point records in prms parameter files
         Examples
         --------
 
@@ -326,7 +328,7 @@ class GsflowModel(object):
 
         if (basename, workspace) == (None, None):
             print("Warning: input files will be overwritten....")
-            self._write_all(write_only)
+            self._write_all(write_only, prms_precision=prms_precision)
 
         # only change the directory
         elif basename is None and workspace is not None:
@@ -374,7 +376,7 @@ class GsflowModel(object):
             # write
             if self.prms is not None:
                 self.prms.control = self.control
-            self._write_all(write_only)
+            self._write_all(write_only, prms_precision=prms_precision)
 
         # only change the basename
         elif basename is not None and workspace is None:
@@ -420,7 +422,7 @@ class GsflowModel(object):
             # update file names in control object
             self._update_control_fnames(workspace, basename)
             self.prms.control = self.control
-            self._write_all(write_only)
+            self._write_all(write_only, prms_precision=prms_precision)
 
         # change both directory & basename
         elif basename is not None and workspace is not None:
@@ -480,7 +482,7 @@ class GsflowModel(object):
             # update file names in control object
             self._update_control_fnames(workspace, basename)
             self.prms.control = self.control
-            self._write_all(write_only)
+            self._write_all(write_only, prms_precision=prms_precision)
 
         else:
             raise NotImplementedError()
@@ -579,7 +581,7 @@ class GsflowModel(object):
             out_files_list.append(new_outfn)
         self.mf.output_fnames = out_files_list
 
-    def _write_all(self, write_only):
+    def _write_all(self, write_only, prms_precision):
         """
         Method to write input files
 
@@ -588,7 +590,8 @@ class GsflowModel(object):
         write_only : list
             list of files to write accepts,
             control, parameters, prms_data, mf, and modsim
-
+        prms_precision: int
+            precision for floating point variables in the prms parameter file
         """
 
         write_only_options = (
@@ -624,7 +627,7 @@ class GsflowModel(object):
             # self write parameters
             if len(write_only) == 0 or "parameters" in write_only:
                 print("Writing Parameters files ...")
-                self.prms.parameters.write()
+                self.prms.parameters.write(precision=prms_precision)
 
             # write data
             if len(write_only) == 0 or "prms_data" in write_only:
