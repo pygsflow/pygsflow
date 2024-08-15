@@ -545,7 +545,7 @@ class PrmsParameters(ParameterBase):
 
             super(PrmsParameters, self).add_record(record_obj)
 
-    def write(self, name=None, precision=9):
+    def write(self, name=None, precision=None):
         """
         Method to write the PrmsParameters object to PRMS parameter files
 
@@ -831,11 +831,30 @@ class ParameterRecord(RecordBase):
         for val in self.values:
             fid.write("\n")
             if self.datatype in (2, 3) and self.name != "hru_area":
-                fid.write(f"{val :.{precision}f}")
+                if precision is not None:
+                    s0 = f"{val :.{precision}g}"
+                    s1 = f"{val :.{precision}f}"
+                    s2 = f"{val :.{1}g}"
+
+                    if len(s0) == len(s2):
+                        s = s0
+                        if len(s0) == 1:
+                            s = f"{val :.{1}f}"
+                    elif len(s2) < len(s1) < len(s0) and "e" not in s0:
+                        s = s1
+                    elif len(s2) > len(s1):
+                        s = s2
+                    elif len(s0) > len(s2) and len(s0) < len(s1):
+                        s = s0
+                    else:
+                        s = s0
+                    fid.write(s)
+                else:
+                    fid.write(str(val))
             else:
                 fid.write(str(val))
 
-    def write(self, fid, precision=9):
+    def write(self, fid, precision=None):
         """
         Method to write to an open file
 

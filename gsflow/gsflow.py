@@ -293,7 +293,7 @@ class GsflowModel(object):
             forgive=forgive,
         )
 
-    def write_input(self, basename=None, workspace=None, write_only=None, prms_precision=9):
+    def write_input(self, basename=None, workspace=None, write_only=None, prms_precision=None):
         """
          Write input files for gsflow. Four cases are possible:
             - if basename and workspace are None,then the exisiting files
@@ -314,7 +314,8 @@ class GsflowModel(object):
             ['control', 'parameters', 'prms_data', 'mf', 'modsim']
         prms_precision: int
             integer defining the floating point precision to write floating
-            point records in prms parameter files
+            point records in prms parameter files. Default is None which does
+            not apply formatting
         Examples
         --------
 
