@@ -66,6 +66,7 @@ class ModflowBuilder(object):
         finf=None,
         botm=None,
         ibound=None,
+        strt=None,
         iuzfbnd=None,
     ):
         """
@@ -86,6 +87,8 @@ class ModflowBuilder(object):
             bottom elevation for single layer model
         ibound : np.ndarray
             ibound array of active model cells
+        strt : float, np.ndarray
+            optional array of starting head elevations
         iuzfbnd : np.ndarray
             uzf ibound array of active model cells
 
@@ -95,7 +98,7 @@ class ModflowBuilder(object):
 
         """
         self.build_dis(botm=botm)
-        self.build_bas6(ibound=ibound)
+        self.build_bas6(ibound=ibound, strt=strt)
         self.build_upw()
         self.build_nwt()
         self.build_oc()
@@ -137,7 +140,7 @@ class ModflowBuilder(object):
         )
         return dis
 
-    def build_bas6(self, ibound=None):
+    def build_bas6(self, ibound=None, strt=None):
         """
         Method to build the BAS6 package
 
@@ -146,6 +149,8 @@ class ModflowBuilder(object):
         ibound : int, np.ndarray
             array of active modflow cells within the model, >0 for active, 0
             for inactive
+        strt : float, np.ndarray
+            array of starting heads for each cell within the model
 
         Returns
         -------
@@ -156,9 +161,12 @@ class ModflowBuilder(object):
             ibound = np.ones(
                 (self._modelgrid.nrow, self._modelgrid.ncol), dtype=int
             )
+        if strt is None:
+            strt = self._dem_data
+
         bas_defaults = self._defaults["bas"]
         bas = flopy.modflow.ModflowBas(
-            self._ml, ibound=ibound, strt=self._dem_data, **bas_defaults
+            self._ml, ibound=ibound, strt=strt, **bas_defaults
         )
         return bas
 
