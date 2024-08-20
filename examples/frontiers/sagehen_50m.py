@@ -73,8 +73,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         np.savetxt(resampled_dem, dem, delimiter="  ")
     else:
@@ -210,8 +208,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="nearest",
-            multithread=True,
-            thread_pool=12
         )
         veg_type[ibound == 0] = 0
         veg_type = veg_type.astype(int)
@@ -222,8 +218,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="nearest",
-            multithread=True,
-            thread_pool=12
         )
         veg_cov[ibound == 0] = 0
         veg_cov = veg_cov.astype(int)
@@ -234,8 +228,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         awc[ibound == 0] = 0
         awc[awc == raster.nodatavals[0]] = np.nanmedian(awc)
@@ -246,8 +238,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         ksat[ibound == 0] = 0
         ksat[ksat == raster.nodatavals[0]] = np.nanmedian(ksat)
@@ -258,8 +248,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         sand[ibound == 0] = 0
         sand[sand == raster.nodatavals[0]] = np.nanmedian(sand)
@@ -271,8 +259,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         clay[ibound == 0] = 0
         clay[clay == raster.nodatavals[0]] = np.nanmedian(clay)
@@ -284,8 +270,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         impervious[ibound == 0] = 0
         impervious /= 100
@@ -298,8 +282,6 @@ if __name__ == "__main__":
                 modelgrid,
                 band=raster.bands[0],
                 method="linear",
-                multithread=True,
-                thread_pool=12
             )
             ppt.append(tppt.ravel())
         ppt = np.array(ppt)
@@ -312,8 +294,6 @@ if __name__ == "__main__":
                 modelgrid,
                 band=raster.bands[0],
                 method="linear",
-                multithread=True,
-                thread_pool=12
             )
             tmin.append(ttmin.ravel())
         tmin = np.array(tmin)
@@ -326,8 +306,6 @@ if __name__ == "__main__":
                 modelgrid,
                 band=raster.bands[0],
                 method="linear",
-                multithread=True,
-                thread_pool=12
             )
             tmax.append(ttmax.ravel())
         tmax = np.array(tmax)
@@ -624,8 +602,8 @@ if __name__ == "__main__":
     with styles.USGSMap():
         fig, axis = plt.subplots(2, 1, figsize=(10, 6))
         plt.rcParams.update({'font.size': 100})
-        axis[0].plot(stats.Date, stats.basin_cfs_1, color='r', linewidth=2.2, label='simulated 50m calibration, NSE=0.74')
-        axis[0].plot(stats.Date, stats.runoff_1, '--', color='b', linewidth=1.5, label='measured')
+        axis[0].plot(stats.Date.values, stats.basin_cfs_1.values, color='r', linewidth=2.2, label='simulated 50m calibration, NSE=0.74')
+        axis[0].plot(stats.Date.values, stats.runoff_1.values, '--', color='b', linewidth=1.5, label='measured')
         handles, labels = axis[0].get_legend_handles_labels()
         axis[0].legend(handles, labels, bbox_to_anchor=(0.25, 0.65))
         axis[0].set_xlabel("Date")
@@ -645,10 +623,10 @@ if __name__ == "__main__":
         plt.ylabel("Flow Components, in cfs")
         plt.yscale("log")
         plt.ylim(1.0e-3, 1.0e4)
-        axis[1].plot(stats.Date, stats.basin_ssflow_cfs_1, color='r', linewidth=1.5, label='Interflow')
-        axis[1].plot(stats.Date, gw_seepage, color='purple', linewidth=1.5, label='Groundwater seepage')
-        axis[1].plot(stats.Date, stats.basin_sroff_cfs_1, color='y', linewidth=1.5, label='Hortonian runoff')
-        axis[1].plot(stats.Date, stats.basin_dunnian_1, color='b', linewidth=1.5, label='Dunnian runoff')
+        axis[1].plot(stats.Date.values, stats.basin_ssflow_cfs_1.values, color='r', linewidth=1.5, label='Interflow')
+        axis[1].plot(stats.Date.values, gw_seepage.values, color='purple', linewidth=1.5, label='Groundwater seepage')
+        axis[1].plot(stats.Date.values, stats.basin_sroff_cfs_1.values, color='y', linewidth=1.5, label='Hortonian runoff')
+        axis[1].plot(stats.Date.values, stats.basin_dunnian_1.values, color='b', linewidth=1.5, label='Dunnian runoff')
         handles, labels = axis[1].get_legend_handles_labels()
         axis[1].legend(handles, labels, bbox_to_anchor=(0.25, 0.65))
         plt.tight_layout()

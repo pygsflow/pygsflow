@@ -73,8 +73,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         np.savetxt(resampled_dem, dem, delimiter="  ")
     else:
@@ -201,8 +199,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="nearest",
-            multithread=True,
-            thread_pool=12
         )
         veg_type[ibound == 0] = 0
         veg_type = veg_type.astype(int)
@@ -214,8 +210,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="nearest",
-            multithread=True,
-            thread_pool=12
         )
         veg_cov[ibound == 0] = 0
         veg_cov = veg_cov.astype(int)
@@ -226,8 +220,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         awc[ibound == 0] = 0
         awc[awc == raster.nodatavals[0]] = np.nanmedian(awc)
@@ -238,8 +230,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         ksat[ibound == 0] = 0
         ksat[ksat == raster.nodatavals[0]] = np.nanmedian(ksat)
@@ -250,8 +240,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         sand[ibound == 0] = 0
         sand[sand == raster.nodatavals[0]] = np.nanmedian(sand)
@@ -263,8 +251,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         clay[ibound == 0] = 0
         clay[clay == raster.nodatavals[0]] = np.nanmedian(clay)
@@ -276,8 +262,6 @@ if __name__ == "__main__":
             modelgrid,
             band=raster.bands[0],
             method="median",
-            multithread=True,
-            thread_pool=12
         )
         impervious[ibound == 0] = 0
         impervious /= 100
@@ -290,8 +274,6 @@ if __name__ == "__main__":
                 modelgrid,
                 band=raster.bands[0],
                 method="linear",
-                multithread=True,
-                thread_pool=12
             )
             ppt.append(tppt.ravel())
         ppt = np.array(ppt)
@@ -304,8 +286,6 @@ if __name__ == "__main__":
                 modelgrid,
                 band=raster.bands[0],
                 method="linear",
-                multithread=True,
-                thread_pool=12
             )
             tmin.append(ttmin.ravel())
         tmin = np.array(tmin)
@@ -318,8 +298,6 @@ if __name__ == "__main__":
                 modelgrid,
                 band=raster.bands[0],
                 method="linear",
-                multithread=True,
-                thread_pool=12
             )
             tmax.append(ttmax.ravel())
         tmax = np.array(tmax)
