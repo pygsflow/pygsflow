@@ -84,11 +84,16 @@ class PrmsBuilder(object):
         # get the nhru from the model grid
         nhru = self.modelgrid.ncpl
 
+        dany = False
+        if hasattr(self.cascades_obj, "dany_flag"):
+            if self.cascades_obj.dany_flag:
+                dany = True
+
         # set segment and reach
         if self.stream_data_obj is not None:
             dimension_defaults["nsegment"] = self.stream_data_obj.iseg.max()
             dimension_defaults["nreach"] = self.stream_data_obj.reach_data.size
-        elif self.cascades_obj.dany_flag:
+        elif dany:
             dimension_defaults["nsegment"] = self.cascades_obj.nsegments
             dimension_defaults["nreaches"] = self.cascades_obj.nreaches
 
@@ -158,7 +163,7 @@ class PrmsBuilder(object):
             param_list.append(param_record)
 
         param_dict = {}
-        if self.cascades_obj.dany_flag:
+        if dany:
             # area_conv converts model unit area to acres for prms
             hru_area = self.cascades_obj.hru_area * area_conv
         else:
@@ -182,7 +187,7 @@ class PrmsBuilder(object):
             aspect = self.stream_data_obj.aspect.ravel()
             param_dict["hru_aspect"] = {"record": aspect, "dtype": 2}
 
-        elif self.cascades_obj.dany_flag:
+        elif dany:
             hru_slope = self.cascades_obj.hru_slope
             hru_slope[hru_slope < 1e-04] = 0
             param_dict["hru_slope"] = {"record": hru_slope, "dtype": 2}
