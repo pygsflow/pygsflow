@@ -89,6 +89,10 @@ class PrmsBuilder(object):
             if self.cascades_obj.dany_flag:
                 dany = True
 
+        if hasattr(self.stream_data_obj, "dany_flag"):
+            if self.stream_data_obj.dany_flag:
+                self.stream_data_obj = None
+
         # set segment and reach
         if self.stream_data_obj is not None:
             dimension_defaults["nsegment"] = self.stream_data_obj.iseg.max()

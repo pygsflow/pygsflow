@@ -35,7 +35,9 @@ class ModflowBuilder(object):
         exe_name = "mfnwt.exe"
         self._ml = Modflow(model_name, exe_name=exe_name)
 
-        assert (modelgrid.nrow, modelgrid.ncol) == dem_data.shape
+        if (modelgrid.nrow, modelgrid.ncol) != dem_data.shape:
+            dem_data = dem_data.reshape((modelgrid.nrow, modelgrid.ncol))
+
         self._modelgrid = modelgrid
         self._dem_data = dem_data
 

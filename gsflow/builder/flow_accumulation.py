@@ -1846,6 +1846,7 @@ class _StreamsObj(object):
     """
 
     def __init__(self, reach_data, segment_data, gridded_data):
+        self.dany_flag = False
         self.iseg = gridded_data["iseg"]
         self.ireach = gridded_data["ireach"]
         self.outseg = gridded_data["outseg"]
