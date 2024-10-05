@@ -108,7 +108,7 @@ class StatVar(object):
                 var_element.append(int(elem))
 
             columns = ["ID"] + GsConstant.COLUMN_HEADER + var_names
-            stat_df = pd.read_csv(fid, delim_whitespace=True, names=columns)
+            stat_df = pd.read_csv(fid, sep="\\s+", names=columns)
             Dates = []
             for index, irow in stat_df.iterrows():
                 dt = datetime.datetime(

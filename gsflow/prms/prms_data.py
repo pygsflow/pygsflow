@@ -88,7 +88,7 @@ class PrmsData(object):
                     columns.append(val_nm[0] + "_" + str(val))
 
         columns = GsConstant.COLUMN_HEADER + columns
-        data_pd = pd.read_csv(fid, delim_whitespace=True, header=None)
+        data_pd = pd.read_csv(fid, sep="\\s+", header=None)
         if len(list(data_pd)) > len(columns):
             data_pd = data_pd[[i for i in range(len(list(columns)))]]
         data_pd.rename(columns={ix: i for ix, i in enumerate(columns)}, inplace=True)
