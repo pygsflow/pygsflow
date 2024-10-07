@@ -685,6 +685,8 @@ class ParameterRecord(RecordBase):
                 )
                 raise ValueError(err)
 
+        self._force_dtype()
+
     def __getitem__(self, item):
         return self.values[item]
 
@@ -752,6 +754,7 @@ class ParameterRecord(RecordBase):
         # change data type
         self._check_dtype()
         self._values = new_values
+        self._force_dtype()
 
     def export_nc(self, f, modflow, **kwargs):
         """
