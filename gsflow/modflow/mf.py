@@ -2,7 +2,6 @@ import os
 import inspect
 import flopy
 import platform
-from flopy.utils import TemporalReference
 from flopy.modflow.mf import Modflow as fpModflow
 from ..utils import mfreadnam
 
@@ -475,9 +474,6 @@ class Modflow(fpModflow):
             itmuni = dis.itmuni
             attributes["lenuni"] = dis.lenuni
 
-        dis.tr = TemporalReference(
-            itmuni=itmuni, start_datetime=start_datetime
-        )
         dis.start_datetime = start_datetime
 
         if load_only is None:
