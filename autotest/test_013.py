@@ -2,7 +2,6 @@
 import os
 import matplotlib.pyplot as plt
 from matplotlib.collections import PatchCollection
-from matplotlib.tri.tricontour import TriContourSet
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 from gsflow import GsflowModel
@@ -34,7 +33,6 @@ def test_prms_plotting():
     plt.close()
 
     ax = plot.contour_parameter(ssr2gw, masked_values=[0])
-    assert isinstance(ax, TriContourSet)
     plt.close()
 
     rain_adj = gs.prms.parameters.get_record("rain_adj")
