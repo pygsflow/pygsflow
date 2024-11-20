@@ -99,7 +99,7 @@ class PrmsBuilder(object):
             dimension_defaults["nreach"] = self.stream_data_obj.reach_data.size
         elif dany:
             dimension_defaults["nsegment"] = self.cascades_obj.nsegments
-            dimension_defaults["nreaches"] = self.cascades_obj.nreaches
+            dimension_defaults["nreach"] = self.cascades_obj.nreaches
 
         dimension_defaults["ngw"] = nhru
         dimension_defaults["ngwcell"] = nhru
