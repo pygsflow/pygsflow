@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pygsflow"
+version = "1.1.1"
+description = "pyGSFLOW is a python package to create, run, and post-process GSFLOW-based models"
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "MIT license" }
+authors = [
+    { name = "Ayman Alzraiee", email = "ayman.alzraiee@gmail.com" },
+    { name = "Joshua Larsen", email = "jlarsen@usgs.gov" },
+    { name = "Rich Niswonger", email = "rniswon@usgs.gov" },
+    { name = "Donald Martin", email = "domartin@usgs.gov" }
+]
+keywords = ["gsflow"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Topic :: Scientific/Engineering :: Hydrology",
+    "Operating System :: OS Independent"
+]
+
+dependencies = [
+    "pandas",
+    "numpy",
+    'flopy == 3.3.5; python_version >= "3.7" and python_version < "3.8"',
+    'flopy >= 3.3.4; python_version >= "3.8"',
+    "pyshp",
+    "pycrs",
+    "matplotlib"
+]
+
+[project.urls]
+Homepage = "https://github.com/pygsflow/pygsflow"
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+include = [
+    "gsflow",
+    "gsflow.prms",
+    "gsflow.utils",
+    "gsflow.modflow",
+    "gsflow.modsim",
+    "gsflow.output",
+    "gsflow.builder",
+    "gsflow.crt"
+]
