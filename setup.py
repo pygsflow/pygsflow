@@ -37,7 +37,7 @@ with open(os.path.join(".", "README.md")) as foo:
 
 setup(
     author="Ayman Alzraiee, Joshua Larsen, Rich Niswonger, Donald Martin",
-    author_email='aalzraiee@usgs.gov, jlarsen@usgs.gov, rniswon@usgs.gov, domartin@usgs.gov',
+    author_email='ayman.alzraiee@gmail.com, jlarsen@usgs.gov, rniswon@usgs.gov, domartin@usgs.gov',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
