@@ -46,7 +46,7 @@ https://github.com/pygsflow/pygsflow/tree/master/examples
 The pygsflow repository can be installed using pip.
 To install the release version, open a terminal, command prompt, or anaconda prompt and type:
 
-`pip install pygsflow`
+`pip install pygsflow` 
 
 **Version 1.1.1** (Develop version with most recent updates)
 
@@ -140,3 +140,4 @@ Survey (USGS). No warranty, expressed or implied, is made by the USGS or the U.S
 functionality of the software and related material nor shall the fact of release constitute any such 
 warranty. The software is provided on the condition that neither the USGS nor the U.S. Government shall 
 be held liable for any damages resulting from the authorized or unauthorized use of the software 
+
