@@ -145,7 +145,7 @@ def test_watershed_delineation():
     # read in pour point from shapefile and set watershed boundary
     with shapefile.Reader(pour_point_file) as r:
         shape = r.shape(0)
-        pour_point = shape.points
+        pour_point = [list(i) for i in shape.points]
         pour_point[0][1] -= 20
         pour_point[0][0] -= 20
 
@@ -236,7 +236,7 @@ def test_cascade_generation():
 
     with shapefile.Reader(pour_point_file) as r:
         shape = r.shape(0)
-        pour_point = shape.points
+        pour_point = [list(i) for i in shape.points]
         pour_point[0][1] -= 20
         pour_point[0][0] -= 20
 
