@@ -4,7 +4,7 @@ import numpy as np
 import gsflow
 from gsflow.builder import Defaults, ModflowDefaults, PrmsDefaults
 import flopy
-import mf_utils
+from utils import mf_utils
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.interpolate import interp1d

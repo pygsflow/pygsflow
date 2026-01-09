@@ -13,7 +13,7 @@ from flopy.utils.gridgen import Gridgen
 # import utils
 # import prms_utils
 from utils import oct_tree_grid
-#from utils.mfusg_builder import build_mfusg, add_uzf, add_rch, add_evt
+from utils.mfusg_builder import build_mfusg, add_uzf, add_rch, add_evt
 from utils.prms_builder import build_prms
 from pathlib import Path
 # ================================
@@ -26,13 +26,17 @@ sample_grid = True  # make true if first time running
 mi = Model_info()
 mi.ws = os.path.abspath(os.path.dirname(__file__))
 mi.iws = Path(mi.ws).parent/'data'/'geospatial'
-mi.ows = os.path.join(mi.ws, "new_model")
+mi.ows = os.path.join(mi.ws, "temp")
 if not os.path.exists(mi.ows):
     os.mkdir(mi.ows)
 mi.dem_file = os.path.join(mi.iws, 'dem.img')
 mi.pour_point_file = os.path.join(mi.iws, "model_points.shp")
 mi.resampled_dem = os.path.join(mi.ows, 
                                  "sagehen_50m_med.txt")
+
+mi.usg_model_ws = Path(mi.ws)/'ugmodel'
+mi.usg_base_name = "usg_sagehen"
+
 mi.stream_threshold = 810000  # m3 of drainage area
 mi.cellsize = 50
 mi.fine_model_ws = (r"C:\workspace\projects\gsflow6\scripts\sagehen"
@@ -41,8 +45,7 @@ mi.fine_model_fn = os.path.join(mi.fine_model_ws,
                                  "sagehen_50m.nam")
 mi.fine_control_file = os.path.join(mi.fine_model_ws, 
                                      "sagehen_50m_cont.control")
-mi.usg_model_ws = (r"C:\workspace\projects\gsflow6\usg")
-mi.usg_base_name = "usg_sagehen"
+
 mi.usg_model_fn = os.path.join(mi.usg_model_ws, f"{mi.usg_base_name}.nam")
 mi.usg_control_file = os.path.join(mi.usg_model_ws, f"{mi.usg_base_name}.control")
 
@@ -79,7 +82,7 @@ add_rch(mi)
 add_evt(mi)
 
 
-import gridutil
-gridutil.plot_grid(mi.oct_grid2d, mi.gsflow.prms.parameters.get_values('hru_strmseg_down_id'))
+#import gridutil
+#gridutil.plot_grid(mi.oct_grid2d, mi.gsflow.prms.parameters.get_values('hru_strmseg_down_id'))
 
 end = 1
