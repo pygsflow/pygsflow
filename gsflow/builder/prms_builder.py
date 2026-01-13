@@ -148,6 +148,8 @@ class PrmsBuilder(object):
 
             if dim[0][0] == "one":
                 record = [record]
+            elif len(dim) == 1 and len(record) > 1:
+                record = record
             else:
                 record = record * dim[0][1]
             record = np.array(record).ravel()
