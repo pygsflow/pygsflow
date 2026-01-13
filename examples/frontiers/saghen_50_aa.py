@@ -5,7 +5,7 @@ import flopy
 import numpy as np
 import shapefile
 import matplotlib.pyplot as plt
-#from gsflow.utils import Rasterpy
+# from gsflow.utils import Raster
 from flopy.utils import Raster
 from flopy.plot import styles
 from gsflow import GsflowModel, PrmsModel, PrmsData
@@ -14,7 +14,7 @@ from gsflow.builder import (
     ModflowBuilder,
     ControlFileBuilder,
     PrmsBuilder,
-    FlowAccumulation
+    FlowAccumulation,
 )
 import gsflow.builder.builder_utils as bu
 import pandas as pd
@@ -24,8 +24,8 @@ pd.options.mode.chained_assignment = None
 
 def nash_sutcliffe_efficiency(qsim, qobs, flg):
     if flg:
-      qsim = np.log(qsim)
-      qobs = np.log(qobs)
+        qsim = np.log(qsim)
+        qobs = np.log(qobs)
     qsim[np.isinf(qsim)] = np.nan
     qobs[np.isinf(qobs)] = np.nan
     numerator = np.nansum((qsim - qobs) ** 2)
@@ -49,6 +49,7 @@ def build_lut(f, dtype=int):
 
 if __name__ == "__main__":
     sample_grid = True
+    exe_name = r"C:\Users\sregan\Workspace\git_repositories\pygsflow\bin\HydroGRID.exe"
     # set file names here
     ws = os.path.abspath(os.path.dirname(__file__))
     iws = os.path.join(ws, "..", "data", "geospatial")
@@ -56,12 +57,12 @@ if __name__ == "__main__":
     if not os.path.exists(ows):
         os.mkdir(ows)
 
-    dem_file = os.path.join(iws, 'dem.img')
+    dem_file = os.path.join(iws, "dem.img")
     pour_point_file = os.path.join(iws, "model_points.shp")
 
     resampled_dem = os.path.join(ows, "sagehen_50m_med.txt")
 
-    stream_threshold = 810000 # m3 of drainage area
+    stream_threshold = 810000  # m3 of drainage area
     cellsize = 50
 
     # generate a "Fishnet"
@@ -70,23 +71,21 @@ if __name__ == "__main__":
     # resample DEM to the model grid using minimum elevation
     if sample_grid:
         raster = Raster.load(dem_file)
-        dem = raster.resample_to_grid(
-            modelgrid,
-            band=raster.bands[0],
-            method="median",
-        )
+        dem = raster.resample_to_grid(modelgrid, band=raster.bands[0], method="median")
         np.savetxt(resampled_dem, dem, delimiter="  ")
     else:
         dem = np.genfromtxt(resampled_dem)
 
     hru_type = np.ones((modelgrid.nrow, modelgrid.ncol), dtype=int)
-    fa = FlowAccumulation(dem,
-                          modelgrid.xcellcenters,
-                          modelgrid.ycellcenters,
-                          hru_type=hru_type, verbose=True)
+    fa = FlowAccumulation(
+        dem,
+        modelgrid.xcellcenters,
+        modelgrid.ycellcenters,
+        hru_type=hru_type,
+        verbose=True,
+    )
 
     flow_dir = fa.flow_directions(dijkstra=True, breach=0.001)
-
     flow_acc = fa.flow_accumulation()
 
     # read in pour point from shapefile and set watershed boundary
@@ -94,7 +93,7 @@ if __name__ == "__main__":
         shape = r.shape(0)
         pour_point = shape.points
 
-    watershed = fa.define_watershed(pour_point, modelgrid, fmt='xy')
+    watershed = fa.define_watershed(pour_point, modelgrid, fmt="xy")
 
     threshold = stream_threshold / (cellsize ** 2)
     strm_obj = fa.make_streams(flow_dir, flow_acc, threshold)
@@ -106,14 +105,15 @@ if __name__ == "__main__":
     mfbuild = ModflowBuilder(modelgrid, dem, "sagehen_50m")
     botm = dem - 100
     botm.shape = (1, modelgrid.nrow, modelgrid.ncol)
-    ml = mfbuild.build_all(strm_obj.reach_data,
-                           strm_obj.segment_data,
-                           strm_obj.irunbnd,
-                           finf=np.ones(dem.shape),
-                           botm=botm,
-                           ibound=watershed.astype(int),
-                           iuzfbnd=watershed.astype(int)
-                          )
+    ml = mfbuild.build_all(
+        strm_obj.reach_data,
+        strm_obj.segment_data,
+        strm_obj.irunbnd,
+        finf=np.ones(dem.shape),
+        botm=botm,
+        ibound=watershed.astype(int),
+        iuzfbnd=watershed.astype(int),
+    )
 
     # update dis file to create a transient model
     flopy.modflow.ModflowDis(
@@ -132,7 +132,7 @@ if __name__ == "__main__":
         tsmult=[1, 1],
         steady=[True, False],
         itmuni=ml.dis.itmuni,
-        lenuni=ml.dis.lenuni
+        lenuni=ml.dis.lenuni,
     )
 
     # update a few SFR parameters for GSFLOW!
@@ -151,15 +151,12 @@ if __name__ == "__main__":
         modelgrid,
         fa.get_dem_data().ravel(),
         hru_type=watershed,
-        hru_subbasin=watershed
+        hru_subbasin=watershed,
     )
 
     param_obj = prmsbuild.build()
     lat, lon = utm.to_latlon(
-        modelgrid.xcellcenters.ravel(),
-        modelgrid.ycellcenters.ravel(),
-        10,
-        "N"
+        modelgrid.xcellcenters.ravel(), modelgrid.ycellcenters.ravel(), 10, "N"
     )
     param_obj.set_values("hru_lat", lat)
     param_obj.set_values("hru_lon", lon)
@@ -177,7 +174,9 @@ if __name__ == "__main__":
     prism = {"ppt_utm": [], "tmax_utm": [], "tmin_utm": []}
     for folder in prism.keys():
         for f in os.listdir(os.path.join(iws, "climate", folder)):
-            if os.path.isfile(os.path.join(iws, "climate", folder, f)) and f.endswith(".img"):
+            if os.path.isfile(os.path.join(iws, "climate", folder, f)) and f.endswith(
+                    ".img"
+            ):
                 prism[folder].append(os.path.join(iws, "climate", folder, f))
 
     resampled_veg_type = os.path.join(ows, "veg_type_nearest_50.txt")
@@ -189,18 +188,18 @@ if __name__ == "__main__":
     resampled_impervious = os.path.join(ows, "impervious_median_50.txt")
 
     resampled_ppt = os.path.join(ows, "ppt_bilinear_50.txt")
-    resampled_tmax = os.path.join(ows, 'tmax_bilinear_50.txt')
-    resampled_tmin = os.path.join(ows, 'tmin_bilinear_50.txt')
+    resampled_tmax = os.path.join(ows, "tmax_bilinear_50.txt")
+    resampled_tmin = os.path.join(ows, "tmin_bilinear_50.txt")
 
-    covtype_remap = os.path.join(iws, "..", 'remaps', "landfire", "covtype.rmp")
-    covden_sum_remap = os.path.join(iws, "..", 'remaps', "landfire", "covdensum.rmp")
-    covden_win_remap = os.path.join(iws, "..", 'remaps', "landfire", "covdenwin.rmp")
-    root_depth_remap = os.path.join(iws, "..", 'remaps', "landfire", 'rtdepth.rmp')
+    covtype_remap = os.path.join(iws, "..", "remaps", "landfire", "covtype.rmp")
+    covden_sum_remap = os.path.join(iws, "..", "remaps", "landfire", "covdensum.rmp")
+    covden_win_remap = os.path.join(iws, "..", "remaps", "landfire", "covdenwin.rmp")
+    root_depth_remap = os.path.join(iws, "..", "remaps", "landfire", "rtdepth.rmp")
     snow_intcp_remap = os.path.join(iws, "..", "remaps", "landfire", "snow_intcp.rmp")
     srain_intcp_remap = os.path.join(iws, "..", "remaps", "landfire", "srain_intcp.rmp")
 
-    climate_dataframe = os.path.join(iws, 'climate', "sagehen_climate.csv")
-    climate_lapse_rates = os.path.join(iws, 'climate', 'sagehen_lapse_rates.csv')
+    climate_dataframe = os.path.join(iws, "climate", "sagehen_climate.csv")
+    climate_lapse_rates = os.path.join(iws, "climate", "sagehen_lapse_rates.csv")
 
     if sample_rasters:
         ibound = watershed.astype(int)
@@ -266,22 +265,23 @@ if __name__ == "__main__":
         clay /= 100
         np.savetxt(resampled_clay, clay)
 
-        raster = Raster.load(impervious_raster)
+        ##AA
         import rasterio
+
         with rasterio.open(impervious_raster) as src:
             data = src.read(1, out_dtype="int16")
             profile = src.profile
-            profile.update(dtype="int16", nodata = -999)
+            profile.update(dtype="int16", nodata=-999)
         impervious_rasterFixed = impervious_raster.replace(".img", "_fixed.img")
         with rasterio.open(impervious_rasterFixed, "w", **profile) as dst:
             dst.write(data, 1)
+            ##
 
-        raster = Raster.load(impervious_raster)
-
+        raster = Raster.load(impervious_rasterFixed)
         impervious = raster.resample_to_grid(
             modelgrid,
             band=raster.bands[0],
-            method="median",
+            method="median"
         )
         impervious[ibound == 0] = 0
         impervious /= 100
@@ -371,10 +371,7 @@ if __name__ == "__main__":
     root_depth = bu.root_depth(veg_type, root_depth_lut)
     hru_aspect = bu.d8_to_hru_aspect(flow_dir)
     hru_slope = bu.d8_to_hru_slope(
-        flow_dir,
-        dem,
-        modelgrid.xcellcenters,
-        modelgrid.ycellcenters
+        flow_dir, dem, modelgrid.xcellcenters, modelgrid.ycellcenters
     )
 
     soil_type = bu.soil_type(clay, sand)
@@ -387,12 +384,7 @@ if __name__ == "__main__":
     slowcoef_lin = bu.slowcoef_lin(ksat, hru_aspect.values, cellsize, cellsize)
 
     slowcoef_sq = bu.slowcoef_sq(
-        ksat,
-        hru_aspect.values,
-        sand,
-        soil_moist_max.values,
-        cellsize,
-        cellsize
+        ksat, hru_aspect.values, sand, soil_moist_max.values, cellsize, cellsize
     )
 
     # add soil parameters to prms object
@@ -417,7 +409,12 @@ if __name__ == "__main__":
     param_obj.add_record_object(carea_max, replace=True)
 
     # climate parameters
-    param_obj.add_record(name="nobs", values=[1,])
+    param_obj.add_record(
+        name="nobs",
+        values=[
+            1,
+        ],
+    )
     outlet_sta = modelgrid.intersect(pour_point[0][0], pour_point[0][1])
     outlet_sta = modelgrid.get_node([(0,) + outlet_sta])
     print(outlet_sta)
@@ -425,23 +422,32 @@ if __name__ == "__main__":
     cdf = bu.add_prms_date_columns_to_df(cdf, "date")
     cdf.rename(
         columns={
-            'precip': 'precip_0',
-            'tmin': 'tmin_0',
-            'tmax': 'tmax_0',
-            'runoff': 'runoff_0',
-            'date': 'Date'
+            "precip": "precip_0",
+            "tmin": "tmin_0",
+            "tmax": "tmax_0",
+            "runoff": "runoff_0",
+            "date": "Date",
         },
-        inplace=True
+        inplace=True,
     )
     # reorder dataframe to later build a prms Data object from it
     cdfcols = [
-        "Year", "Month", "Day", "Hour", "Minute", "Second",
-        "tmax_0", "tmin_0", "precip_0", "runoff_0", "Date"
+        "Year",
+        "Month",
+        "Day",
+        "Hour",
+        "Minute",
+        "Second",
+        "tmax_0",
+        "tmin_0",
+        "precip_0",
+        "runoff_0",
+        "Date",
     ]
     cdf = cdf[cdfcols]
 
     # start climate parameter calculations
-    mean_ppt = bu.get_mean_monthly_from_df(cdf, 'precip_0')
+    mean_ppt = bu.get_mean_monthly_from_df(cdf, "precip_0")
     cdf["tmax_0"] = bu.fahrenheit_to_celsius(cdf["tmax_0"].values)
     cdf["tmin_0"] = bu.fahrenheit_to_celsius(cdf["tmin_0"].values)
     mean_tmax = bu.get_mean_monthly_from_df(cdf, "tmax_0", temperature=True)
@@ -468,107 +474,140 @@ if __name__ == "__main__":
     param_obj.add_record_object(jh_coef, replace=True)
     param_obj.add_record(
         "outlet_sta",
-        values=[outlet_sta[0] + 1,],
+        values=[
+            outlet_sta[0] + 1,
+        ],
         dimensions=[["one", 1]],
-        datatype=1
+        datatype=1,
     )
     param_obj.add_record(
         "id_obsrunoff",
-        values=[outlet_sta[0] + 1, ],
+        values=[
+            outlet_sta[0] + 1,
+        ],
         dimensions=[["one", 1]],
-        datatype=1
+        datatype=1,
     )
 
     param_obj.add_record(
         "tsta_elev",
-        values=[1932.4,],
+        values=[
+            1932.4,
+        ],
         dimensions=[["ntemp", 1]],
-        datatype=2
+        datatype=2,
     )
-    
+
     # build the prms data file
-    prmsdata = PrmsData(data_df=cdf)   
+    prmsdata = PrmsData(data_df=cdf)
     control_obj = ControlFileBuilder().build("saghen_50m", param_obj, ml)
 
     # build the PrmsModel
     prms = PrmsModel(control_obj, parameters=param_obj, data=prmsdata)
-
     gsf = GsflowModel(control=control_obj, prms=prms, mf=ml)
 
     gsf.control.set_values("start_time", [1982, 10, 1, 0, 0, 0])
     gsf.control.add_record("end_time", values=[1996, 9, 31, 0, 0, 0])
-    gsf.control.add_record("print_debug", values=[0, ])
+    gsf.control.add_record(
+        "print_debug",
+        values=[
+            0,
+        ],
+    )
     gsf.control.add_record("modflow_time_zero", values=[1982, 10, 1, 0, 0, 0])
-    gsf.control.add_record("data_file", values=["sagehen_50m.data", ])
+    gsf.control.add_record(
+        "data_file",
+        values=[
+            "sagehen_50m.data",
+        ],
+    )
     gsf.control.add_record("srunoff_module", values=["srunoff_smidx"])
     gsf.control.set_values("model_mode", values=["GSFLOW5"])
-    gsf.control.set_values("subbasin_flag", values=[0, ])
-    gsf.control.set_values("parameter_check_flag", values=[0, ])
+    gsf.control.set_values(
+        "subbasin_flag",
+        values=[
+            0,
+        ],
+    )
+    gsf.control.set_values(
+        "parameter_check_flag",
+        values=[
+            0,
+        ],
+    )
     gsf.control.add_record("statsON_OFF", values=[1])
     gsf.control.add_record("nstatVars", values=[6])
     gsf.control.add_record("statVar_element", values=["1", "1", "1", "1", "1", "1"])
-    gsf.control.add_record("statVar_names",
-                           values=["runoff",
-                                   "basin_cfs",
-                                   "basin_ssflow_cfs",
-                                   "basin_gwflow_cfs",
-                                   "basin_sroff_cfs",
-                                   "basin_dunnian"])
+    gsf.control.add_record(
+        "statVar_names",
+        values=[
+            "runoff",
+            "basin_cfs",
+            "basin_ssflow_cfs",
+            "basin_gwflow_cfs",
+            "basin_sroff_cfs",
+            "basin_dunnian",
+        ],
+    )
     gsf.control.add_record("stat_var_file", values=["statvar.dat"])
 
     # Modify PRMS paramters for calibration
     # temp dist
-    tmax_lapse = gsf.prms.parameters.get_values('tmax_lapse')
-    tmin_lapse = gsf.prms.parameters.get_values('tmin_lapse')
-    tmax_lapse = tmax_lapse + 1.2   #0.7
-    tmin_lapse = tmin_lapse + 1.2   #0.7
+    tmax_lapse = gsf.prms.parameters.get_values("tmax_lapse")
+    tmin_lapse = gsf.prms.parameters.get_values("tmin_lapse")
+    tmax_lapse = tmax_lapse + 1.2  # 0.7
+    tmin_lapse = tmin_lapse + 1.2  # 0.7
     gsf.prms.parameters.set_values("tmax_lapse", values=tmax_lapse)
     gsf.prms.parameters.set_values("tmin_lapse", values=tmin_lapse)
-    max_missing = gsf.prms.parameters.get_values('max_missing')
-    max_missing = max_missing*2
+    max_missing = gsf.prms.parameters.get_values("max_missing")
+    max_missing = max_missing * 2
     gsf.prms.parameters.set_values("max_missing", values=max_missing)
     # snow
-    tmax_allsnow = gsf.prms.parameters.get_values('tmax_allsnow')
+    tmax_allsnow = gsf.prms.parameters.get_values("tmax_allsnow")
     tmax_allsnow[:] = 0.7
     gsf.prms.parameters.set_values("tmax_allsnow", values=tmax_allsnow)
     value = [2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1]
-    gsf.prms.parameters.add_record("tmax_allrain_offset", values=value, dimensions=[('nmonths', 12)])
-    covden_win = gsf.prms.parameters.get_values('covden_win')
-    rad_trncf = gsf.prms.parameters.get_values('rad_trncf')
+    gsf.prms.parameters.add_record(
+        "tmax_allrain_offset", values=value, dimensions=[("nmonths", 12)]
+    )
+    covden_win = gsf.prms.parameters.get_values("covden_win")
+    rad_trncf = gsf.prms.parameters.get_values("rad_trncf")
     rad_trncf = 0.8 * covden_win  # correlated to covden_win
     gsf.prms.parameters.set_values("rad_trncf", values=rad_trncf)
     # ET
-    soil_moist_max = gsf.prms.parameters.get_values('soil_moist_max')
+    soil_moist_max = gsf.prms.parameters.get_values("soil_moist_max")
     soil_moist_max = soil_moist_max * 3.0
     gsf.prms.parameters.set_values("soil_moist_max", values=soil_moist_max)
     value = [0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03]
-    gsf.prms.parameters.add_record("jh_coef", values=value, dimensions=[('nmonths', 12)])
+    gsf.prms.parameters.add_record(
+        "jh_coef", values=value, dimensions=[("nmonths", 12)]
+    )
 
     # runoff
-    snowinfil_max = gsf.prms.parameters.get_values('snowinfil_max')
+    snowinfil_max = gsf.prms.parameters.get_values("snowinfil_max")
     snowinfil_max = snowinfil_max * 5.0
     gsf.prms.parameters.set_values("snowinfil_max", values=snowinfil_max)
-    smidx_coef = gsf.prms.parameters.get_values('smidx_coef')
+    smidx_coef = gsf.prms.parameters.get_values("smidx_coef")
     smidx_coef = smidx_coef / 100.0
-    smidx_exp = gsf.prms.parameters.get_values('smidx_exp')
+    smidx_exp = gsf.prms.parameters.get_values("smidx_exp")
     smidx_exp = smidx_exp / 100.0
-    carea_max = gsf.prms.parameters.get_values('carea_max')
+    carea_max = gsf.prms.parameters.get_values("carea_max")
     carea_max = carea_max / 100.0
     gsf.prms.parameters.set_values("smidx_coef", values=smidx_coef)
     gsf.prms.parameters.set_values("smidx_exp", values=smidx_exp)
     gsf.prms.parameters.set_values("carea_max", values=carea_max)
     # interflow
-    slowcoef_sq = gsf.prms.parameters.get_values('slowcoef_sq')
+    slowcoef_sq = gsf.prms.parameters.get_values("slowcoef_sq")
     slowcoef_sq = slowcoef_sq * 0.1
     gsf.prms.parameters.set_values("slowcoef_sq", values=slowcoef_sq)
-    slowcoef_lin = gsf.prms.parameters.get_values('slowcoef_lin')
+    slowcoef_lin = gsf.prms.parameters.get_values("slowcoef_lin")
     slowcoef_lin = slowcoef_lin * 3.0
     gsf.prms.parameters.set_values("slowcoef_lin", values=slowcoef_lin)
     # Recharge
-    ssr2gw_rate = gsf.prms.parameters.get_values('ssr2gw_rate')
+    ssr2gw_rate = gsf.prms.parameters.get_values("ssr2gw_rate")
     ssr2gw_rate = ssr2gw_rate * 500.0
     gsf.prms.parameters.set_values("ssr2gw_rate", values=ssr2gw_rate)
-    sat_threshold = gsf.prms.parameters.get_values('sat_threshold')
+    sat_threshold = gsf.prms.parameters.get_values("sat_threshold")
     sat_threshold = sat_threshold / 3
     gsf.prms.parameters.set_values("sat_threshold", values=sat_threshold)
 
@@ -577,14 +616,13 @@ if __name__ == "__main__":
     for par_ in par_to_remove:
         gsf.prms.parameters.remove_record(par_)
 
-    gsf.write_input(basename="sagehen_50m",
-                    workspace=ows)
+    gsf.write_input(basename="sagehen_50m", workspace=ows)
 
     gsf.prms.parameters.remove_record("adjmix_rain")
 
-    exe_name = os.path.join("..", "..", "bin", "gsflow")
-    if platform.system().lower() == "windows":
-        exe_name += ".exe"
+    # exe_name = os.path.join("../..", "..", "bin", "gsflow")
+    # if platform.system().lower() == "windows":
+    #     exe_name += ".exe"
 
     # reload the model to assure that it has valid formatting
     gsf = GsflowModel.load_from_file(os.path.join(ows, "sagehen_50m_cont.control"))
@@ -598,24 +636,35 @@ if __name__ == "__main__":
     stats.reset_index(inplace=True, drop=True)
 
     # Calculate N-S and Log(N-S)
-    nse_val = nash_sutcliffe_efficiency(stats.basin_cfs_1, stats.runoff_1,
-                                        False)
-    nse_val_log = nash_sutcliffe_efficiency(stats.basin_cfs_1, stats.runoff_1,
-                                            True)
+    nse_val = nash_sutcliffe_efficiency(stats.basin_cfs_1, stats.runoff_1, False)
+    nse_val_log = nash_sutcliffe_efficiency(stats.basin_cfs_1, stats.runoff_1, True)
     nse_val_log_str = str(nse_val_log)
     print(nse_val, nse_val_log)
 
     gw_seepage = stats.basin_cfs_1.values.copy() - (
-            stats.basin_ssflow_cfs_1.values.copy() +
-            stats.basin_sroff_cfs_1.values.copy() +
-            stats.basin_dunnian_1.values.copy()
+            stats.basin_ssflow_cfs_1.values.copy()
+            + stats.basin_sroff_cfs_1.values.copy()
+            + stats.basin_dunnian_1.values.copy()
     )
 
     with styles.USGSMap():
         fig, axis = plt.subplots(2, 1, figsize=(10, 6))
-        plt.rcParams.update({'font.size': 100})
-        axis[0].plot(stats.Date.values, stats.basin_cfs_1.values, color='r', linewidth=2.2, label='simulated 50m calibration, NSE=0.74')
-        axis[0].plot(stats.Date.values, stats.runoff_1.values, '--', color='b', linewidth=1.5, label='measured')
+        plt.rcParams.update({"font.size": 100})
+        axis[0].plot(
+            stats.Date.values,
+            stats.basin_cfs_1.values,
+            color="r",
+            linewidth=2.2,
+            label="simulated 50m calibration, NSE=0.74",
+        )
+        axis[0].plot(
+            stats.Date.values,
+            stats.runoff_1.values,
+            "--",
+            color="b",
+            linewidth=1.5,
+            label="measured",
+        )
         handles, labels = axis[0].get_legend_handles_labels()
         axis[0].legend(handles, labels, bbox_to_anchor=(0.25, 0.65))
         axis[0].set_xlabel("Date")
@@ -635,12 +684,35 @@ if __name__ == "__main__":
         plt.ylabel("Flow Components, in cfs")
         plt.yscale("log")
         plt.ylim(1.0e-3, 1.0e4)
-        axis[1].plot(stats.Date.values, stats.basin_ssflow_cfs_1.values, color='r', linewidth=1.5, label='Interflow')
-        axis[1].plot(stats.Date.values, gw_seepage.values, color='purple', linewidth=1.5, label='Groundwater seepage')
-        axis[1].plot(stats.Date.values, stats.basin_sroff_cfs_1.values, color='y', linewidth=1.5, label='Hortonian runoff')
-        axis[1].plot(stats.Date.values, stats.basin_dunnian_1.values, color='b', linewidth=1.5, label='Dunnian runoff')
+        axis[1].plot(
+            stats.Date.values,
+            stats.basin_ssflow_cfs_1.values,
+            color="r",
+            linewidth=1.5,
+            label="Interflow",
+        )
+        axis[1].plot(
+            stats.Date.values,
+            gw_seepage.values,
+            color="purple",
+            linewidth=1.5,
+            label="Groundwater seepage",
+        )
+        axis[1].plot(
+            stats.Date.values,
+            stats.basin_sroff_cfs_1.values,
+            color="y",
+            linewidth=1.5,
+            label="Hortonian runoff",
+        )
+        axis[1].plot(
+            stats.Date.values,
+            stats.basin_dunnian_1.values,
+            color="b",
+            linewidth=1.5,
+            label="Dunnian runoff",
+        )
         handles, labels = axis[1].get_legend_handles_labels()
         axis[1].legend(handles, labels, bbox_to_anchor=(0.25, 0.65))
         plt.tight_layout()
         plt.show()
-

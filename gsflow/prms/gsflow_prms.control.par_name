@@ -188,7 +188,7 @@ Default   : 1.000000
 Name      : adjmix_rain
 Module    : climate_hru
 Descr     : Adjustment factor for rain in a rain/snow mix
-Help      : Monthly (January to December) factor to adjust rain proportion in a mixed rain/snow event
+Help      : Monthly (January to December) multiplicative factor to adjust rain proportion in a mixed rain/snow event
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -202,14 +202,14 @@ Default   : 1.000000
 Name      : adjust_rain
 Module    : xyz_dist
 Descr     : Monthly (January to December) rain downscaling adjustment factor for each precipitation measurement station
-Help      : Monthly (January to December) rain downscaling adjustment factor for each precipitation measurement station
+Help      : Monthly (January to December) multiplicative rain downscaling adjustment factor for each precipitation measurement station
 Ndimen    : 2
 Dimensions: nrain - 2, nmonths - 12
 Size      : 24
 Type      : float
 Units     : decimal fraction
 Width     : 4
-Max       : 0.500000
+Max       : 3.000000
 Min       : -0.500000
 Default   : -0.400000
 
@@ -223,7 +223,7 @@ Size      : 24
 Type      : float
 Units     : decimal fraction
 Width     : 4
-Max       : 0.500000
+Max       : 3.000000
 Min       : -0.500000
 Default   : -0.400000
 
@@ -423,7 +423,7 @@ Units     : acres
 Width     : 0
 Max       : 99.000000
 Min       : 0.000000
-Default   : 5.000000
+Default   : 0.000000
 
 Name      : ccov_intcp
 Module    : ccsolrad
@@ -497,7 +497,7 @@ Default   : 0
 
 Name      : cov_type
 Module    : basin
-Descr     : Cover type designation for HRU
+Descr     : Cover type designation for each HRU
 Help      : Vegetation cover type for each HRU (0=bare soil; 1=grasses; 2=shrubs; 3=trees; 4=coniferous)
 Ndimen    : 1
 Dimensions: nhru - 128
@@ -603,8 +603,8 @@ Size      : 1536
 Type      : float
 Units     : dday/temp_units
 Width     : 0
-Max       : 0.900000
-Min       : 0.200000
+Max       : 1.400000
+Min       : 0.100000
 Default   : 0.400000
 
 Name      : den_init
@@ -701,8 +701,8 @@ Size      : 128
 Type      : float
 Units     : decimal fraction
 Width     : 4
-Max       : 1.000000
-Min       : 0.000000
+Max       : 1.500000
+Min       : 0.500000
 Default   : 1.000000
 
 Name      : dprst_flow_coef
@@ -771,8 +771,8 @@ Size      : 128
 Type      : float
 Units     : fraction/day
 Width     : 4
-Max       : 0.100000
-Min       : 0.000100
+Max       : 0.200000
+Min       : 0.000000
 Default   : 0.020000
 
 Name      : dprst_seep_rate_open
@@ -785,8 +785,8 @@ Size      : 128
 Type      : float
 Units     : fraction/day
 Width     : 4
-Max       : 0.100000
-Min       : 0.000100
+Max       : 0.200000
+Min       : 0.000000
 Default   : 0.020000
 
 Name      : elev_outflow
@@ -876,14 +876,14 @@ Default   : 264
 Name      : fastcoef_lin
 Module    : soilzone
 Descr     : Linear preferential-flow routing coefficient
-Help      : Linear coefficient in equation to route preferential-flow storage downslope for each HRU
+Help      : Linear coefficient in equation to route preferential-flow storage for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : fraction/day
 Width     : 0
-Max       : 1.000000
+Max       : 1.500000
 Min       : 0.000000
 Default   : 0.100000
 
@@ -1111,7 +1111,7 @@ Size      : 128
 Type      : float
 Units     : inches
 Width     : 0
-Max       : 10.000000
+Max       : 50.000000
 Min       : 0.000000
 Default   : 2.000000
 
@@ -1304,7 +1304,7 @@ Bounded   : nrain
 
 Name      : hru_psta
 Module    : precip_laps
-Descr     : Index of base precipitation station for HRU
+Descr     : Index of base precipitation station for each HRU
 Help      : Index of the base precipitation station used for lapse rate calculations for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
@@ -1393,7 +1393,7 @@ Bounded   : nsub
 
 Name      : hru_tlaps
 Module    : temp_sta 
-Descr     : Index of lapse temperature station for HRU
+Descr     : Index of lapse temperature station for each HRU
 Help      : Index of the lapse temperature station used for lapse rate calculations
 Ndimen    : 1
 Dimensions: nhru - 128
@@ -1408,7 +1408,7 @@ Bounded   : ntemp
 
 Name      : hru_tsta
 Module    : climate_hru
-Descr     : Index of base temperature station for HRU
+Descr     : Index of base temperature station for each HRU
 Help      : Index of the base temperature station used for lapse rate calculations
 Ndimen    : 1
 Dimensions: nhru - 128
@@ -1424,7 +1424,7 @@ Bounded   : ntemp
 Name      : hru_type
 Module    : basin
 Descr     : HRU type
-Help      : Type of each HRU (0=inactive; 1=land; 2=lake; 3=swale)
+Help      : Type of each HRU (0=inactive; 1=land; 2=lake; 3=swale; 4=glacier)
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -1524,7 +1524,7 @@ Default   : 0.000000
 Name      : hs_krs
 Module    : potet_hs
 Descr     : Potential ET adjustment factor - Hargreaves-Samani
-Help      : Monthly (January to December) adjustment factor used in Hargreaves-Samani potential ET computations for each HRU
+Help      : Monthly (January to December) multiplicative adjustment factor used in Hargreaves-Samani potential ET computations for each HRU
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -1580,8 +1580,8 @@ Default   : 0.050000
 
 Name      : irr_type
 Module    : intcp
-Descr     : Method of application of water for each application
-Help      : Method of application of water for each application time-series (0=sprinkler (interception applies); 1=furrow/drip (no intercept); 2=ignore)
+Descr     : Application method of irrigation water
+Help      : Application method of irrigation water for each HRU (0 = sprinkler method with interception only; 1=ditch/drip method with no interception; 2=ignore; 3=sprinkler across whole HRU with interception and throughfall; 4=sprinkler method with amount of water applied on the basis of cover density, such as a living filter), for options 1, 2, and 3 irrigation water is specified as an HRU-area weighted average value
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -1602,8 +1602,8 @@ Size      : 1536
 Type      : float
 Units     : per degrees Fahrenheit
 Width     : 0
-Max       : 0.100000
-Min       : 0.000000
+Max       : 1.500000
+Min       : -0.500000
 Default   : 0.014000
 
 Name      : jh_coef_hru
@@ -1651,14 +1651,14 @@ Default   : 0.100000
 Name      : lake_evap_adj
 Module    : soilzone
 Descr     : Monthly potet factor to adjust potet on lakes
-Help      : Monthly (January to December) adjustment factor for potential ET for each lake
+Help      : Monthly (January to December) multiplicative adjustment factor for potential ET for each lake
 Ndimen    : 2
 Dimensions: nmonths - 12, nlake - 0
 Size      : 1
 Type      : float
 Units     : decimal fraction
 Width     : 4
-Max       : 1.000000
+Max       : 1.500000
 Min       : 0.500000
 Default   : 1.000000
 
@@ -1863,12 +1863,12 @@ Default   : -4.000000
 Name      : lat_temp_adj
 Module    : stream_temp
 Descr     : Correction factor to adjust the bias of the temperature of the lateral inflow
-Help      : Correction factor to adjust the bias of the temperature of the lateral inflow
+Help      : Additive correction factor to adjust the bias of the temperature of the lateral inflow
 Ndimen    : 2
 Dimensions: nsegment - 15, nmonths - 12
 Size      : 180
 Type      : float
-Units     : decimal fraction
+Units     : degrees Celsius
 Width     : 4
 Max       : 5.000000
 Min       : -5.000000
@@ -2236,7 +2236,7 @@ Bounded   : nobs
 Name      : padj_rn
 Module    : precip_laps
 Descr     : Rain adjustment factor, by month for each precipitation station
-Help      : Monthly (January to December) factor to adjust precipitation lapse rate computed between station hru_psta and station hru_plaps; positive factors are mutiplied times the lapse rate and negative factors are made positive and substituted for the computed lapse rate
+Help      : Monthly (January to December) factor to adjust rain lapse rate computed between station hru_psta and station hru_plaps; positive factors are mutiplied times the lapse rate and negative factors are made positive and substituted for the computed lapse rate
 Ndimen    : 2
 Dimensions: nrain - 2, nmonths - 12
 Size      : 24
@@ -2250,7 +2250,7 @@ Default   : 1.000000
 Name      : padj_sn
 Module    : precip_laps
 Descr     : Snow adjustment factor, by month for each precipitation station
-Help      : Monthly (January to December) factor to adjust precipitation lapse rate computed between station hru_psta and station hru_plaps; positive factors are mutiplied times the lapse rate and negative factors are made positive and substituted for the computed lapse rate
+Help      : Monthly (January to December) factor to adjust snow lapse rate computed between station hru_psta and station hru_plaps; positive factors are mutiplied times the lapse rate and negative factors are made positive and substituted for the computed lapse rate
 Ndimen    : 2
 Dimensions: nrain - 2, nmonths - 12
 Size      : 24
@@ -2335,7 +2335,7 @@ Bounded   : nsegment
 Name      : potet_cbh_adj
 Module    : climate_hru
 Descr     : Potential ET adjustment factor, by month for each HRU
-Help      : Monthly (January to December) adjustment factor to potential evapotranspiration specified in CBH Files for each HRU
+Help      : Monthly (January to December) multiplicative adjustment factor to potential evapotranspiration specified in CBH Files for each HRU
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -2416,6 +2416,20 @@ Max       : 0.500000
 Min       : 0.000000
 Default   : 0.020000
 
+Name      : ppt_zero_thresh
+Module    : climate_hru
+Descr     : Precipitation below this amount is set to 0.0
+Help      : Precipitation below this amount is set to 0.0
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : precip_units
+Width     : 0
+Max       : 0.100000
+Min       : 0.000000
+Default   : 0.000000
+
 Name      : prcp_wght_dist
 Module    : ide_dist
 Descr     : Weighting function for inverse distance, precipitation
@@ -2446,8 +2460,8 @@ Default   : 0
 
 Name      : pref_flow_den
 Module    : soilzone
-Descr     : Fraction of the soil zone in which preferential flow occurs for each HRU
-Help      : Fraction of the soil zone in which preferential flow occurs for each HRU
+Descr     : Fraction of the gravity reservoir in which preferential flow occurs for each HRU
+Help      : Fraction of the gravity reservoir in which preferential flow occurs for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -2457,6 +2471,20 @@ Width     : 0
 Max       : 0.500000
 Min       : 0.000000
 Default   : 0.000000
+
+Name      : pref_flow_infil_frac
+Module    : soilzone
+Descr     : Fraction of the soilwater infiltration partitioned to the preferential reservoir storage for each HRU
+Help      : Fraction of the soilwater infiltration partitioned to the preferential reservoir storage for each HRU
+Ndimen    : 1
+Dimensions: nhru - 258
+Size      : 258
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 1.000000
+Min       : -1.000000
+Default   : -1.000000
 
 Name      : print_freq
 Module    : basin_sum
@@ -2517,7 +2545,7 @@ Default   : 1
 Name      : psta_mon
 Module    : precip_dist2
 Descr     : Monthly precipitation for each of the nrain precipitation measurement stations
-Help      : Monthly (January to December) factor to precipitation at each measured station to adjust precipitation distributed to each HRU to account for differences in elevation, and so forth
+Help      : Monthly (January to December) factor applied to precipitation at each measured station to adjust precipitation distributed to each HRU to account for differences in elevation, and so forth
 Ndimen    : 2
 Dimensions: nrain - 2, nmonths - 12
 Size      : 24
@@ -2615,7 +2643,7 @@ Default   : 0.000000
 Name      : pt_alpha
 Module    : potet_pt
 Descr     : Potential ET adjustment factor - Priestly-Taylor
-Help      : Monthly (January to December) adjustment factor used in Priestly-Taylor potential ET computations for each HRU
+Help      : Monthly (January to December) multiplicative adjustment factor used in Priestly-Taylor potential ET computations for each HRU
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -2685,7 +2713,7 @@ Default   : 0.000000
 Name      : radj_sppt
 Module    : ddsolrad
 Descr     : Adjustment to solar radiation on precipitation day - summer
-Help      : Adjustment factor for computed solar radiation for summer day with greater than ppt_rad_adj inches of precipitation for each HRU
+Help      : Multiplicative adjustment factor for computed solar radiation for summer day with greater than ppt_rad_adj inches of precipitation for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -2699,7 +2727,7 @@ Default   : 0.440000
 Name      : radj_wppt
 Module    : ddsolrad
 Descr     : Adjustment to solar radiation on precipitation day - winter
-Help      : Adjustment factor for computed solar radiation for winter day with greater than ppt_rad_adj inches of precipitation for each HRU
+Help      : Multiplicative adjustment factor for computed solar radiation for winter day with greater than ppt_rad_adj inches of precipitation for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -2727,21 +2755,21 @@ Default   : 0.800000
 Name      : rain_adj
 Module    : precip_laps
 Descr     : Monthly rain adjustment factor for each HRU
-Help      : Monthly (January to December) factor to adjust measured precipitation on each HRU to account for differences in elevation, and so forth
+Help      : Monthly (January to December) multiplicative factor to adjust measured rain on each HRU to account for differences in elevation, and so forth
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
 Type      : float
 Units     : decimal fraction
 Width     : 4
-Max       : 2.500000
-Min       : 0.500000
+Max       : 10.000000
+Min       : 0.200000
 Default   : 1.000000
 
 Name      : rain_cbh_adj
 Module    : climate_hru
 Descr     : Rain adjustment factor, by month for each HRU
-Help      : Monthly (January to December) adjustment factor to measured precipitation determined to be rain on each HRU to account for differences in elevation, and so forth
+Help      : Monthly (January to December) multiplicative adjustment factor to measured precipitation determined to be rain on each HRU to account for differences in elevation, and so forth
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -2769,7 +2797,7 @@ Default   : 2
 Name      : rain_mon
 Module    : precip_dist2
 Descr     : Rain adjustment factor, by month for each HRU
-Help      : Monthly (January to December) factor to rain on each HRU to adjust precipitation distributed to each HRU to account for differences in elevation, and so forth
+Help      : Monthly (January to December) factor applied to rain on each HRU to adjust precipitation distributed to each HRU to account for differences in elevation, and so forth
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -2890,7 +2918,7 @@ Type      : float
 Units     : inches
 Width     : 0
 Max       : 999.000000
-Min       : 0.000010
+Min       : 0.000000
 Default   : 999.000000
 
 Name      : seg_elev
@@ -2924,7 +2952,7 @@ Default   : 0.700000
 Name      : seg_lat
 Module    : stream_temp
 Descr     : Segment latitude
-Help      : Latitiude of each segment
+Help      : Latitude of each segment
 Ndimen    : 1
 Dimensions: nsegment - 15
 Size      : 15
@@ -2951,8 +2979,8 @@ Default   : 1000.000000
 
 Name      : seg_slope
 Module    : stream_temp
-Descr     : Bed slope of each segment
-Help      : Bed slope of each segment
+Descr     : Surface slope of each segment
+Help      : Surface slope of each segment as approximation for bed slope of stream
 Ndimen    : 1
 Dimensions: nsegment - 15
 Size      : 15
@@ -2960,8 +2988,8 @@ Type      : float
 Units     : decimal fraction
 Width     : 4
 Max       : 2.000000
-Min       : 0.000100
-Default   : 0.015000
+Min       : 0.000000
+Default   : 0.000100
 
 Name      : segment_flow_init
 Module    : muskingum
@@ -3036,7 +3064,7 @@ Default   : 0.100000
 Name      : slowcoef_lin
 Module    : soilzone
 Descr     : Linear gravity-flow reservoir routing coefficient
-Help      : Linear coefficient in equation to route gravity-reservoir storage downslope for each HRU
+Help      : Linear coefficient in equation to route gravity-reservoir storage for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -3050,7 +3078,7 @@ Default   : 0.015000
 Name      : slowcoef_sq
 Module    : soilzone
 Descr     : Non-linear gravity-flow reservoir routing coefficient
-Help      : Non-linear coefficient in equation to route gravity-reservoir storage downslope for each HRU
+Help      : Non-linear coefficient in equation to route gravity-reservoir storage for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -3085,7 +3113,7 @@ Size      : 128
 Type      : float
 Units     : 1.0/inch
 Width     : 0
-Max       : 1.000000
+Max       : 5.000000
 Min       : 0.000000
 Default   : 0.300000
 
@@ -3120,21 +3148,21 @@ Default   : 50.000000
 Name      : snow_adj
 Module    : precip_laps
 Descr     : Monthly snow adjustment factor for each HRU
-Help      : Monthly (January to December) factor to adjust measured precipitation on each HRU to account for differences in elevation, and so forth
+Help      : Monthly (January to December) multiplicative factor to adjust measured snow on each HRU to account for differences in elevation, and so forth
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
 Type      : float
 Units     : decimal fraction
 Width     : 4
-Max       : 2.500000
-Min       : 0.500000
+Max       : 5.000000
+Min       : 0.200000
 Default   : 1.000000
 
 Name      : snow_cbh_adj
 Module    : climate_hru
 Descr     : Snow adjustment factor, by month for each HRU
-Help      : Monthly (January to December) adjustment factor to measured precipitation determined to be snow on each HRU to account for differences in elevation, and so forth
+Help      : Monthly (January to December) multiplicative adjustment factor to measured precipitation determined to be snow on each HRU to account for differences in elevation, and so forth
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -3162,7 +3190,7 @@ Default   : 0.100000
 Name      : snow_mon
 Module    : precip_dist2
 Descr     : Rain adjustment factor, by month for each HRU
-Help      : Monthly (January to December) factor to snow on each HRU to adjust precipitation distributed to each HRU to account for differences in elevation, and so forth
+Help      : Monthly (January to December) factor applied to snow on each HRU to adjust precipitation distributed to each HRU to account for differences in elevation, and so forth
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -3203,8 +3231,8 @@ Default   : 0.000000
 
 Name      : soil2gw_max
 Module    : soilzone
-Descr     : Maximum value for capillary reservoir excess to GWR
-Help      : Maximum amount of the capillary reservoir excess that is routed directly to the GWR for each HRU
+Descr     : Maximum value for capillary reservoir excess to groundwater storage
+Help      : Maximum amount of the capillary reservoir excess that is routed directly to groundwater storage for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -3225,9 +3253,23 @@ Size      : 128
 Type      : float
 Units     : inches
 Width     : 4
-Max       : 10.000000
+Max       : 20.000000
 Min       : 0.000000
 Default   : 3.000000
+
+Name      : soil_moist_init_frac
+Module    : soilzone
+Descr     : Initial fraction available water in the capillary reservoir
+Help      : Initial fraction of available water in the capillary reservoir (fraction of soil_moist_max) for each HRU
+Ndimen    : 1
+Dimensions: nhru - 258
+Size      : 258
+Type      : float
+Units     : decimal fraction
+Width     : 0
+Max       : 1.000000
+Min       : 0.000000
+Default   : 0.000000
 
 Name      : soil_moist_max
 Module    : soilzone
@@ -3239,37 +3281,37 @@ Size      : 128
 Type      : float
 Units     : inches
 Width     : 0
-Max       : 20.000000
-Min       : 0.000010
+Max       : 30.000000
+Min       : 0.000000
 Default   : 2.000000
 
-Name      : soil_rechr_init
-Module    : climateflow
-Descr     : Initial storage of water for soil recharge zone
-Help      : Initial storage for soil recharge zone (upper part of capillary reservoir where losses occur as both evaporation and transpiration) for each HRU; must be less than or equal to soil_moist_init
-Ndimen    : 1
-Dimensions: nhru - 128
-Size      : 128
-Type      : float
-Units     : inches
-Width     : 4
-Max       : 10.000000
-Min       : 0.000000
-Default   : 1.000000
-
-Name      : soil_rechr_max
+Name      : soil_rechr_init_frac
 Module    : soilzone
-Descr     : Maximum storage for soil recharge zone
-Help      : Maximum storage for soil recharge zone (upper portion of capillary reservoir where losses occur as both evaporation and transpiration); must be less than or equal to soil_moist_max
+Descr     : Initial fraction of available water in the soil recharge zone within the capillary reservoir
+Help      : Initial fraction of available water in the capillary reservoir where losses occur as both evaporation and transpiration (upper zone of capillary reservoir) for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
 Type      : float
-Units     : inches
+Units     : decimal fraction
 Width     : 4
-Max       : 5.000000
+Max       : 1.000000
+Min       : 0.000000
+Default   : 0.000000
+
+Name      : soil_rechr_max_frac
+Module    : soilzone
+Descr     : Fraction of capillary reservoir where losses occur as both evaporation and transpiration (soil recharge zone)
+Help      : Fraction of the capillary reservoir water-holding capacity (soil_moist_max) where losses occur as both evaporation and transpiration (upper zone of capillary reservoir) for each HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 1.000000
 Min       : 0.000010
-Default   : 1.500000
+Default   : 1.000000
 
 Name      : soil_type
 Module    : soilzone
@@ -3327,10 +3369,10 @@ Max       : 1.000000
 Min       : 0.000000
 Default   : 0.100000
 
-Name      : sro_to_dprst
+Name      : sro_to_dprst_imperv
 Module    : srunoff_smidx
-Descr     : Fraction of pervious surface runoff that flows into surface-depression storage
-Help      : Fraction of pervious surface runoff that flows into surface-depression storage; the remainder flows to a stream network for each HRU
+Descr     : Fraction of impervious surface runoff that flows into surface-depression storage
+Help      : Fraction of impervious surface runoff that flows into surface-depression storage; the remainder flows to the stream network for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -3341,10 +3383,10 @@ Max       : 1.000000
 Min       : 0.000000
 Default   : 0.200000
 
-Name      : sro_to_dprst_imperv
+Name      : sro_to_dprst_perv
 Module    : srunoff_smidx
-Descr     : Fraction of impervious surface runoff that flows into surface-depression storage
-Help      : Fraction of impervious surface runoff that flows into surface-depression storage; the remainder flows to a stream network for each HRU
+Descr     : Fraction of pervious surface runoff that flows into surface-depression storage
+Help      : Fraction of pervious surface runoff that flows into surface-depression storage; the remainder flows to the stream network for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -3371,8 +3413,8 @@ Default   : 30
 
 Name      : ssr2gw_exp
 Module    : soilzone
-Descr     : Coefficient to route water from subsurface to groundwater
-Help      : Non-linear coefficient in equation used to route water from the gravity reservoir to the GWR for each HRU
+Descr     : Coefficient to route water from subsurface to groundwater storage
+Help      : Non-linear coefficient in equation used to route water from the gravity reservoir to groundwater storage for each HRU
 Ndimen    : 1
 Dimensions: nssr - 128
 Size      : 128
@@ -3385,8 +3427,8 @@ Default   : 1.000000
 
 Name      : ssr2gw_rate
 Module    : soilzone
-Descr     : Coefficient to route water from gravity reservoir to GWR
-Help      : Linear coefficient in equation used to route water from the gravity reservoir to the GWR for each HRU
+Descr     : Coefficient to route water from gravity reservoir to groundwater storage
+Help      : Linear coefficient in equation used to route water from the gravity reservoir to groundwater storage for each HRU
 Ndimen    : 1
 Dimensions: nssr - 128
 Size      : 128
@@ -3397,17 +3439,17 @@ Max       : 1.000000
 Min       : 0.000100
 Default   : 0.100000
 
-Name      : ssstor_init
-Module    : climateflow
-Descr     : Initial storage in each GVR and PFR
-Help      : Initial storage of the gravity and preferential-flow reservoirs for each HRU
+Name      : ssstor_init_frac
+Module    : soilzone
+Descr     : Initial fraction of available water in the gravity plus preferential-flow reservoirs
+Help      : Initial fraction of available water in the gravity plus preferential-flow reservoirs (fraction of sat_threshold) for each HRU
 Ndimen    : 1
 Dimensions: nssr - 128
 Size      : 128
 Type      : float
-Units     : inches
+Units     : decimal fraction
 Width     : 4
-Max       : 5.000000
+Max       : 1.000000
 Min       : 0.000000
 Default   : 0.000000
 
@@ -3622,6 +3664,20 @@ Max       : 75.000000
 Min       : -8.000000
 Default   : 38.000000
 
+Name      : tmax_allrain_offset
+Module    : climate_hru
+Descr     : Precipitation is rain if HRU max temperature >= tmax_allsnow + this value
+Help      : Monthly (January to December) maximum air temperature when precipitation is assumed to be rain; if HRU air temperature is greater than or equal to tmax_allsnow plus this value, precipitation is rain
+Ndimen    : 2
+Dimensions: nhru - 158, nmonths - 12
+Size      : 3096
+Type      : float
+Units     : temp_units
+Width     : 0
+Max       : 50.000000
+Min       : 0.000000
+Default   : 1.000000
+
 Name      : tmax_allrain_sta
 Module    : ide_dist
 Descr     : Precipitation is rain if HRU max temperature >= this value
@@ -3681,7 +3737,7 @@ Default   : 32.000000
 Name      : tmax_cbh_adj
 Module    : climate_hru
 Descr     : Monthly maximum temperature adjustment factor for each HRU
-Help      : Monthly (January to December) adjustment factor to maximum air temperature for each HRU, estimated on the basis of slope and aspect
+Help      : Monthly (January to December) additive adjustment factor to maximum air temperature for each HRU, estimated on the basis of slope and aspect
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -3765,7 +3821,7 @@ Default   : 0.000000
 Name      : tmin_cbh_adj
 Module    : climate_hru
 Descr     : Monthly minimum temperature adjustment factor for each HRU
-Help      : Monthly (January to December) adjustment factor to minimum air temperature for each HRU, estimated on the basis of slope and aspect
+Help      : Monthly (January to December) additive adjustment factor to minimum air temperature for each HRU, estimated on the basis of slope and aspect
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
@@ -3814,8 +3870,8 @@ Size      : 15
 Type      : long
 Units     : none
 Width     : 4
-Max       : 1000000
-Min       : -11
+Max       : 9999999
+Min       : 0
 Default   : 0
 
 Name      : transp_beg
@@ -3835,7 +3891,7 @@ Default   : 1
 Name      : transp_end
 Module    : transp_tindex
 Descr     : Month to stop transpiration period
-Help      : Month to stop transpiration computations; transpiration is computed thru end of previous month
+Help      : Month to stop transpiration computations; transpiration is computed through the end of previous month
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -3989,7 +4045,7 @@ Default   : 0
 Name      : va_clos_exp
 Module    : srunoff_smidx
 Descr     : Coefficient in the exponential equation to compute current surface area of closed surface-depression storage
-Help      : Coefficient in the exponential equation relating maximum surface area to the fraction that closed depressions are full to compute current surface area for each HRU; 0.001 is an approximate rectangle; 1.0 is a triangle
+Help      : Coefficient in the exponential equation relating maximum surface area to the fraction that closed depressions are full to compute current surface area for each HRU; 0.001 is an approximate cylinder; 1.0 is a cone
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -4003,7 +4059,7 @@ Default   : 0.001000
 Name      : va_open_exp
 Module    : srunoff_smidx
 Descr     : Coefficient in the exponential equation to compute current surface area of open surface-depression storage
-Help      : Coefficient in the exponential equation relating maximum surface area to the fraction that open depressions are full to compute current surface area for each HRU; 0.001 is an approximate rectangle; 1.0 is a triangle
+Help      : Coefficient in the exponential equation relating maximum surface area to the fraction that open depressions are full to compute current surface area for each HRU; 0.001 is an approximate cylinder; 1.0 is a cone
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -4183,32 +4239,32 @@ Min       : 1.000000
 Default   : 5.000000
 
 Name      : width_alpha
-Module    : stream_temp
+Module    : strmflow_character
 Descr     : Alpha coefficient in power function for width calculation
-Help      : Alpha coefficient in power function for width calculation
+Help      : Alpha coefficient in power function for width calculation (for units M and CMS)
 Ndimen    : 1
 Dimensions: nsegment - 15
 Size      : 15
 Type      : float
-Units     : unknown
+Units     : meters
 Width     : 4
-Max       : 2.000000
-Min       : 0.000100
-Default   : 0.015000
+Max       : 20.200001
+Min       : 2.600000
+Default   : 7.200000
 
 Name      : width_m
-Module    : stream_temp
+Module    : strmflow_character
 Descr     : M value in power function for width calculation
-Help      : M value in power function for width calculation
+Help      : M value in power function for width calculation (for units M and CMS)
 Ndimen    : 1
 Dimensions: nsegment - 15
 Size      : 15
 Type      : float
-Units     : unknown
+Units     : none
 Width     : 4
-Max       : 2.000000
-Min       : 0.000100
-Default   : 0.015000
+Max       : 0.520000
+Min       : 0.480000
+Default   : 0.500000
 
 Name      : wrain_intcp
 Module    : intcp
