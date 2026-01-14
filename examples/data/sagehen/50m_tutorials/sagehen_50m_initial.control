@@ -28,7 +28,7 @@ GSFLOW model
 executable_model
 1
 4
-prmsIV.exe
+HydroGRID.exe
 ####
 gsflow_output_file
 1
@@ -38,7 +38,7 @@ gsflow.out
 model_mode
 1
 4
-GSFLOW5
+GSFLOW
 ####
 parameter_check_flag
 1
@@ -55,15 +55,10 @@ rpt_days
 1
 7
 ####
-snarea_curve_flag
-1
-1
-0
-####
 soilzone_aet_flag
 1
 1
-0
+1
 ####
 solrad_module
 1
@@ -78,7 +73,7 @@ srunoff_smidx
 start_time
 6
 1
-1975
+1982
 10
 1
 0

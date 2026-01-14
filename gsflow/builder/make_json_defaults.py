@@ -100,7 +100,6 @@ defaults = {
         "canopy_flag": {"dtype": 1, "record": 1},
         "et_module": {"dtype": 4, "record": "potet_jh"},
         "precip_module": {"dtype": 4, "record": "precip_1sta"},
-        "snarea_curve_flag": {"dtype": 1, "record": 0},
         "soilzone_aet_flag": {"dtype": 1, "record": 1},
         "solrad_module": {"dtype": 4, "record": "ddsolrad"},
         "srunoff_module": {"dtype": 4, "record": "srunoff_smidx"},
