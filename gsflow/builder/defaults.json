@@ -155,10 +155,50 @@
         },
         "parameters": {
             "adjmix_rain": {
-                "dimension": "nmonths",
+                "dimension": [
+                    [
+                        "nhru",
+                        "nmonths"
+                    ]
+                ],
                 "dtype": 2,
                 "record": [
-                    1.0
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ],
+                    [
+                        1.0
+                    ]
                 ]
             },
             "albset_rna": {
@@ -866,6 +906,13 @@
                 "dtype": 2,
                 "record": [
                     0.0
+                ]
+            },
+            "tmax_allrain_offset": {
+                "dimension": "nmonths",
+                "dtype": 2,
+                "record": [
+                        15.0
                 ]
             },
             "tmax_index": {
