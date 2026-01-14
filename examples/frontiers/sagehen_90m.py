@@ -481,7 +481,7 @@ if __name__ == "__main__":
     gsf.control.add_record("data_file", values=["sagehen_90m.data",])
     gsf.control.add_record("srunoff_module", values=["srunoff_smidx"])
     gsf.control.add_record("model_output_file", values=["gsflow_sagehen_90.out"])
-    gsf.control.set_values("model_mode", values=["GSFLOW5"])
+    gsf.control.set_values("model_mode", values=["GSFLOW"])
     gsf.control.set_values("subbasin_flag", values=[0,])
     gsf.control.set_values("parameter_check_flag", values=[0, ])
     gsf.control.add_record("statsON_OFF", values=[1])

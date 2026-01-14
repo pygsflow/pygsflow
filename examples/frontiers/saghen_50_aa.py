@@ -522,7 +522,7 @@ if __name__ == "__main__":
         ],
     )
     gsf.control.add_record("srunoff_module", values=["srunoff_smidx"])
-    gsf.control.set_values("model_mode", values=["GSFLOW5"])
+    gsf.control.set_values("model_mode", values=["GSFLOW"])
     gsf.control.set_values(
         "subbasin_flag",
         values=[
