@@ -812,8 +812,9 @@ class ParameterRecord(RecordBase):
         fid.write("####\n")
         fid.write(self.name)
         fid.write(" ")
-        if self.width is not None:
-            fid.write("{}\n".format(self.width))
+#        if self.width is not None:
+#            fid.write("{}\n".format(self.width))
+        fid.write("\n")
         # write number of dimension
         fid.write(str(self.ndim))
         # write dimension names
@@ -897,8 +898,8 @@ class ParameterRecord(RecordBase):
                 "####",
                 "\n",
                 self.name,
-                " ",
-                str(self.width),
+#                " ",
+#                str(self.width),
                 "\n",
                 str(self.ndim),
                 "\n",

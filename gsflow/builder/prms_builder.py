@@ -246,14 +246,14 @@ class PrmsBuilder(object):
                 replace=True,
             )
 
-            params.add_record(
-                name=rname.replace("hru", "gw"),
-                values=values,
-                dimensions=[["ncascdgw", self.cascades_obj.ncascade]],
-                datatype=1,
-                file_name=name,
-                replace=True,
-            )
+            #params.add_record(
+            #    name=rname.replace("hru", "gw"),
+            #    values=values,
+            #    dimensions=[["ncascdgw", self.cascades_obj.ncascade]],
+            #    datatype=1,
+            #    file_name=name,
+            #    replace=True,
+            #)
 
         params.add_record(
             name="hru_pct_up",
@@ -264,14 +264,14 @@ class PrmsBuilder(object):
             replace=True,
         )
 
-        params.add_record(
-            name="gw_pct_up",
-            values=self.cascades_obj.hru_pct_up,
-            dimensions=[["ncascdgw", self.cascades_obj.ncascade]],
-            datatype=2,
-            file_name=name,
-            replace=True,
-        )
+        #params.add_record(
+        #    name="gw_pct_up",
+        #    values=self.cascades_obj.hru_pct_up,
+        #    dimensions=[["ncascdgw", self.cascades_obj.ncascade]],
+        #    datatype=2,
+        #    file_name=name,
+        #    replace=True,
+        #)
 
         if len(np.unique(self.hru_subbasin)) == 2:
             params.add_record(
@@ -285,13 +285,13 @@ class PrmsBuilder(object):
             )
 
         # add gvr linkage
-        for t in ("cell", "hru"):
-            params.add_record(
-                f"gvr_{t}_id",
-                values=list(range(1, nhru + 1)),
-                dimensions=[["nhrucell", nhru]],
-                datatype=1,
-                file_name=name,
-            )
+        #for t in ("cell", "hru"):
+        #    params.add_record(
+        #        f"gvr_{t}_id",
+        #        values=list(range(1, nhru + 1)),
+        #        dimensions=[["nhrucell", nhru]],
+        #        datatype=1,
+        #        file_name=name,
+        #    )
 
         return params

@@ -22,6 +22,10 @@ Name  : ncascdgw
 Value : 317
 Desc  : Number of GWR links for cascading flow
 
+Name  : ncbh
+Value : 0
+Desc  : Number of values in each CBH File (active HRUs)
+
 Name  : nconsumed
 Value : 0
 Desc  : Number of consumptive water-use destinations
@@ -86,6 +90,10 @@ Name  : nlake
 Value : 0
 Desc  : Number of lakes
 
+Name  : nlake_hrus
+Value : 0
+Desc  : Number of lake HRUs
+
 Name  : nlakeelev
 Value : 0
 Desc  : Maximum number of lake elevations for any rating table data set
@@ -93,6 +101,14 @@ Desc  : Maximum number of lake elevations for any rating table data set
 Name  : nlapse
 Value : 3
 Desc  : Number of lapse rates in X, Y, and Z directions
+
+Name  : nmap
+Value : 0
+Desc  : Number of mapped values
+
+Name  : nmap2hru
+Value : 0
+Desc  : Number of intersections between HRUs and input climate map
 
 Name  : nmonths
 Value : 12
@@ -150,6 +166,10 @@ Name  : nstage4
 Value : 0
 Desc  : Maximum number of lake elevations values (rows) for lake rating table 4
 
+Name  : nstreamtemp
+Value : 0
+Desc  : Number of stream temperature replacement segments
+
 Name  : nsub
 Value : 2
 Desc  : Number of internal subbasins
@@ -185,6 +205,20 @@ Max       : 24.000000
 Min       : 0.010000
 Default   : 1.000000
 
+Name      : abl_elev_range
+Module    : glacr_melt
+Descr     : Average HRU snowfield ablation zones elevation range
+Help      : Average HRU snowfield ablation zones elevation range or ~ median-min elev
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : elev_units
+Width     : 4
+Max       : 17000.000000
+Min       : 0.000000
+Default   : 1000.000000
+
 Name      : adjmix_rain
 Module    : climate_hru
 Descr     : Adjustment factor for rain in a rain/snow mix
@@ -216,7 +250,7 @@ Default   : -0.400000
 Name      : adjust_snow
 Module    : xyz_dist
 Descr     : Monthly (January to December) snow downscaling adjustment factor for each precipitation measurement station
-Help      : Monthly (January to December) snow downscaling adjustment factor for each precipitation measurement station
+Help      : Monthly (January to December) multiplicative snow downscaling adjustment factor for each precipitation measurement station
 Ndimen    : 2
 Dimensions: nrain - 2, nmonths - 12
 Size      : 24
@@ -240,6 +274,34 @@ Width     : 4
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.100000
+
+Name      : albedo_coef
+Module    : snowcomp
+Descr     : Coefficient in calculation of ice albedo
+Help      : Coefficient in calculation of ice albedo
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : none
+Width     : 4
+Max       : 0.300000
+Min       : 0.100000
+Default   : 0.137000
+
+Name      : albedo_ice
+Module    : snowcomp
+Descr     : Ice albedo 300 meters below ELA
+Help      : Ice albedo 300 meters below ELA
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 0.600000
+Min       : 0.200000
+Default   : 0.344000
 
 Name      : albset_rna
 Module    : snowcomp
@@ -467,6 +529,34 @@ Max       : 20.000000
 Min       : 0.020000
 Default   : 5.000000
 
+Name      : cfgi_decay
+Module    : srunoff_smidx
+Descr     : CFGI daily decay of index; value of 1.0 is no decay
+Help      : CFGI daily decay of index; value of 1.0 is no decay
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 1.000000
+Min       : 0.010000
+Default   : 0.970000
+
+Name      : cfgi_thrshld
+Module    : srunoff_smidx
+Descr     : CFGI threshold value indicating frozen soil
+Help      : CFGI threshold value indicating frozen soil
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : index
+Width     : 4
+Max       : 500.000000
+Min       : 1.000000
+Default   : 52.549999
+
 Name      : circle_switch
 Module    : cascade
 Descr     : Switch to check for circles
@@ -635,6 +725,34 @@ Max       : 0.800000
 Min       : 0.100000
 Default   : 0.600000
 
+Name      : depth_alpha
+Module    : strmflow_character
+Descr     : Alpha coefficient in power function for depth calculation
+Help      : Alpha coefficient in power function for depth calculation (for units M and CMS)
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : float
+Units     : meters
+Width     : 4
+Max       : 0.630000
+Min       : 0.120000
+Default   : 0.270000
+
+Name      : depth_m
+Module    : strmflow_character
+Descr     : M value in power function for depth calculation
+Help      : M value in power function for depth calculation (for units M and CMS)
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : float
+Units     : meters
+Width     : 4
+Max       : 0.400000
+Min       : 0.380000
+Default   : 0.390000
+
 Name      : dist_exp
 Module    : ide_dist
 Descr     : Exponent for inverse distance calculations
@@ -718,6 +836,20 @@ Width     : 4
 Max       : 0.500000
 Min       : 0.000010
 Default   : 0.050000
+
+Name      : dprst_frac
+Module    : basin
+Descr     : Fraction of each HRU area that has surface depressions
+Help      : Fraction of each HRU area that has surface depressions
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : decimal fraction
+Width     : 0
+Max       : 0.999000
+Min       : 0.000000
+Default   : 0.000000
 
 Name      : dprst_frac_hru
 Module    : basin
@@ -890,7 +1022,7 @@ Default   : 0.100000
 Name      : fastcoef_sq
 Module    : soilzone
 Descr     : Non-linear preferential-flow routing coefficient
-Help      : Non-linear coefficient in equation used to route preferential-flow storage downslope for each HRU
+Help      : Non-linear coefficient in equation used to route preferential-flow storage for each HRU
 Ndimen    : 1
 Dimensions: nhru - 128
 Size      : 128
@@ -928,6 +1060,90 @@ Width     : 4
 Max       : 32.000000
 Min       : -10.000000
 Default   : 28.000000
+
+Name      : glacier_frac_init
+Module    : snowcomp
+Descr     : Initial fraction of glaciation (0=none; 1=100%) in glacier-capable HRU
+Help      : Initial fraction of glaciation (0=none; 1=100%) in glacier-capable HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 1.000000
+Min       : 0.000000
+Default   : 0.000000
+
+Name      : glacr_freeh2o_cap
+Module    : snowcomp
+Descr     : Free-water holding capacity of glacier ice
+Help      : Free-water holding capacity of glacier ice expressed as a decimal fraction of the frozen water content of the glacier ice (glacr_pk_ice)
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 0.010000
+Min       : 0.000000
+Default   : 0.002000
+
+Name      : glacr_layer
+Module    : snowcomp
+Descr     : Active layer on glacier
+Help      : Active layer is 0 to 15 m (590.6 inches) thick at start of year, when melts will set daily glacr_pk_temp to 0
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : inches
+Width     : 4
+Max       : 590.599976
+Min       : 0.000000
+Default   : 3.940000
+
+Name      : glacrva_coef
+Module    : glacr_melt
+Descr     : Volume area scaling coefficient for glaciers with Luthi 2009
+Help      : Volume area scaling coefficient for glaciers, average value by region
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : m**(3-2*glacrva_exp)
+Width     : 4
+Max       : 2.000000
+Min       : 0.010000
+Default   : 0.280000
+
+Name      : glacrva_exp
+Module    : glacr_melt
+Descr     : Volume area exponential coefficient for glaciers
+Help      : Volume area exponential coefficient for glaciers, average value by region
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : none
+Width     : 4
+Max       : 2.000000
+Min       : 1.000000
+Default   : 1.375000
+
+Name      : glrette_frac_init
+Module    : snowcomp
+Descr     : Initial fraction of glacierette (too small for glacier dynamics)
+Help      : Initial fraction of glacierette  (too small for glacier dynamics)
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 1.000000
+Min       : 0.000000
+Default   : 0.000000
 
 Name      : gvr_cell_id
 Module    : gsflow_prms
@@ -1143,6 +1359,35 @@ Max       : 0.008000
 Min       : 0.004000
 Default   : 0.005500
 
+Name      : hru2map_id
+Module    : temp_map
+Descr     : HRU identification number for each HRU to mapped spatial units intersection
+Help      : HRU identification number for each HRU to mapped spatial units intersection
+Ndimen    : 1
+Dimensions: nmap2hru - 0
+Size      : 1
+Type      : long
+Units     : none
+Width     : 4
+Max       : 128
+Min       : 0
+Default   : 1
+Bounded   : nhru
+
+Name      : hru2map_pct
+Module    : temp_map
+Descr     : Portion of HRU associated with each HRU to map intersection
+Help      : Portion of HRU associated with each HRU to map intersection
+Ndimen    : 1
+Dimensions: nmap2hru - 0
+Size      : 1
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 1.000000
+Min       : 0.000000
+Default   : 0.000000
+
 Name      : hru_area
 Module    : basin
 Descr     : HRU area
@@ -1243,6 +1488,34 @@ Width     : 0
 Max       : 90.000000
 Min       : -90.000000
 Default   : 40.000000
+
+Name      : hru_length
+Module    : glacr_melt
+Descr     : Length of segment covering all of glacier-possible HRU
+Help      : Length of segment covering all of glacier-possible HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : km
+Width     : 4
+Max       : 10000.000000
+Min       : 0.000000
+Default   : 0.000000
+
+Name      : hru_lon
+Module    : setup_param
+Descr     : HRU longitude
+Help      : Longitude of each HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : degrees East
+Width     : 4
+Max       : 360.000000
+Min       : -360.000000
+Default   : -105.000000
 
 Name      : hru_pansta
 Module    : potet_jh
@@ -1449,6 +1722,20 @@ Max       : 128
 Min       : 0
 Default   : 0
 Bounded   : nhru
+
+Name      : hru_width
+Module    : glacr_melt
+Descr     : Width of glacier-possible HRU
+Help      : Width of glacier-possible HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : km
+Width     : 4
+Max       : 10000.000000
+Min       : 0.000000
+Default   : 0.000000
 
 Name      : hru_windspeed_sta
 Module    : potet_pm_sta
@@ -1874,6 +2161,35 @@ Max       : 5.000000
 Min       : -5.000000
 Default   : 0.000000
 
+Name      : mann_n
+Module    : routing
+Descr     : Mannings roughness coefficient
+Help      : Mannings roughness coefficient for each segment
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : float
+Units     : dimensionless
+Width     : 4
+Max       : 0.150000
+Min       : 0.001000
+Default   : 0.040000
+
+Name      : map2hru_id
+Module    : temp_map
+Descr     : Mapped spatial unit identification number for each HRU to map intersection
+Help      : Mapped spatial unit identification number for each HRU to map intersection
+Ndimen    : 1
+Dimensions: nmap2hru - 0
+Size      : 1
+Type      : long
+Units     : none
+Width     : 4
+Max       : 0
+Min       : 0
+Default   : 0
+Bounded   : nmap
+
 Name      : mapvars_freq
 Module    : map_results
 Descr     : Mapped results frequency
@@ -1901,6 +2217,20 @@ Width     : 4
 Max       : 3
 Min       : 0
 Default   : 0
+
+Name      : max_gldepth
+Module    : glacr_melt
+Descr     : Upper bound on glacier thickness, thickest glacier measured is Taku at 1.5 km, ice sheet 3 km
+Help      : Upper bound on glacier thickness, thickest glacier measured is Taku at 1.5 km, ice sheet 3 km
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : km
+Width     : 4
+Max       : 3.000000
+Min       : 0.100000
+Default   : 1.500000
 
 Name      : max_lapse
 Module    : xyz_dist
@@ -2444,6 +2774,20 @@ Max       : 1.000000
 Min       : 0.000000
 Default   : 0.500000
 
+Name      : precip_map_adj
+Module    : precip_map
+Descr     : Monthly rain adjustment factor for each mapped spatial unit
+Help      : Monthly (January to December) multiplicative adjustment factor to mapped precipitation to account for differences in elevation, and so forth
+Ndimen    : 2
+Dimensions: nmap - 0, nmonths - 12
+Size      : 1
+Type      : float
+Units     : decimal fraction
+Width     : 4
+Max       : 2.000000
+Min       : 0.500000
+Default   : 1.000000
+
 Name      : precip_units
 Module    : climate_hru
 Descr     : Units for measured precipitation
@@ -2921,6 +3265,20 @@ Max       : 999.000000
 Min       : 0.000000
 Default   : 999.000000
 
+Name      : seg_depth
+Module    : routing
+Descr     : Segment river depth
+Help      : Segment river depth at bankfull; shallowest depth from Blackburn-Lynch (2017);Congo is deepest at 250 m but in the US it is probably the Hudson at 66 m
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : float
+Units     : meters
+Width     : 4
+Max       : 250.000000
+Min       : 0.030000
+Default   : 1.000000
+
 Name      : seg_elev
 Module    : stream_temp
 Descr     : Segment elevation at midpoint
@@ -3004,6 +3362,21 @@ Width     : 4
 Max       : 10000000.000000
 Min       : 0.000000
 Default   : 0.000000
+
+Name      : segment_outflow_id
+Module    : segment_to_hru
+Descr     : Identification number of HRU that receives outflow from a segment
+Help      : Identification number of HRU that receives outflow from a segment
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : long
+Units     : none
+Width     : 4
+Max       : 128
+Min       : 0
+Default   : 0
+Bounded   : nhru
 
 Name      : segment_type
 Module    : routing
@@ -3117,6 +3490,48 @@ Max       : 5.000000
 Min       : 0.000000
 Default   : 0.300000
 
+Name      : snarea_a
+Module    : snowcomp
+Descr     : Snow area depletion curve minimum SWE value
+Help      : Snow area depletion curve minimum SWE value for each HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : inches
+Width     : 4
+Max       : 1.000000
+Min       : 0.000000
+Default   : 0.000000
+
+Name      : snarea_b
+Module    : snowcomp
+Descr     : Snow area depletion S-curve coefficient B
+Help      : Snow area depletion S-curve coefficient B for each HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : none
+Width     : 4
+Max       : 20.000000
+Min       : 0.500000
+Default   : 2.000000
+
+Name      : snarea_c
+Module    : snowcomp
+Descr     : Snow area depletion S-curve coefficient C
+Help      : Snow area depletion S-curve coefficient C for each HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : none
+Width     : 4
+Max       : 3.000000
+Min       : 0.001000
+Default   : 1.500000
+
 Name      : snarea_curve
 Module    : snowcomp
 Descr     : Snow area depletion curve values
@@ -3130,6 +3545,20 @@ Width     : 0
 Max       : 1.000000
 Min       : 0.000000
 Default   : 1.000000
+
+Name      : snarea_d
+Module    : snowcomp
+Descr     : Snow area depletion S-curve coefficient D
+Help      : Snow area depletion S-curve coefficient D for each HRU
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : float
+Units     : none
+Width     : 4
+Max       : 3.000000
+Min       : 0.000000
+Default   : 0.975000
 
 Name      : snarea_thresh
 Module    : snowcomp
@@ -3453,6 +3882,62 @@ Max       : 1.000000
 Min       : 0.000000
 Default   : 0.000000
 
+Name      : stor_firn
+Module    : glacr_melt
+Descr     : Monthly Storage coefficient for firn melt on glaciers
+Help      : Monthly (January to December) Storage coefficient for firn melt on glaciers
+Ndimen    : 2
+Dimensions: nhru - 128, nmonths - 12
+Size      : 3096
+Type      : float
+Units     : hours
+Width     : 4
+Max       : 1000.000000
+Min       : 150.000000
+Default   : 400.000000
+
+Name      : stor_ice
+Module    : glacr_melt
+Descr     : Monthly Storage coefficient for ice melt on glaciers
+Help      : Monthly (January to December) Storage coefficient for ice melt on glaciers
+Ndimen    : 2
+Dimensions: nhru - 128, nmonths - 12
+Size      : 3096
+Type      : float
+Units     : hours
+Width     : 4
+Max       : 29.000000
+Min       : 5.000000
+Default   : 10.000000
+
+Name      : stor_snow
+Module    : glacr_melt
+Descr     : Monthly Storage coefficient for snow melt on glaciers
+Help      : Monthly (January to December) Storage coefficient for snow melt on glaciers
+Ndimen    : 2
+Dimensions: nhru - 128, nmonths - 12
+Size      : 3096
+Type      : float
+Units     : hours
+Width     : 4
+Max       : 149.000000
+Min       : 30.000000
+Default   : 80.000000
+
+Name      : stream_tave_init
+Module    : stream_temp
+Descr     : Initial average stream temperature in each segment
+Help      : Initial average stream temperature in each segment at the beginning of a simulation
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : float
+Units     : degrees Celsius
+Width     : 4
+Max       : 100.000000
+Min       : -10.000000
+Default   : 0.000000
+
 Name      : subbasin_down
 Module    : subbasin
 Descr     : Downstream subbasin for each subbasin
@@ -3579,6 +4064,21 @@ Width     : 4
 Max       : 1000.000000
 Min       : -100.000000
 Default   : 5.000000
+
+Name      : tempIN_segment
+Module    : stream_temp
+Descr     : Index of streamflow temperature in Data File that replaces temperature in a segment
+Help      : Index of streamflow temperature in Data File that replaces temperature in a segment
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : long
+Units     : none
+Width     : 4
+Max       : 0
+Min       : 0
+Default   : 0
+Bounded   : nstreamtemp
 
 Name      : temp_units
 Module    : climate_hru
@@ -3790,6 +4290,20 @@ Max       : 20.000000
 Min       : -20.000000
 Default   : 3.000000
 
+Name      : tmax_map_adj
+Module    : temp_map
+Descr     : Monthly maximum temperature adjustment factor for each mapped spatial unit
+Help      : Monthly (January to December) additive adjustment factor to maximum air temperature for each mapped, spatial unit estimated on the basis of slope and aspect
+Ndimen    : 2
+Dimensions: nmap - 0, nmonths - 12
+Size      : 1
+Type      : float
+Units     : temp_units
+Width     : 4
+Max       : 10.000000
+Min       : -10.000000
+Default   : 0.000000
+
 Name      : tmin_add
 Module    : xyz_dist
 Descr     : Minimum temperature additive term for the air-temperature-measurement station transformation transform
@@ -3859,6 +4373,35 @@ Width     : 4
 Max       : 20.000000
 Min       : -20.000000
 Default   : 3.000000
+
+Name      : tmin_map_adj
+Module    : temp_map
+Descr     : Monthly minimum temperature adjustment factor for each mapped spatial unit
+Help      : Monthly (January to December) additive adjustment factor to minimum air temperature for each mapped spatial unit, estimated on the basis of slope and aspect
+Ndimen    : 2
+Dimensions: nmap - 0, nmonths - 12
+Size      : 1
+Type      : float
+Units     : temp_units
+Width     : 4
+Max       : 10.000000
+Min       : -10.000000
+Default   : 0.000000
+
+Name      : tohru
+Module    : glacr_melt
+Descr     : The index of the down-flowline HRU for a glacier
+Help      : Index of down-flowline HRU to which the HRU glacier melt flows, for non-glacier HRUs that do not flow to another HRU enter 0
+Ndimen    : 1
+Dimensions: nhru - 128
+Size      : 128
+Type      : long
+Units     : none
+Width     : 4
+Max       : 128
+Min       : 0
+Default   : 0
+Bounded   : nhru
 
 Name      : tosegment
 Module    : routing
