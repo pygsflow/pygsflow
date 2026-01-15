@@ -472,19 +472,19 @@ if __name__ == "__main__":
     param_obj.add_record_object(tmax_adj, replace=True)
     param_obj.add_record_object(tmin_adj, replace=True)
     param_obj.add_record_object(jh_coef, replace=True)
- #   param_obj.add_record(
- #       "outlet_sta",
- #       values=[
- #           outlet_sta[0] + 1,
- #       ],
- #       dimensions=[["one", 1]],
- #       datatype=1,
- #   )
+    #   param_obj.add_record(
+    #       "outlet_sta",
+    #       values=[
+    #           outlet_sta[0] + 1,
+    #       ],
+    #       dimensions=[["one", 1]],
+    #       datatype=1,
+    #   )
     param_obj.add_record(
         "id_obsrunoff",
         values=[
-#            id_obsrunoff[0] + 1,
-                1
+            #            id_obsrunoff[0] + 1,
+            1
         ],
         dimensions=[["one", 1]],
         datatype=1,
@@ -589,14 +589,14 @@ if __name__ == "__main__":
     #snowinfil_max = gsf.prms.parameters.get_values("snowinfil_max")
     #snowinfil_max = snowinfil_max * 5.0
     #gsf.prms.parameters.set_values("snowinfil_max", values=snowinfil_max)
-    #smidx_coef = gsf.prms.parameters.get_values("smidx_coef")
+    smidx_coef = gsf.prms.parameters.get_values("smidx_coef")
     #smidx_coef = smidx_coef / 100.0
     #smidx_exp = gsf.prms.parameters.get_values("smidx_exp")
     #smidx_exp = smidx_exp / 100.0
     #carea_max = gsf.prms.parameters.get_values("carea_max")
     #carea_max = carea_max / 100.0
     gsf.prms.parameters.set_values("smidx_coef", values=smidx_coef)
-    gsf.prms.parameters.set_values("smidx_exp", values=smidx_exp)
+    #gsf.prms.parameters.set_values("smidx_exp", values=smidx_exp)
     #gsf.prms.parameters.set_values("carea_max", values=carea_max)
     # interflow
     #slowcoef_sq = gsf.prms.parameters.get_values("slowcoef_sq")
