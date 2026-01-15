@@ -226,6 +226,11 @@
                 "dtype": 1,
                 "record": 1
             },
+            "outlet_sta": {
+                "dimension": "one",
+                "dtype": 1,
+                "record": 1
+            },
             "carea_max": {
                 "dimension": "one",
                 "dtype": 2,
@@ -541,7 +546,7 @@
             "max_missing": {
                 "dimension": "one",
                 "dtype": 1,
-                "record": 7
+                "record": 3
             },
             "melt_force": {
                 "dimension": "one",
@@ -606,7 +611,7 @@
                 "dimension": "nmonths",
                 "dtype": 2,
                 "record": [
-                    1.0
+                    0.0
                 ]
             },
             "radj_sppt": {

@@ -195,8 +195,8 @@ if __name__ == "__main__":
     covden_sum_remap = os.path.join(iws, "..", "remaps", "landfire", "covdensum.rmp")
     covden_win_remap = os.path.join(iws, "..", "remaps", "landfire", "covdenwin.rmp")
     root_depth_remap = os.path.join(iws, "..", "remaps", "landfire", "rtdepth.rmp")
-    snow_intcp_remap = os.path.join(iws, "..", "remaps", "landfire", "snow_intcp.rmp")
-    srain_intcp_remap = os.path.join(iws, "..", "remaps", "landfire", "srain_intcp.rmp")
+    #snow_intcp_remap = os.path.join(iws, "..", "remaps", "landfire", "snow_intcp.rmp")
+    #srain_intcp_remap = os.path.join(iws, "..", "remaps", "landfire", "srain_intcp.rmp")
 
     climate_dataframe = os.path.join(iws, "climate", "sagehen_climate.csv")
     climate_lapse_rates = os.path.join(iws, "climate", "sagehen_lapse_rates.csv")
@@ -342,8 +342,8 @@ if __name__ == "__main__":
     covden_sum_lut = build_lut(covden_sum_remap)
     covden_win_lut = build_lut(covden_win_remap)
     root_depth_lut = build_lut(root_depth_remap)
-    snow_intcp_lut = build_lut(snow_intcp_remap)
-    srain_intcp_lut = build_lut(srain_intcp_remap)
+    #snow_intcp_lut = build_lut(snow_intcp_remap)
+    #srain_intcp_lut = build_lut(srain_intcp_remap)
 
     # read in "climate dataframe"
     cdf = pd.read_csv(climate_dataframe)
@@ -354,18 +354,18 @@ if __name__ == "__main__":
     covden_sum = bu.covden_sum(veg_cov, covden_sum_lut)
     covden_win = bu.covden_win(covtype.values, covden_win_lut)
     rad_trncf = bu.rad_trncf(covden_win.values)
-    snow_intcp = bu.snow_intcp(veg_type, snow_intcp_lut)
-    srain_intcp = bu.srain_intcp(veg_type, srain_intcp_lut)
-    wrain_intcp = bu.wrain_intcp(veg_type, snow_intcp_lut)
+    #snow_intcp = bu.snow_intcp(veg_type, snow_intcp_lut)
+    #srain_intcp = bu.srain_intcp(veg_type, srain_intcp_lut)
+    #wrain_intcp = bu.wrain_intcp(veg_type, snow_intcp_lut)
 
     # add veg to param_obj
     param_obj.add_record_object(covtype, True)
     param_obj.add_record_object(covden_sum, True)
     param_obj.add_record_object(covden_win, True)
     param_obj.add_record_object(rad_trncf, True)
-    param_obj.add_record_object(snow_intcp, True)
-    param_obj.add_record_object(srain_intcp, True)
-    param_obj.add_record_object(wrain_intcp, True)
+    #param_obj.add_record_object(snow_intcp, True)
+    #param_obj.add_record_object(srain_intcp, True)
+    #param_obj.add_record_object(wrain_intcp, True)
 
     # build soil parameters
     root_depth = bu.root_depth(veg_type, root_depth_lut)
@@ -376,37 +376,37 @@ if __name__ == "__main__":
 
     soil_type = bu.soil_type(clay, sand)
     soil_moist_max = bu.soil_moist_max(awc, root_depth)
-    soil_moist_init = bu.soil_moist_init(soil_moist_max.values)
-    soil_rech_max = bu.soil_rech_max(awc, root_depth)
+    #soil_moist_init = bu.soil_moist_init(soil_moist_max.values)
+    #soil_rech_max = bu.soil_rech_max(awc, root_depth)
     ssr2gw_rate = bu.ssr2gw_rate(ksat, sand, soil_moist_max.values)
-    ssr2gw_sq = bu.ssr2gw_exp(nhru)
-    soil_rech_init = bu.soil_rech_init(soil_rech_max.values)
+    #ssr2gw_sq = bu.ssr2gw_exp(nhru)
+    #soil_rech_init = bu.soil_rech_init(soil_rech_max.values)
     slowcoef_lin = bu.slowcoef_lin(ksat, hru_aspect.values, cellsize, cellsize)
 
-    slowcoef_sq = bu.slowcoef_sq(
-        ksat, hru_aspect.values, sand, soil_moist_max.values, cellsize, cellsize
-    )
+    #slowcoef_sq = bu.slowcoef_sq(
+    #    ksat, hru_aspect.values, sand, soil_moist_max.values, cellsize, cellsize
+    #)
 
     # add soil parameters to prms object
     param_obj.add_record_object(hru_slope, replace=True)
     param_obj.add_record_object(hru_aspect, replace=True)
     param_obj.add_record_object(soil_type, replace=True)
     param_obj.add_record_object(soil_moist_max, replace=True)
-    param_obj.add_record_object(soil_moist_init, replace=True)
-    param_obj.add_record_object(soil_rech_max, replace=True)
-    param_obj.add_record_object(soil_rech_init, replace=True)
+    #param_obj.add_record_object(soil_moist_init, replace=True)
+    #param_obj.add_record_object(soil_rech_max, replace=True)
+    #param_obj.add_record_object(soil_rech_init, replace=True)
     param_obj.add_record_object(ssr2gw_rate, replace=True)
-    param_obj.add_record_object(ssr2gw_sq, replace=True)
+    #param_obj.add_record_object(ssr2gw_sq, replace=True)
     param_obj.add_record_object(slowcoef_lin, replace=True)
-    param_obj.add_record_object(slowcoef_sq, replace=True)
+    #param_obj.add_record_object(slowcoef_sq, replace=True)
 
     # imperviousness parameters
     hru_percent_imperv = bu.hru_percent_imperv(impervious)
-    carea_max = bu.carea_max(impervious)
+    #carea_max = bu.carea_max(impervious)
 
     # add imperv to prms obj
     param_obj.add_record_object(hru_percent_imperv, replace=True)
-    param_obj.add_record_object(carea_max, replace=True)
+    #param_obj.add_record_object(carea_max, replace=True)
 
     # climate parameters
     param_obj.add_record(
@@ -415,9 +415,9 @@ if __name__ == "__main__":
             1,
         ],
     )
-    outlet_sta = modelgrid.intersect(pour_point[0][0], pour_point[0][1])
-    outlet_sta = modelgrid.get_node([(0,) + outlet_sta])
-    print(outlet_sta)
+    #outlet_sta = modelgrid.intersect(pour_point[0][0], pour_point[0][1])
+    #outlet_sta = modelgrid.get_node([(0,) + outlet_sta])
+    #print(outlet_sta)
 
     cdf = bu.add_prms_date_columns_to_df(cdf, "date")
     cdf.rename(
@@ -472,18 +472,19 @@ if __name__ == "__main__":
     param_obj.add_record_object(tmax_adj, replace=True)
     param_obj.add_record_object(tmin_adj, replace=True)
     param_obj.add_record_object(jh_coef, replace=True)
-    param_obj.add_record(
-        "outlet_sta",
-        values=[
-            outlet_sta[0] + 1,
-        ],
-        dimensions=[["one", 1]],
-        datatype=1,
-    )
+ #   param_obj.add_record(
+ #       "outlet_sta",
+ #       values=[
+ #           outlet_sta[0] + 1,
+ #       ],
+ #       dimensions=[["one", 1]],
+ #       datatype=1,
+ #   )
     param_obj.add_record(
         "id_obsrunoff",
         values=[
-            outlet_sta[0] + 1,
+#            id_obsrunoff[0] + 1,
+                1
         ],
         dimensions=[["one", 1]],
         datatype=1,
@@ -507,14 +508,14 @@ if __name__ == "__main__":
     gsf = GsflowModel(control=control_obj, prms=prms, mf=ml)
 
     gsf.control.set_values("start_time", [1982, 10, 1, 0, 0, 0])
-    gsf.control.add_record("end_time", values=[1996, 9, 31, 0, 0, 0])
+    #gsf.control.add_record("end_time", values=[1996, 9, 31, 0, 0, 0])
     gsf.control.add_record(
         "print_debug",
         values=[
             0,
         ],
     )
-    gsf.control.add_record("modflow_time_zero", values=[1982, 10, 1, 0, 0, 0])
+    #gsf.control.add_record("modflow_time_zero", values=[1982, 10, 1, 0, 0, 0])
     gsf.control.add_record(
         "data_file",
         values=[
@@ -559,47 +560,48 @@ if __name__ == "__main__":
     tmin_lapse = tmin_lapse + 1.2  # 0.7
     gsf.prms.parameters.set_values("tmax_lapse", values=tmax_lapse)
     gsf.prms.parameters.set_values("tmin_lapse", values=tmin_lapse)
-    max_missing = gsf.prms.parameters.get_values("max_missing")
-    max_missing = max_missing * 2
-    gsf.prms.parameters.set_values("max_missing", values=max_missing)
+    #max_missing = gsf.prms.parameters.get_values("max_missing")
+    #max_missing = max_missing * 2
+    #gsf.prms.parameters.set_values("max_missing", values=max_missing)
     # snow
     tmax_allsnow = gsf.prms.parameters.get_values("tmax_allsnow")
     tmax_allsnow[:] = 0.7
     gsf.prms.parameters.set_values("tmax_allsnow", values=tmax_allsnow)
-    value = [2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1]
-    gsf.prms.parameters.add_record(
-        "tmax_allrain_offset", values=value, dimensions=[("nmonths", 12)]
-    )
+    #value = [2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1]
+    #gsf.prms.parameters.add_record(
+    #    "tmax_allrain_offset", values=value, dimensions=[("nmonths", 12)]
+    #)
     covden_win = gsf.prms.parameters.get_values("covden_win")
     rad_trncf = gsf.prms.parameters.get_values("rad_trncf")
     rad_trncf = 0.8 * covden_win  # correlated to covden_win
     gsf.prms.parameters.set_values("rad_trncf", values=rad_trncf)
     # ET
     soil_moist_max = gsf.prms.parameters.get_values("soil_moist_max")
-    soil_moist_max = soil_moist_max * 3.0
+    #soil_moist_max = soil_moist_max * 3.0
+    soil_moist_max = soil_moist_max
     gsf.prms.parameters.set_values("soil_moist_max", values=soil_moist_max)
-    value = [0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03]
-    gsf.prms.parameters.add_record(
-        "jh_coef", values=value, dimensions=[("nmonths", 12)]
-    )
+    #value = [0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03]
+    #gsf.prms.parameters.add_record(
+    #    "jh_coef", values=value, dimensions=[("nmonths", 12)]
+    #)
 
     # runoff
-    snowinfil_max = gsf.prms.parameters.get_values("snowinfil_max")
-    snowinfil_max = snowinfil_max * 5.0
-    gsf.prms.parameters.set_values("snowinfil_max", values=snowinfil_max)
-    smidx_coef = gsf.prms.parameters.get_values("smidx_coef")
-    smidx_coef = smidx_coef / 100.0
-    smidx_exp = gsf.prms.parameters.get_values("smidx_exp")
-    smidx_exp = smidx_exp / 100.0
-    carea_max = gsf.prms.parameters.get_values("carea_max")
-    carea_max = carea_max / 100.0
+    #snowinfil_max = gsf.prms.parameters.get_values("snowinfil_max")
+    #snowinfil_max = snowinfil_max * 5.0
+    #gsf.prms.parameters.set_values("snowinfil_max", values=snowinfil_max)
+    #smidx_coef = gsf.prms.parameters.get_values("smidx_coef")
+    #smidx_coef = smidx_coef / 100.0
+    #smidx_exp = gsf.prms.parameters.get_values("smidx_exp")
+    #smidx_exp = smidx_exp / 100.0
+    #carea_max = gsf.prms.parameters.get_values("carea_max")
+    #carea_max = carea_max / 100.0
     gsf.prms.parameters.set_values("smidx_coef", values=smidx_coef)
     gsf.prms.parameters.set_values("smidx_exp", values=smidx_exp)
-    gsf.prms.parameters.set_values("carea_max", values=carea_max)
+    #gsf.prms.parameters.set_values("carea_max", values=carea_max)
     # interflow
-    slowcoef_sq = gsf.prms.parameters.get_values("slowcoef_sq")
-    slowcoef_sq = slowcoef_sq * 0.1
-    gsf.prms.parameters.set_values("slowcoef_sq", values=slowcoef_sq)
+    #slowcoef_sq = gsf.prms.parameters.get_values("slowcoef_sq")
+    #slowcoef_sq = slowcoef_sq * 0.1
+    #gsf.prms.parameters.set_values("slowcoef_sq", values=slowcoef_sq)
     slowcoef_lin = gsf.prms.parameters.get_values("slowcoef_lin")
     slowcoef_lin = slowcoef_lin * 3.0
     gsf.prms.parameters.set_values("slowcoef_lin", values=slowcoef_lin)
@@ -607,12 +609,13 @@ if __name__ == "__main__":
     ssr2gw_rate = gsf.prms.parameters.get_values("ssr2gw_rate")
     ssr2gw_rate = ssr2gw_rate * 500.0
     gsf.prms.parameters.set_values("ssr2gw_rate", values=ssr2gw_rate)
-    sat_threshold = gsf.prms.parameters.get_values("sat_threshold")
-    sat_threshold = sat_threshold / 3
-    gsf.prms.parameters.set_values("sat_threshold", values=sat_threshold)
+    #sat_threshold = gsf.prms.parameters.get_values("sat_threshold")
+    #sat_threshold = sat_threshold / 3
+    #sat_threshold = soil_moist_max * 3
+    #gsf.prms.parameters.set_values("sat_threshold", values=sat_threshold)
 
     # clean unused parameters
-    par_to_remove = ["gw_up_id", "gw_down_id", "gw_strmseg_down_id", "gw_pct_up"]
+    par_to_remove = ["gw_up_id", "gw_down_id", "gw_strmseg_down_id", "gw_pct_up", "hru_subbasin"]
     for par_ in par_to_remove:
         gsf.prms.parameters.remove_record(par_)
 
