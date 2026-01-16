@@ -607,7 +607,8 @@ if __name__ == "__main__":
     gsf.prms.parameters.set_values("slowcoef_lin", values=slowcoef_lin)
     # Recharge
     ssr2gw_rate = gsf.prms.parameters.get_values("ssr2gw_rate")
-    ssr2gw_rate = ssr2gw_rate * 500.0
+    #ssr2gw_rate = ssr2gw_rate * 500.0
+    ssr2gw_rate = ssr2gw_rate  * ( 0.1 )
     gsf.prms.parameters.set_values("ssr2gw_rate", values=ssr2gw_rate)
     #sat_threshold = gsf.prms.parameters.get_values("sat_threshold")
     #sat_threshold = sat_threshold / 3

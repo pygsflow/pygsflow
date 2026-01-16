@@ -197,10 +197,10 @@ Desc  : Number of wind-speed measurement stations
 Name  : one
 Value : 1
 Desc  : Dimension of scalar parameters and variables
+
 Name  : seven
 Value : 7
 Desc  : Need for keeping glacier variable real array 
-
 --------------- PARAMETERS ---------------
 
 Name      : K_coef
