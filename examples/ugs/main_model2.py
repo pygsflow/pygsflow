@@ -23,6 +23,7 @@ class Model_info:
     pass
 sample_grid = True  # make true if first time running
 # hold all the model info
+
 mi = Model_info()
 mi.ws = os.path.abspath(os.path.dirname(__file__))
 mi.iws = Path(mi.ws).parent/'data'/'geospatial'
@@ -36,12 +37,12 @@ mi.resampled_dem = os.path.join(mi.ows,
 
 mi.usg_model_ws = Path(mi.ws)/'ugmodel'
 mi.usg_base_name = "usg_sagehen"
+mi.gridgen_exe = r"C:\Users\sregan\Workspace\bin\gridgen.exe"
 
 mi.stream_threshold = 810000  # m3 of drainage area
 mi.cellsize = 50
-mi.fine_model_ws = (r"C:\workspace\projects\gsflow6\scripts\sagehen"
-                    r"\example\temp")
-mi.fine_model_fn = os.path.join(mi.fine_model_ws, 
+mi.fine_model_ws = (r"C:\Users\sregan\Workspace\git_repositories\pygsflow\examples\frontiers\temp")
+mi.fine_model_fn = os.path.join(mi.fine_model_ws,
                                  "sagehen_50m.nam")
 mi.fine_control_file = os.path.join(mi.fine_model_ws, 
                                      "sagehen_50m_cont.control")

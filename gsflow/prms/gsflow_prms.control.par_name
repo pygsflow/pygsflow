@@ -3845,7 +3845,7 @@ Module    : soilzone
 Descr     : Coefficient to route water from subsurface to groundwater storage
 Help      : Non-linear coefficient in equation used to route water from the gravity reservoir to groundwater storage for each HRU
 Ndimen    : 1
-Dimensions: nssr - 128
+Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : none

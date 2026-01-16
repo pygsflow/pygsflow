@@ -469,14 +469,14 @@
                 ]
             },
             "hru_psta": {
-                "dimension": "nhru",
+                "dimension": "one",
                 "dtype": 1,
                 "record": [
                     1
                 ]
             },
             "hru_tsta": {
-                "dimension": "nhru",
+                "dimension": "one",
                 "dtype": 1,
                 "record": [
                     1

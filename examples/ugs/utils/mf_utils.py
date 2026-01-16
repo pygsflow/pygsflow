@@ -3,7 +3,8 @@ import pandas as pd
 from shapely.geometry import LineString, Point
 from shapely.geometry import Polygon, LineString
 from shapely.strtree import STRtree
-from gridutil import plot_grid
+from utils.gridutil import plot_grid
+
 import matplotlib.pyplot as plt
 
 

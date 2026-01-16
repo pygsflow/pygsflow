@@ -407,8 +407,9 @@ def create_oct_tree_grid(mi, stream_buffer_distance=100.0):
     ms = mi.fine_gsf.mf
     dis = mi.fine_gsf.mf.dis
     source_grid = grid_from_structured_dis(mi.fine_gsf.mf.dis)
+    gridgen_exe = mi.gridgen_exe
     #ms.modelgrid.set_coord_info(crs=mi.fine_gsf.mf.crs)
-    g = Gridgen(ms.modelgrid, model_ws=gridgen_ws)
+    g = Gridgen(ms.modelgrid, model_ws=gridgen_ws, exe_name= gridgen_exe)
 
     # Convert watershed mask to polygon boundary
     mi.watershed = prms_utils.get_prms_watershed(mi.fine_gsf)

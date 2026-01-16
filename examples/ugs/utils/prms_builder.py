@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 import flopy
 import gsflow
-import gridutil
+from utils import gridutil
+from utils.gridutil import plot_grid
 from gsflow import (PrmsParameters, ParameterRecord, PrmsData, PrmsModel,
 ControlFile, GsflowModel)
 from gsflow.builder import (
@@ -226,13 +227,14 @@ def modify_unstrutured_prms(mi, param_list):
         if par.name in to_be_removed_params:
             continue
 
-        elif par.name in ['cascade_flg']:
-            par.values = np.array([0])
-            new_param_list.append(par)
+        #elif par.name in ['cascade_flg']:
+        #    par.values = np.array([0])
+        #    new_param_list.append(par)
 
-        elif par.name in ['cascade_tol']:
-            par.values = np.array([0.0])
-            new_param_list.append(par)
+
+        # elif par.name in ['cascade_tol']:
+        #     par.values = np.array([0.0])
+        #     new_param_list.append(par)
 
         elif par.name in ['hru_up_id']:
             dims = [[par.dimensions_names[0], nhrus_new]]
@@ -259,61 +261,61 @@ def modify_unstrutured_prms(mi, param_list):
                                 datatype= 2)
             new_param_list.append(par1)
         
-        elif par.name in ['gvr_cell_pct']:
-            dims = [['nhrucell', nhrus_new]]
-            par1 = ParameterRecord(name= 'gvr_cell_pct',
-                                values= np.ones(nhrus_new),
-                                dimensions=dims,
-                                datatype= 2)
-            new_param_list.append(par1)
+        # elif par.name in ['gvr_cell_pct']:
+        #     dims = [['nhrucell', nhrus_new]]
+        #     par1 = ParameterRecord(name= 'gvr_cell_pct',
+        #                         values= np.ones(nhrus_new),
+        #                         dimensions=dims,
+        #                         datatype= 2)
+        #     new_param_list.append(par1)
+        #
+        # elif par.name in ['gvr_hru_id']:
+        #     dims = [['nhrucell', nhrus_new]]
+        #     par1 = ParameterRecord(name= 'gvr_hru_id',
+        #                         values= 1+np.arange(nhrus_new),
+        #                         dimensions=dims,
+        #                         datatype= 1)
+        #     new_param_list.append(par1)
         
-        elif par.name in ['gvr_hru_id']:
-            dims = [['nhrucell', nhrus_new]]
-            par1 = ParameterRecord(name= 'gvr_hru_id',
-                                values= 1+np.arange(nhrus_new),
-                                dimensions=dims,
-                                datatype= 1)
-            new_param_list.append(par1)
-        
-        elif par.name in ['gvr_cell_id']:
-            dims = [['nhrucell', nhrus_new]]
-            par1 = ParameterRecord(name= 'gvr_cell_id',
-                                values= 1+np.arange(nhrus_new),
-                                dimensions=dims,
-                                datatype= 1)
-            new_param_list.append(par1)
-        
-        elif par.name in ['gvr_hru_pct']:
-            dims = [['nhrucell', nhrus_new]]
-            par1 = ParameterRecord(name= 'gvr_hru_pct',
-                                values= nhrus_new*[1.0],
-                                dimensions=dims,
-                                datatype= 2)
-            new_param_list.append(par1)
+        # elif par.name in ['gvr_cell_id']:
+        #     dims = [['nhrucell', nhrus_new]]
+        #     par1 = ParameterRecord(name= 'gvr_cell_id',
+        #                         values= 1+np.arange(nhrus_new),
+        #                         dimensions=dims,
+        #                         datatype= 1)
+        #     new_param_list.append(par1)
+        #
+        # elif par.name in ['gvr_hru_pct']:
+        #     dims = [['nhrucell', nhrus_new]]
+        #     par1 = ParameterRecord(name= 'gvr_hru_pct',
+        #                         values= nhrus_new*[1.0],
+        #                         dimensions=dims,
+        #                         datatype= 2)
+        #     new_param_list.append(par1)
 
-        elif par.name in ['smidx_coef']:
-            par.values = np.array(nhrus_new*[0.005])
-            new_param_list.append(par)
+        # elif par.name in ['smidx_coef']:
+        #     par.values = np.array(nhrus_new*[0.005])
+        #     new_param_list.append(par)
 
-        elif par.name in ['smidx_exp']:
-            par.values = np.array(nhrus_new*[0.3])
-            new_param_list.append(par)
-        
-        elif par.name in ['snowinfil_max']:
-            par.values = np.array(nhrus_new*[2.0])
-            new_param_list.append(par)
-        
-        elif par.name in ['max_missing']:
-            par.values = np.array([3])
-            new_param_list.append(par)
-        
-        elif par.name in ['sat_threshold']:
-            par.values = np.array(nhrus_new*[999.0])
-            new_param_list.append(par)
-        
-        elif par.name in ['radadj_slope']:
-            par.values = np.array(12*[0.0])
-            new_param_list.append(par)
+        # elif par.name in ['smidx_exp']:
+        #     par.values = np.array(nhrus_new*[0.3])
+        #     new_param_list.append(par)
+        #
+        # elif par.name in ['snowinfil_max']:
+        #     par.values = np.array(nhrus_new*[2.0])
+        #     new_param_list.append(par)
+        #
+        # elif par.name in ['max_missing']:
+        #     par.values = np.array([3])
+        #     new_param_list.append(par)
+        #
+        # elif par.name in ['sat_threshold']:
+        #     par.values = np.array(nhrus_new*[999.0])
+        #     new_param_list.append(par)
+        #
+        # elif par.name in ['radadj_slope']:
+        #     par.values = np.array(12*[0.0])
+        #     new_param_list.append(par)
  
         else:
             new_param_list.append(par)

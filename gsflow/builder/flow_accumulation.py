@@ -824,10 +824,10 @@ class FlowAccumulation(object):
 
         if not many2many:
             hru_up_id, hru_down_id, hru_pct_up = self._build_nidp(cascades=True)
-            cascade_flag = 1
+            cascade_flg = 1
         else:
             hru_up_id, hru_down_id, hru_pct_up = self._build_many2many_cascades(streams, breach)
-            cascade_flag = 0
+            cascade_flg = 0
         # add the watershed outlet hru to cascades_ids
         hru_up_id.append(self._wpp)
         hru_down_id.append(self._wpp)
@@ -866,7 +866,7 @@ class FlowAccumulation(object):
         hru_down_id += 1
 
         return _Cascades(
-            hru_up_id, hru_down_id, hru_pct_up, hru_strmseg_down_id, cascade_flag
+            hru_up_id, hru_down_id, hru_pct_up, hru_strmseg_down_id, cascade_flg
         )
 
     def _build_many2many_cascades(self, streams, breach=0.0):

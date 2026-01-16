@@ -380,7 +380,7 @@ def ssr2gw_rate(ksat, sand, soil_moist_max):
         "ssr2gw_rate",
         values,
         dimensions=[
-            ["nssr", values.size],
+            ["nhru", values.size],
         ],
         datatype=2,
     )
@@ -404,7 +404,7 @@ def ssr2gw_exp(nhru):
         "ssr2gw_sq",
         values,
         dimensions=[
-            ["nssr", nhru],
+            ["nhru", nhru],
         ],
         datatype=2,
     )
