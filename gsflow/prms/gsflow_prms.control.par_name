@@ -10,6 +10,10 @@ Sagehen Parameter File with 128 HRUs, 201 reaches, segments, cascading flow
 
 --------------- DIMENSIONS ---------------
 
+Name  : four
+Value : 4
+Desc  : Need for keeping glacier variable integer array
+
 Name  : mxnsos
 Value : 0
 Desc  : Maximum number of storage/outflow table values for storage-detention reservoirs and lakes connected to the stream network using Puls routing
@@ -65,6 +69,10 @@ Desc  : Maximum number of reservoir gate-opening values (columns) for lake ratin
 Name  : ngate4
 Value : 0
 Desc  : Maximum number of reservoir gate-opening values (columns) for lake rating table 4
+
+Name  : nglres
+Value : 3
+Desc  : Number of reservoirs in a glacier
 
 Name  : ngw
 Value : 128
@@ -189,6 +197,10 @@ Desc  : Number of wind-speed measurement stations
 Name  : one
 Value : 1
 Desc  : Dimension of scalar parameters and variables
+Name  : seven
+Value : 7
+Desc  : Need for keeping glacier variable real array 
+
 --------------- PARAMETERS ---------------
 
 Name      : K_coef
@@ -473,6 +485,20 @@ Max       : 1
 Min       : 0
 Default   : 0
 
+Name      : cascade_min
+Module    : cascade
+Descr     : Cascade minimum
+Help      : Minimum depth of interflow + Dunnian flow to cascade
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : inches
+Width     : 0
+Max       : 0.01
+Min       : 0.000000
+Default   : 0.000001
+
 Name      : cascade_tol
 Module    : cascade
 Descr     : Cascade area below which a cascade link is ignored
@@ -486,6 +512,21 @@ Width     : 0
 Max       : 99.000000
 Min       : 0.000000
 Default   : 0.000000
+
+Name      : cbh_hru_id
+Module    : climate_hru
+Descr     : HRU identification number associated with each value in CBH File
+Help      : HRU identification number associated with each value in CBH File
+Ndimen    : 1
+Dimensions: ncbh - 128
+Size      : 128
+Type      : long
+Units     : none
+Width     : 4
+Max       : 128
+Min       : 1
+Default   : 1
+Bounded   : ntemp
 
 Name      : ccov_intcp
 Module    : ccsolrad
@@ -1215,7 +1256,7 @@ Width     : 0
 Max       : 128
 Min       : 0
 Default   : 0
-Bounded   : ngw
+Bounded   : nhru
 
 Name      : gw_pct_up
 Module    : cascade
@@ -1236,7 +1277,7 @@ Module    : gwflow
 Descr     : Linear coefficient to compute seepage and groundwater discharge to and from associated lake HRUs
 Help      : Linear coefficient in equation to compute lakebed seepage to the GWR and groundwater discharge to each lake using broad-crested weir routing or gate opening routing
 Ndimen    : 1
-Dimensions: ngw - 128
+Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : fraction/day
@@ -1287,14 +1328,14 @@ Width     : 0
 Max       : 128
 Min       : 0
 Default   : 0
-Bounded   : ngw
+Bounded   : nhru
 
 Name      : gwflow_coef
 Module    : gwflow
 Descr     : Groundwater routing coefficient
 Help      : Linear coefficient in the equation to compute groundwater discharge for each GWR
 Ndimen    : 1
-Dimensions: ngw - 128
+Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : fraction/day
@@ -1308,7 +1349,7 @@ Module    : gwflow
 Descr     : Groundwater sink coefficient
 Help      : Linear coefficient in the equation to compute outflow to the groundwater sink for each GWR
 Ndimen    : 1
-Dimensions: ngw - 128
+Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : fraction/day
@@ -1322,7 +1363,7 @@ Module    : gwflow
 Descr     : Initial storage in each GWR
 Help      : Storage in each GWR at the beginning of a simulation
 Ndimen    : 1
-Dimensions: ngw - 128
+Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : inches
@@ -1336,7 +1377,7 @@ Module    : gwflow
 Descr     : Minimum storage in each GWR
 Help      : Minimum storage in each GWR to ensure storage is greater than specified value to account for inflow from deep aquifers or injection wells with the water source outside the basin
 Ndimen    : 1
-Dimensions: ngw - 128
+Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : inches
@@ -1807,6 +1848,36 @@ Width     : 4
 Max       : 1000000000.000000
 Min       : -1000000000.000000
 Default   : 0.000000
+
+Name      : hru2map_id
+Module    : precip_map
+Descr     : Identification number for each HRU to mapped spatial units intersection
+Help      : Identification number for each HRU to mapped spatial units intersection
+Ndimen    : 1
+Dimensions: ntemp - 1
+Size      : 1
+Type      : long
+Units     : none
+Width     : 0
+Max       : 1
+Min       : 0
+Default   : 0
+Bounded   : ntemp
+
+Name      : hru2map_pct
+Module    : precip_map
+Descr     : Portion of HRU associated with each HRU to map intersection
+Help      : Portion of HRU associated with each HRU to map intersection
+Ndimen    : 1
+Dimensions: ntemp - 1
+Size      : 1
+Type      : float
+Units     : decimal fraction
+Width     : 0
+Max       : 1.0
+Min       : 0.0
+Default   : 0.0
+Bounded   : ntemp
 
 Name      : hs_krs
 Module    : potet_hs
@@ -3265,6 +3336,21 @@ Max       : 999.000000
 Min       : 0.000000
 Default   : 999.000000
 
+Name      : seg_close
+Module    : stream_tmep
+Descr     : Soil saturation threshold, above field-capacity threshold
+Help      : Index of closest segment from elevation and latitude for each a segment, if not specified, seg_close defaults to the upstream segment
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : long
+Units     : none
+Width     : 0
+Max       : 15
+Min       : -1
+Default   : -1
+Bounded   : nsegment
+
 Name      : seg_depth
 Module    : routing
 Descr     : Segment river depth
@@ -3672,20 +3758,6 @@ Max       : 5.000000
 Min       : 0.000000
 Default   : 0.000000
 
-Name      : soil_moist_init
-Module    : climateflow
-Descr     : Initial value of available water in capillary reservoir
-Help      : Initial value of available water in capillary reservoir for each HRU
-Ndimen    : 1
-Dimensions: nhru - 128
-Size      : 128
-Type      : float
-Units     : inches
-Width     : 4
-Max       : 20.000000
-Min       : 0.000000
-Default   : 3.000000
-
 Name      : soil_moist_init_frac
 Module    : soilzone
 Descr     : Initial fraction available water in the capillary reservoir
@@ -3859,7 +3931,7 @@ Module    : soilzone
 Descr     : Coefficient to route water from gravity reservoir to groundwater storage
 Help      : Linear coefficient in equation used to route water from the gravity reservoir to groundwater storage for each HRU
 Ndimen    : 1
-Dimensions: nssr - 128
+Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : fraction/day
@@ -3873,7 +3945,7 @@ Module    : soilzone
 Descr     : Initial fraction of available water in the gravity plus preferential-flow reservoirs
 Help      : Initial fraction of available water in the gravity plus preferential-flow reservoirs (fraction of sat_threshold) for each HRU
 Ndimen    : 1
-Dimensions: nssr - 128
+Dimensions: nhru - 128
 Size      : 128
 Type      : float
 Units     : decimal fraction
@@ -4108,6 +4180,21 @@ Max       : 1.000000
 Min       : 0.000000
 Default   : 0.500000
 
+Name      : tempIN_segment
+Module    : stream_temp
+Descr     : Index of streamflow temperature in Data File that replaces temperature in a segment
+Help      : Index of streamflow temperature in Data File that replaces temperature in a segment
+Ndimen    : 1
+Dimensions: nsegment - 15
+Size      : 15
+Type      : long
+Units     : none
+Width     : 4
+Max       : 15
+Min       : 0
+Default   : 0
+bounded   : nstreamtemp
+
 Name      : tmax_add
 Module    : xyz_dist
 Descr     : Maximum temperature additive term for climate station transform
@@ -4136,19 +4223,19 @@ Max       : 10.000000
 Min       : -10.000000
 Default   : 0.000000
 
-Name      : tmax_allrain
-Module    : climate_hru
-Descr     : Precipitation is rain if HRU max temperature >= this value
-Help      : Monthly (January to December) maximum air temperature when precipitation is assumed to be rain; if HRU air temperature is greater than or equal to this value, precipitation is rain
+Name      : tmax_adj_offset
+Module    : xyz_dist
+Descr     : HRU maximum temperature adjustment as offset from tmin_adj
+Help      : Monthly (January to December) additive adjustment to maximum temperature for each HRU as offset from tmin_adj, estimated on the basis of slope and aspect
 Ndimen    : 2
 Dimensions: nhru - 128, nmonths - 12
 Size      : 1536
 Type      : float
 Units     : temp_units
 Width     : 4
-Max       : 75.000000
-Min       : -8.000000
-Default   : 38.000000
+Max       : 50.000000
+Min       : 0.0
+Default   : 0.0
 
 Name      : tmax_allrain_dist
 Module    : xyz_dist
@@ -4248,6 +4335,20 @@ Max       : 10.000000
 Min       : -10.000000
 Default   : 0.000000
 
+Name      : tmax_cbh_adj_offset
+Module    : climate_hru
+Descr     : Monthly maximum temperature adjustment factor as an offset from tmin_cbh_adj for each HRU
+Help      : Monthly (January to December) additive adjustment factor to maximum air temperature as an offset from tmin_cbh_adj for each HRU, estimated based on slope and aspect
+Ndimen    : 2
+Dimensions: nhru - 128, nmonths - 12
+Size      : 1536
+Type      : float
+Units     : temp_units
+Width     : 0
+Max       : 50.000000
+Min       : 0.0
+Default   : 0.0
+
 Name      : tmax_div
 Module    : xyz_dist
 Descr     : Maximum temperature divisor term for climate station transform
@@ -4303,6 +4404,20 @@ Width     : 4
 Max       : 10.000000
 Min       : -10.000000
 Default   : 0.000000
+
+Name      : tmax_map_adj_offset
+Module    : temp_map
+Descr     : Monthly maximum temperature adjustment factor as an offset from tmin_map_adj for each mapped spatial unit
+Help      : Monthly (January to December) additive adjustment factor to maximum air temperature as an offset from tmin_map_adj for each mapped, spatial unit estimated on the basis of slope and aspect
+Ndimen    : 2
+Dimensions: nmap - 0, nmonths - 12
+Size      : 1
+Type      : float
+Units     : temp_units
+Width     : 4
+Max       : 50.000000
+Min       : 0.0
+Default   : 0.0
 
 Name      : tmin_add
 Module    : xyz_dist
