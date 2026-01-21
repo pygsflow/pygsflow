@@ -16,9 +16,9 @@ def test_empty_control_record():
 
 
 def test_build_parameter_record():
-    name = "ssr2gw_rate 0"
+    name = "ssr2gw_rate"
     values = np.random.randn(128)
-    dimensions = [["nssr", 128]]
+    dimensions = [["nhru", 128]]
     datatype = 2
     pr = ParameterRecord(name, values=values, dimensions=dimensions,
                          datatype=datatype)

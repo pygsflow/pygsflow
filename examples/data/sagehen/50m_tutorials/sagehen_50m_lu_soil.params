@@ -1213698,7 +1213698,7 @@ nssr
 1.0
 1.0
 ####
-sstor_init 10
+ssstor_init 10
 1
 nssr
 20562
@@ -1234266,7 +1234266,7 @@ nssr
 0.0
 0.0
 ####
-sstor_init_frac 10
+ssstor_init_frac 10
 1
 nssr
 20562
