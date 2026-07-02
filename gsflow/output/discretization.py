@@ -139,7 +139,9 @@ class PrmsDiscretization(object):
         return self._xypts[hru - 1]
 
     @staticmethod
-    def load_from_flopy(model, xll=None, yll=None, rotation=None):
+    def load_from_flopy(
+            model, xll=None, yll=None, rotation=None, gvr_cell_id=None
+    ):
         """
         Method to load discretization from a flopy model
 
@@ -152,6 +154,9 @@ class PrmsDiscretization(object):
             yoffset for modflow grid
         rotation : float, optional
             rotation for modflow grid
+        gvr_cell_id : PrmsParameter or iterable
+            optional gvr_cell_id information for reordering discretization when
+            PRMS and MODFLOW have inconsistent grid numbering
 
         Returns
         -------
@@ -160,6 +165,10 @@ class PrmsDiscretization(object):
         """
         import flopy
         from gsflow.modflow import Modflow
+
+        if gvr_cell_id is not None:
+            if hasattr(gvr_cell_id, "values"):
+                gvr_cell_id = gvr_cell_id.values
 
         if not isinstance(model, flopy.modflow.Modflow) or not isinstance(
             model, Modflow
@@ -193,7 +202,13 @@ class PrmsDiscretization(object):
                 ]
                 xypts.append(t)
 
-        return PrmsDiscretization(xypts)
+        reordered_xypts = []
+        if gvr_cell_id is not None:
+            for gvr_id in gvr_cell_id:
+                reordered_xypts.append(xypts[gvr_id] - 1)
+            return PrmsDiscretization(reordered_xypts)
+        else:
+            return PrmsDiscretization(xypts)
 
     @staticmethod
     def load_from_shapefile(shp, hru_id="hru_id"):
