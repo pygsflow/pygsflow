@@ -133,7 +133,7 @@ class PrmsDay(object):
             self.__day_file,
             header=None,
             skiprows=self.__data_startline,
-            delim_whitespace=True,
+            sep=r"\s+",
             na_values=[missing_value],
         )
 
