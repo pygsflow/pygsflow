@@ -126,6 +126,7 @@ def parsenamefile(
         For lines that cannot be parsed.
 
     """
+    from pathlib import Path
     # initiate the ext_unit_dict ordered dictionary
     ext_unit_dict = dict()
 
@@ -172,6 +173,13 @@ def parsenamefile(
         fpath = os.path.join(*raw)
 
         # update for GSFLOW
+
+        if fpath[1] == ":":
+            # absolute path, need to resolve it
+            lfpath = Path(os.path.abspath(fpath)).parts
+            key = Path(model_ws).parts[-1]
+            ix = lfpath.index(key)
+            fpath = os.path.join(*lfpath[ix + 1:])
         if control_file is None:
             fname = os.path.join(model_ws, fpath)
         else:
